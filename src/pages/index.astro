@@ -2,10 +2,34 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout>
-    <h1>Logbook</h1>
+<BaseLayout title="Logbook">
+  <main>
+    <header class="page-header">
+      <h1>Logbook</h1>
+      <p class="tagline">One observation at a time.</p>
+    </header>
 
-    <p class="tagline">
-        One observation at a time.
-    </p>
+    <article class="log-entry">
+      <time datetime="2026-07-20">20 July 2026</time>
+
+      <h2>Today, the logbook came online.</h2>
+
+      <p>
+        Today, the logbook came online.
+      </p>
+
+      <p>
+        It began as a small idea during the summer: to create a place for
+        observations rather than a stream of updates.
+      </p>
+
+      <p>
+        A place without algorithms, notifications or expectations.
+      </p>
+
+      <p>
+        Just a quiet corner of the internet. My corner of the internet. 
+      </p>
+    </article>
+  </main>
 </BaseLayout>

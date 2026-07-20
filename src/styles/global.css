@@ -53,3 +53,28 @@ h1 {
     text-decoration: underline;
     text-underline-offset: 0.3em;
 }
+
+.log-entry {
+  margin-top: 5rem;
+  max-width: 42rem;
+}
+
+.log-entry time {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.log-entry h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.log-entry p {
+  line-height: 1.7;
+}
