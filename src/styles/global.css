@@ -1,0 +1,55 @@
+html {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: #222;
+    background: #fff;
+}
+
+body {
+    max-width: 42rem;
+    margin: 5rem auto;
+    padding: 0 2rem;
+
+    line-height: 1.7;
+    font-size: 1.15rem;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.tagline {
+    font-style: italic;
+    color: #666;
+    margin-top: 0;
+}
+
+.site-header {
+    margin-bottom: 4rem;
+}
+
+.site-nav {
+    display: flex;
+    gap: 1.75rem;
+    align-items: center;
+}
+
+.site-nav a {
+    color: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.site-nav a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+}

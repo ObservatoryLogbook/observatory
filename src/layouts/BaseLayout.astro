@@ -1,0 +1,45 @@
+---
+import "../styles/global.css";
+
+interface Props {
+    title?: string;
+}
+
+const {
+    title = "Logbook"
+} = Astro.props;
+
+const pageTitle =
+    title === "Logbook"
+        ? "Logbook"
+        : `${title} · Logbook`;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width"
+        />
+        <meta
+            name="description"
+            content="One observation at a time."
+        />
+        <title>{pageTitle}</title>
+    </head>
+
+    <body>
+        <header class="site-header">
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="/">Logbook</a>
+                <a href="/about">About</a>
+            </nav>
+        </header>
+
+        <main>
+            <slot />
+        </main>
+    </body>
+</html>
