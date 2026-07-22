@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+const { limit } = Astro.props;
+
+const allLogs = (await getCollection("logbook")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const visibleLogs = limit
+  ? allLogs.slice(0, limit)
+  : allLogs;
+
+const renderedLogs = await Promise.all(
+  visibleLogs.map(async (log) => {
+    const formattedDate = log.data.date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+
+    const { Content } = await log.render();
+
+    return {
+      log,
+      formattedDate,
+      Content,
+    };
+  })
+);
+---
+
+{
+  renderedLogs.map(({ log, formattedDate, Content }) => (
+    <article class="log-entry">
+      <time datetime={log.data.date.toISOString().slice(0, 10)}>
+        {formattedDate}
+      </time>
+
+      <h2>{log.data.title}</h2>
+
+      <Content />
+    </article>
+  ))
+}
