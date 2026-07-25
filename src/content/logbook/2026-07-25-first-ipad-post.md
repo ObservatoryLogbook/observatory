@@ -1,6 +1,6 @@
 ---
-title: First iPad post online
-date: 2026-07-2025
+title: First iPad entry online
+date: 2026-07-25
 ---
 
 I'm testing out various ways of publishing observations from just my iPad. Previously, everything has been done through my Macbook, but I have an upcoming trip, where I will not bring it - so I need to have a mobile workflow. 
