@@ -14,7 +14,7 @@ The current options I am testing are:
 
 I am currently testing out Github.dev, which works just fine. It connects directly to the Github repository without problems. 
 
-![First iPad image](images/2026-07-25-first-ipad-image.jpeg)
+![First iPad image](images/2026-07-25-image-from-ipad.jpeg)
 
 In order to upload an image, it seems to be easier to go straight to the Github repository on github.com and adding it there (after copying it through the iOS system and converting it to jpeg-format). 
 
