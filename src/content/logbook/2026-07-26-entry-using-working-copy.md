@@ -1,12 +1,18 @@
----
+—--
 title: Testing Working Copy
 date: 2026-07-26
----
+—--
 
-Working with Working Copy is very easy and straightforward. The installation went well, and so did connecting to the GitHub repository. One of my minor annoyances yesterday was not haven autocorrect, which Working Copy does. However, that comes with a catch: in Markdown, the frontmatter is written within - - -, and autocorrect of course concatenates them to a single em-dash. The workaround: write the dashes with spaces in between and then go back and delete the spaces. That works. 
+Working with Working Copy turned out to be remarkably straightforward. Installation was effortless, and connecting it to my GitHub repository took only a few moments.
 
-Uploading an image was ridiculously simple and straightforward. I could either import directly from the iPad Photos app, or I could convert the image to JPEG format myself and then import the file. 
+One of my minor annoyances yesterday was the lack of autocorrect. Working Copy solves that problem—but introduces another one. Markdown frontmatter is enclosed by three hyphens (`—`), while autocorrect happily turns them into a single em dash (`—`). The workaround is fortunately simple: write the hyphens with spaces in between and then remove the spaces afterwards. Not exactly elegant, but it works.
+
+Uploading images was ridiculously simple. I could either import them directly from the iPad Photos app or convert them to JPEG format first and then import the file. That alone makes Working Copy a much stronger candidate than the browser-based alternatives.
 
 ![Mauna Kea 2015](images/2026-07-26-mauna-kea-2015.jpeg)
 
-This picture is from the top of Mauna Kea, Hawaii. Not necessarily the first thing that comes to mind when thinking about Hawaii, except if you’re an astronomer - or a former astronomer. The conditions for making astronomical observations up here are some of the best in the world. And imagine, it is possible to go straight from a white sandy beach and palm trees to freezing cold and snow in just a couple of hours. Definitely one of my favorite places in the world! 
+This picture was taken on the summit of Mauna Kea, Hawaii. Probably not the first thing that comes to mind when thinking about Hawaii—unless you’re an astronomer, or perhaps a former astronomer.
+
+The observing conditions on Mauna Kea are among the best in the world. It is also one of the very few places where you can leave a white sandy beach lined with palm trees and find yourself surrounded by snow just a couple of hours later.
+
+It remains one of my favourite places anywhere in the world.
