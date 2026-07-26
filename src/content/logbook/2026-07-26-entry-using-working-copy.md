@@ -1,7 +1,7 @@
 ---
 title: Testing Working Copy
 date: 2026-07-26
-—--
+---
 
 Working with Working Copy is very easy and straightforward. The installation went well, and so did connecting to the GitHub repository. One of my minor annoyances yesterday was not haven autocorrect, which Working Copy does. However, that comes with a catch: in Markdown, the frontmatter is written within - - -, and autocorrect of course concatenates them to a single em-dash. The workaround: write the dashes with spaces in between and then go back and delete the spaces. That works. 
 
