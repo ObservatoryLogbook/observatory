@@ -1,7 +1,7 @@
-—--
+---
 title: Testing Working Copy
 date: 2026-07-26
-—--
+---
 
 Working with Working Copy turned out to be remarkably straightforward. Installation was effortless, and connecting it to my GitHub repository took only a few moments.
 
