@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+    const entries = await getCollection("logbook");
+    console.log(entries.map((entry) => entry.id));
+    return entries.map((entry) => ({
+        params: {
+            slug: entry.id.replace(/\.md$/, ""),
+        },
+        props: {
+            entry,
+        },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<h1>{entry.data.title}</h1>
+
+<p>{entry.data.date.toLocaleDateString("en-GB")}</p>
+
+<hr />
+
+<Content />
