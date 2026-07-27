@@ -1,18 +1,19 @@
 ---
 import "../styles/global.css";
+import Telescope from "@lucide/astro/icons/telescope";
 
 interface Props {
     title?: string;
 }
 
 const {
-    title = "Logbook"
+    title = "Observatory"
 } = Astro.props;
 
 const pageTitle =
-    title === "Logbook"
-        ? "Logbook"
-        : `${title} · Logbook`;
+    title === "Observatory"
+        ? "Observatory"
+        : `Observatory · ${title}`;
 ---
 
 <!doctype html>
@@ -23,9 +24,14 @@ const pageTitle =
             name="viewport"
             content="width=device-width"
         />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="/favicon.svg"
+        />
         <meta
             name="description"
-            content="One observation at a time."
+            content="A personal collection of observations, projects, and data."
         />
         <title>{pageTitle}</title>
     </head>
@@ -33,14 +39,15 @@ const pageTitle =
     <body>
         <header class="site-header">
             <nav class="site-nav" aria-label="Main navigation">
-                <a href="/">Logbook</a>
-                <a href="/logbook">Complete logbook</a>
-                <a href="/about">About</a>
+                <a href="/" class="site-brand">
+                    <Telescope class="site-brand__icon" aria-hidden="true" />
+                    <span>Observatory</span>
+                </a>
+                <a href="/logbook/">Logbook</a>
+                <a href="/about/">About</a>
             </nav>
         </header>
 
-        <main>
-            <slot />
-        </main>
+        <slot />
     </body>
 </html>

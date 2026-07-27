@@ -1,15 +1,115 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import LogEntryList from "../components/LogEntryList.astro"; 
+
+import NotebookTabs from "@lucide/astro/icons/notebook-tabs";
+import LayoutDashboard from "@lucide/astro/icons/layout-dashboard";
+import Waypoints from "@lucide/astro/icons/waypoints";
+
+const entries = await getCollection("logbook");
+
+const latestEntries = entries
+    .sort(
+        (a, b) =>
+            b.data.date.getTime() - a.data.date.getTime()
+    )
+    .slice(0, 3);
 ---
 
-<BaseLayout title="Logbook">
-  <main>
-    <header class="page-header">
-      <h1>Logbook</h1>
-      <p>A personal notebook on science, technology, research, and life.</p>
-    </header>
+<BaseLayout title="Observatory">
+    <main>
+        <header class="page-header">
+            <h1>Observatory</h1>
+            <p>
+                A personal collection of observations,
+                projects, and data.
+            </p>
+        </header>
 
-    <LogEntryList limit={5} />
-  </main>
+        <section
+            class="observatory-grid"
+            aria-label="Observatory sections"
+        >
+            <a
+                class="observatory-card observatory-card--active"
+                href="/logbook/"
+            >
+                <div class="observatory-card__header">
+                    <h2>Logbook</h2>
+
+					<NotebookTabs
+					    class="observatory-card__icon"
+					    aria-hidden="true"
+					/>
+                </div>
+
+                <p class="observatory-card__description">
+                    Observations recorded over time.
+                </p>
+
+                <div class="observatory-card__content">
+                    <p class="observatory-card__label">
+                        Latest observations
+                    </p>
+
+                    <ul>
+                        {
+                            latestEntries.map((entry) => (
+                                <li>{entry.data.title}</li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            </a>
+
+            <article
+                class="
+                    observatory-card
+                    observatory-card--inactive
+                "
+            >
+                <div class="observatory-card__header">
+                    <h2>Dashboards</h2>
+
+					<LayoutDashboard
+					    class="observatory-card__icon"
+					    aria-hidden="true"
+					/>
+                </div>
+
+                <p class="observatory-card__description">
+                    Personal data, statistics, and
+                    visualisations.
+                </p>
+
+                <p class="observatory-card__status">
+                    In development
+                </p>
+            </article>
+
+            <article
+                class="
+                    observatory-card
+                    observatory-card--inactive
+                "
+            >
+                <div class="observatory-card__header">
+                    <h2>Projects</h2>
+
+					<Waypoints
+					    class="observatory-card__icon"
+					    aria-hidden="true"
+					/>
+                </div>
+
+                <p class="observatory-card__description">
+                    Larger experiments, systems, and ideas.
+                </p>
+
+                <p class="observatory-card__status">
+                    In development
+                </p>
+            </article>
+        </section>
+    </main>
 </BaseLayout>

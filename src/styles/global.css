@@ -7,21 +7,46 @@ html {
         sans-serif;
 
     color: #222;
-    background: #fff;
+    background: #f7f7f3;
 }
 
 body {
-    max-width: 42rem;
-    margin: 5rem auto;
-    padding: 0 2rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
 
     line-height: 1.7;
     font-size: 1.15rem;
 }
 
+main {
+    width: 100%;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
 h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
+    font-size: clamp(2.6rem, 7vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    margin-bottom: 1rem;
+}
+
+.page-header {
+    max-width: 44rem;
+    margin-bottom: 4rem;
+}
+
+.page-header p {
+    max-width: 36rem;
+    margin-bottom: 0;
+    color: #666;
+    font-size: 1.1rem;
 }
 
 .tagline {
@@ -31,18 +56,21 @@ h1 {
 }
 
 .site-header {
+    padding: 2rem 0;
     margin-bottom: 4rem;
+    border-bottom: 1px solid #deded8;
 }
 
 .site-nav {
     display: flex;
     gap: 1.75rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .site-nav a {
     color: inherit;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-decoration: none;
@@ -54,34 +82,190 @@ h1 {
     text-underline-offset: 0.3em;
 }
 
+.site-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.site-brand__icon {
+    width: 1rem;
+    height: 1rem;
+
+    color: #444;
+
+    stroke-width: 1.8;
+
+    flex-shrink: 0;
+}
+
+.observatory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.observatory-card {
+    position: relative;
+    display: flex;
+    min-height: 20rem;
+    padding: 2rem;
+    flex-direction: column;
+
+    color: inherit;
+    background: #edf0e8;
+    border: 1px solid #dfe3d8;
+    border-radius: 0.4rem;
+    box-shadow:
+        0 0.15rem 0.35rem rgb(34 34 34 / 4%),
+        0 0.6rem 1.5rem rgb(34 34 34 / 5%);
+
+    text-decoration: none;
+}
+
+.observatory-card--active {
+    cursor: pointer;
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease;
+}
+
+.observatory-card--active:hover {
+    transform: translateY(-0.2rem);
+    border-color: #cbd2c0;
+    box-shadow:
+        0 0.25rem 0.5rem rgb(34 34 34 / 5%),
+        0 0.9rem 2rem rgb(34 34 34 / 8%);
+}
+
+.observatory-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #d3d8cc;
+}
+
+.observatory-card h2 {
+    margin: 0;
+    font-size: 1.65rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.observatory-card__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 auto;
+
+    color: #68705f;
+    stroke-width: 1.6;
+}
+
+.observatory-card__description {
+    max-width: 25rem;
+    color: #53584f;
+}
+
+.observatory-card__content {
+    margin-top: auto;
+    padding-top: 2rem;
+}
+
+.observatory-card__label,
+.observatory-card__status {
+    margin-bottom: 0.75rem;
+    color: #73796d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.observatory-card__content ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.observatory-card__content li {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgb(104 112 95 / 20%);
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.observatory-card__content li:last-child {
+    border-bottom: 0;
+}
+
+.observatory-card__status {
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+.observatory-card--inactive {
+    color: #5d6259;
+    background: #f1f2ee;
+    box-shadow:
+        0 0.1rem 0.3rem rgb(34 34 34 / 3%),
+        0 0.4rem 1.2rem rgb(34 34 34 / 4%);
+}
+
 .log-entry {
-  margin-top: 5rem;
-  max-width: 42rem;
+    max-width: 42rem;
+    margin-top: 5rem;
 }
 
 .log-entry time {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #666;
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #666;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .log-entry h2 {
-  margin: 0 0 1.5rem;
-  font-size: 1.6rem;
-  font-weight: 500;
-  line-height: 1.25;
+    margin: 0 0 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.25;
 }
 
 .log-entry p {
-  line-height: 1.7;
+    line-height: 1.7;
 }
 
 .log-entry img {
-  display: block;
-  max-width: 80%;
-  height: auto;
-  margin: auto;
+    display: block;
+    max-width: 80%;
+    height: auto;
+    margin: 2rem auto;
+}
+
+@media (max-width: 48rem) {
+    body {
+        padding-inline: 1.25rem;
+    }
+
+    .site-header {
+        margin-bottom: 3rem;
+    }
+
+    .observatory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .observatory-card {
+        min-height: 17rem;
+        padding: 1.5rem;
+    }
+
+    .page-header {
+        margin-bottom: 3rem;
+    }
 }
