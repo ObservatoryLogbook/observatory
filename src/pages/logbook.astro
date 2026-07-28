@@ -1,9 +1,121 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import LogEntryList from "../components/LogEntryList.astro"; 
+import PageHeader from "../components/PageHeader.astro";
+import { getObservations } from "../lib/logbook";
+
+import NotebookTabs from "@lucide/astro/icons/notebook-tabs";
+
+const observations = (await getObservations()).toReversed();
+
+const monthFormatter = new Intl.DateTimeFormat("en-GB", {
+    month: "long",
+});
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+});
+
+const groupedObservations = observations.reduce((years, observation) => {
+    const year = observation.data.date.getFullYear();
+    const monthNumber = observation.data.date.getMonth();
+    const monthName = monthFormatter.format(observation.data.date);
+
+    let yearGroup = years.find((group) => group.year === year);
+
+    if (!yearGroup) {
+        yearGroup = {
+            year,
+            months: [],
+        };
+
+        years.push(yearGroup);
+    }
+
+    let monthGroup = yearGroup.months.find(
+        (group) => group.monthNumber === monthNumber
+    );
+
+    if (!monthGroup) {
+        monthGroup = {
+            monthNumber,
+            monthName,
+            entries: [],
+        };
+
+        yearGroup.months.push(monthGroup);
+    }
+
+    monthGroup.entries.push(observation);
+
+    return years;
+}, []);
 ---
 
-<BaseLayout>
-  <h1>Complete logbook</h1>
-  <LogEntryList />
+<BaseLayout title="Logbook">
+    <main>
+        <div class="logbook-container">
+            <PageHeader
+                title="Logbook"
+                description="A chronological record of observations, ideas, decisions and discoveries made while building Observatory."
+                icon={NotebookTabs}
+            />
+
+            <section class="logbook-register" aria-label="Logbook archive">
+                {
+                    groupedObservations.map((yearGroup) => (
+                        <section class="register-year">
+                            <h2>{yearGroup.year}</h2>
+
+                            <div class="register-year__months">
+                                {yearGroup.months.map((monthGroup) => (
+                                    <section class="register-month">
+                                        <h3>{monthGroup.monthName}</h3>
+
+                                        <ol class="register-entries">
+                                            {monthGroup.entries.map(
+                                                (observation) => (
+                                                    <li>
+                                                        <a
+                                                            href={`/logbook/${observation.slug}`}
+                                                        >
+                                                            <span class="observation-number">
+                                                                {
+                                                                    observation.formattedNumber
+                                                                }
+                                                            </span>
+
+                                                            <time
+                                                                datetime={observation.data.date.toISOString()}
+                                                            >
+                                                                {
+                                                                    dateFormatter.format(
+                                                                        observation
+                                                                            .data
+                                                                            .date
+                                                                    )
+                                                                }
+                                                            </time>
+
+                                                            <span class="observation-title">
+                                                                {
+                                                                    observation
+                                                                        .data
+                                                                        .title
+                                                                }
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                )
+                                            )}
+                                        </ol>
+                                    </section>
+                                ))}
+                            </div>
+                        </section>
+                    ))
+                }
+            </section>
+        </div>
+    </main>
 </BaseLayout>

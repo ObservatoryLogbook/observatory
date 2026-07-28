@@ -1,27 +1,97 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getObservations } from "../../lib/logbook";
 
 export async function getStaticPaths() {
-    const entries = await getCollection("logbook");
-    console.log(entries.map((entry) => entry.id));
-    return entries.map((entry) => ({
+    const observations = await getObservations();
+
+    return observations.map((observation, index) => ({
         params: {
-            slug: entry.id.replace(/\.md$/, ""),
+            slug: observation.slug,
         },
         props: {
-            entry,
+            observation,
+            previousObservation:
+                index > 0 ? observations[index - 1] : null,
+            nextObservation:
+                index < observations.length - 1
+                    ? observations[index + 1]
+                    : null,
         },
     }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+const {
+    observation,
+    previousObservation,
+    nextObservation,
+} = Astro.props;
+
+const { Content } = await render(observation);
+
+const formattedDate = observation.data.date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+});
 ---
 
-<h1>{entry.data.title}</h1>
+<BaseLayout title={observation.data.title}>
+    <main class="logbook-entry">
+        <header class="logbook-entry__header">
+            <p class="logbook-entry__date">
+                {formattedDate}
+                <span aria-hidden="true"> · </span>
+                Observation #{observation.formattedNumber}
+            </p>
 
-<p>{entry.data.date.toLocaleDateString("en-GB")}</p>
+            <h1>{observation.data.title}</h1>
+        </header>
 
-<hr />
+        <article class="logbook-entry__content">
+            <Content />
+        </article>
 
-<Content />
+        <nav
+            class="entry-navigation"
+            aria-label="Logbook observation navigation"
+        >
+            <div class="entry-navigation__previous">
+                {
+                    previousObservation && (
+                        <a href={`/logbook/${previousObservation.slug}`}>
+                            <span class="entry-navigation__label">
+                                ← Previous
+                            </span>
+
+                            <span class="entry-navigation__title">
+                                {previousObservation.data.title}
+                            </span>
+                        </a>
+                    )
+                }
+            </div>
+
+            <div class="entry-navigation__index">
+                <a href="/logbook/">Logbook</a>
+            </div>
+
+            <div class="entry-navigation__next">
+                {
+                    nextObservation && (
+                        <a href={`/logbook/${nextObservation.slug}`}>
+                            <span class="entry-navigation__label">
+                                Next →
+                            </span>
+
+                            <span class="entry-navigation__title">
+                                {nextObservation.data.title}
+                            </span>
+                        </a>
+                    )
+                }
+            </div>
+        </nav>
+    </main>
+</BaseLayout>
