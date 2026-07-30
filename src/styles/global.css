@@ -1,3 +1,7 @@
+/* =========================================================
+   Foundation
+   ========================================================= */
+
 html {
     font-family:
         Inter,
@@ -15,8 +19,8 @@ body {
     margin: 0 auto;
     padding: 0 2rem 5rem;
 
-    line-height: 1.7;
     font-size: 1.15rem;
+    line-height: 1.7;
 }
 
 main {
@@ -30,51 +34,48 @@ p {
 }
 
 h1 {
+    margin-bottom: 1rem;
+
     font-size: clamp(2.6rem, 7vw, 4.5rem);
     font-weight: 500;
     line-height: 1.05;
     letter-spacing: -0.035em;
-    margin-bottom: 1rem;
-}
-
-.page-header {
-    max-width: 44rem;
-    margin-bottom: 4rem;
-}
-
-.page-header p {
-    max-width: 36rem;
-    margin-bottom: 0;
-    color: #666;
-    font-size: 1.1rem;
 }
 
 .tagline {
-    font-style: italic;
-    color: #666;
     margin-top: 0;
+
+    color: #666;
+    font-style: italic;
 }
 
+
+/* =========================================================
+   Site header and navigation
+   ========================================================= */
+
 .site-header {
-    padding: 2rem 0;
-    margin-bottom: 4rem;
-    border-bottom: 1px solid #deded8;
     position: sticky;
     top: 0;
     z-index: 100;
+
+    padding: 2rem 0;
+    margin-bottom: 4rem;
+
     background: #f7f7f3;
-    /* backdrop-filter: blur(...); */
+    border-bottom: 1px solid #deded8;
 }
 
 .site-nav {
     display: flex;
-    gap: 1.75rem;
     align-items: center;
     flex-wrap: wrap;
+    gap: 1.75rem;
 }
 
 .site-nav a {
     color: inherit;
+
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -96,13 +97,16 @@ h1 {
 .site-brand__icon {
     width: 1rem;
     height: 1rem;
+    flex-shrink: 0;
 
     color: #444;
-
     stroke-width: 1.8;
-
-    flex-shrink: 0;
 }
+
+
+/* =========================================================
+   Observatory overview
+   ========================================================= */
 
 .observatory-grid {
     display: grid;
@@ -112,15 +116,18 @@ h1 {
 
 .observatory-card {
     position: relative;
+
     display: flex;
+    flex-direction: column;
+
     min-height: 20rem;
     padding: 2rem;
-    flex-direction: column;
 
     color: inherit;
     background: #edf0e8;
     border: 1px solid #dfe3d8;
     border-radius: 0.4rem;
+
     box-shadow:
         0 0.15rem 0.35rem rgb(34 34 34 / 4%),
         0 0.6rem 1.5rem rgb(34 34 34 / 5%);
@@ -130,6 +137,7 @@ h1 {
 
 .observatory-card--active {
     cursor: pointer;
+
     transition:
         transform 160ms ease,
         box-shadow 160ms ease,
@@ -138,10 +146,21 @@ h1 {
 
 .observatory-card--active:hover {
     transform: translateY(-0.2rem);
+
     border-color: #cbd2c0;
+
     box-shadow:
         0 0.25rem 0.5rem rgb(34 34 34 / 5%),
         0 0.9rem 2rem rgb(34 34 34 / 8%);
+}
+
+.observatory-card--inactive {
+    color: #5d6259;
+    background: #f1f2ee;
+
+    box-shadow:
+        0 0.1rem 0.3rem rgb(34 34 34 / 3%),
+        0 0.4rem 1.2rem rgb(34 34 34 / 4%);
 }
 
 .observatory-card__header {
@@ -149,21 +168,24 @@ h1 {
     align-items: flex-start;
     justify-content: space-between;
     gap: 2rem;
+
     padding-bottom: 1.25rem;
     margin-bottom: 1.25rem;
+
     border-bottom: 1px solid #d3d8cc;
 }
 
 .observatory-card h2 {
     margin: 0;
+
     font-size: 1.65rem;
     font-weight: 500;
     line-height: 1.2;
 }
 
 .observatory-card__icon {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
     flex: 0 0 auto;
 
     color: #68705f;
@@ -172,6 +194,7 @@ h1 {
 
 .observatory-card__description {
     max-width: 25rem;
+
     color: #53584f;
 }
 
@@ -183,7 +206,9 @@ h1 {
 .observatory-card__label,
 .observatory-card__status {
     margin-bottom: 0.75rem;
+
     color: #73796d;
+
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.09em;
@@ -193,12 +218,15 @@ h1 {
 .observatory-card__content ul {
     margin: 0;
     padding: 0;
+
     list-style: none;
 }
 
 .observatory-card__content li {
     padding: 0.4rem 0;
+
     border-bottom: 1px solid rgb(104 112 95 / 20%);
+
     font-size: 0.95rem;
     line-height: 1.45;
 }
@@ -212,13 +240,11 @@ h1 {
     margin-bottom: 0;
 }
 
-.observatory-card--inactive {
-    color: #5d6259;
-    background: #f1f2ee;
-    box-shadow:
-        0 0.1rem 0.3rem rgb(34 34 34 / 3%),
-        0 0.4rem 1.2rem rgb(34 34 34 / 4%);
-}
+
+/* =========================================================
+   Standalone log entries
+   Retained because this may still be used outside Logbook.
+   ========================================================= */
 
 .log-entry {
     max-width: 42rem;
@@ -227,8 +253,11 @@ h1 {
 
 .log-entry time {
     display: block;
+
     margin-bottom: 0.75rem;
+
     color: #666;
+
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -236,6 +265,7 @@ h1 {
 
 .log-entry h2 {
     margin: 0 0 1.5rem;
+
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 1.25;
@@ -247,36 +277,119 @@ h1 {
 
 .log-entry img {
     display: block;
+
     max-width: 80%;
     height: auto;
     margin: 2rem auto;
 }
 
-@media (max-width: 48rem) {
-    body {
-        padding-inline: 1.25rem;
-    }
 
-    .site-header {
-        padding: 1.25rem 0;
-        margin-bottom: 2.5rem;
-    }
+/* =========================================================
+   Logbook register
+   ========================================================= */
 
-    .observatory-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .observatory-card {
-        min-height: 17rem;
-        padding: 1.5rem;
-    }
-
-    .page-header {
-        margin-bottom: 3rem;
-    }
+/*
+ * PageHeader and register share this container.
+ * This guarantees identical left and right edges.
+ */
+.logbook-container {
+    width: min(100% - 2rem, 56rem);
+    margin-inline: auto;
 }
 
-/* Individual logbook entries */
+.logbook-register {
+    width: 100%;
+    padding: 2rem 0 6rem;
+}
+
+.register-year + .register-year {
+    margin-top: 5rem;
+}
+
+.register-year > h2 {
+    margin: 0 0 2.5rem;
+
+    color: #70756c;
+
+    font-size: 0.875rem;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.register-year__months {
+    display: flex;
+    flex-direction: column;
+    gap: 3.75rem;
+}
+
+.register-month h3 {
+    margin: 0 0 1.25rem;
+
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.register-entries {
+    margin: 0;
+    padding: 0;
+
+    border-top: 1px solid #deded8;
+
+    list-style: none;
+}
+
+.register-entries li {
+    border-bottom: 1px solid #e7e7e1;
+}
+
+.register-entries a {
+    display: grid;
+    grid-template-columns: 2.25rem 3.5rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.75rem;
+
+    padding: 1rem 0;
+
+    color: inherit;
+    text-decoration: none;
+}
+
+.observation-number {
+    color: #9a9d96;
+
+    font-size: 0.8rem;
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+}
+
+.register-entries time {
+    color: #70756c;
+
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.observation-title {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.register-entries a:hover .observation-title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+
+
+/* =========================================================
+   Individual logbook entries
+   ========================================================= */
 
 .logbook-entry {
     width: min(100% - 2rem, 44rem);
@@ -290,7 +403,9 @@ h1 {
 
 .logbook-entry__date {
     margin: 0 0 1.25rem;
+
     color: #70756c;
+
     font-size: 0.875rem;
     line-height: 1.4;
     letter-spacing: 0.04em;
@@ -299,6 +414,7 @@ h1 {
 
 .logbook-entry__header h1 {
     margin: 0;
+
     font-size: clamp(2.25rem, 6vw, 3.75rem);
     line-height: 1.05;
     letter-spacing: -0.035em;
@@ -320,6 +436,7 @@ h1 {
 .logbook-entry__content h2,
 .logbook-entry__content h3 {
     margin: 3rem 0 1rem;
+
     line-height: 1.2;
 }
 
@@ -343,6 +460,7 @@ h1 {
 
 .logbook-entry__content a {
     color: inherit;
+
     text-decoration-thickness: 1px;
     text-underline-offset: 0.18em;
 }
@@ -350,43 +468,35 @@ h1 {
 .logbook-entry__content blockquote {
     margin: 2rem 0;
     padding-left: 1.25rem;
-    border-left: 2px solid #a9afa2;
+
     color: #555b52;
+    border-left: 2px solid #a9afa2;
 }
 
 .logbook-entry__content img {
     display: block;
+
     max-width: 100%;
     height: auto;
     margin: 2.5rem 0;
+
     border-radius: 0.4rem;
 }
 
-@media (max-width: 600px) {
-    .logbook-entry {
-        width: min(100% - 1.5rem, 44rem);
-        padding: 3rem 0 4rem;
-    }
 
-    .logbook-entry__header {
-        margin-bottom: 2.25rem;
-    }
-
-    .logbook-entry__content {
-        font-size: 1rem;
-        line-height: 1.7;
-    }
-}
-
-/* Previous and next logbook entries */
+/* =========================================================
+   Previous and next observation navigation
+   ========================================================= */
 
 .entry-navigation {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    gap: 2rem;
     align-items: start;
+    gap: 2rem;
+
     margin-top: 3.5rem;
     padding-top: 2rem;
+
     border-top: 1px solid #deded8;
 }
 
@@ -413,6 +523,7 @@ h1 {
 
 .entry-navigation__label {
     color: #70756c;
+
     font-size: 0.75rem;
     font-weight: 600;
     line-height: 1.4;
@@ -428,6 +539,7 @@ h1 {
 
 .entry-navigation__index {
     padding-top: 0.05rem;
+
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -442,128 +554,29 @@ h1 {
     text-underline-offset: 0.2em;
 }
 
-@media (max-width: 600px) {
-    .entry-navigation {
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        gap: 0.75rem;
-        margin-top: 3.5rem;
+
+/* =========================================================
+   Responsive layout
+   ========================================================= */
+
+@media (max-width: 48rem) {
+    body {
+        padding-inline: 1.25rem;
     }
 
-    .entry-navigation__label,
-    .entry-navigation__index {
-        font-size: 0.7rem;
+    .site-header {
+        padding: 1.25rem 0;
+        margin-bottom: 2.5rem;
     }
 
-    .entry-navigation__title {
-        font-size: 0.8rem;
+    .observatory-grid {
+        grid-template-columns: 1fr;
     }
-}
 
-/* Logbook register */
-
-.logbook-container {
-    width: min(100% - 2rem, 56rem);
-    margin: auto;
-}
-
-.logbook-register {
-    width: 100%;
-    padding: 2rem 0 6rem;
-}
-
-.logbook-register__header {
-    max-width: 44rem;
-    margin-bottom: 4.5rem;
-}
-
-.logbook-register__header h1 {
-    margin: 0 0 1.25rem;
-    font-size: clamp(2.75rem, 7vw, 4.5rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-}
-
-.logbook-register__header p {
-    max-width: 34rem;
-    margin: 0;
-    color: #62675f;
-    font-size: 1.05rem;
-    line-height: 1.65;
-}
-
-.register-year + .register-year {
-    margin-top: 5rem;
-}
-
-.register-year > h2 {
-    margin: 0 0 2.5rem;
-    color: #70756c;
-    font-size: 0.875rem;
-    line-height: 1.4;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.register-year__months {
-    display: flex;
-    flex-direction: column;
-    gap: 3.75rem;
-}
-
-.register-month h3 {
-    margin: 0 0 1.25rem;
-    font-size: 1.5rem;
-    line-height: 1.2;
-}
-
-.register-entries {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid #deded8;
-}
-
-.register-entries li {
-    border-bottom: 1px solid #e7e7e1;
-}
-
-.register-entries a {
-    display: grid;
-    grid-template-columns: 3rem 7rem minmax(0, 1fr);
-    gap: 1.5rem;
-    align-items: baseline;
-    padding: 1rem 0;
-    color: inherit;
-    text-decoration: none;
-}
-
-.observation-number {
-    color: #9a9d96;
-    font-size: 0.8rem !important;
-    font-weight: 300;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    font-variant-numeric: tabular-nums;
-}
-
-.register-entries time {
-    color: #70756c;
-    font-size: 0.8rem;
-    font-weight: 600;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-}
-
-.observation-title {
-    font-size: 1rem;
-    line-height: 1.5;
-}
-
-.register-entries a:hover span {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
+    .observatory-card {
+        min-height: 17rem;
+        padding: 1.5rem;
+    }
 }
 
 @media (max-width: 600px) {
@@ -575,25 +588,51 @@ h1 {
         padding: 1rem 0 4rem;
     }
 
-    .logbook-register__header {
-        margin-bottom: 3.5rem;
-    }
-
     .register-year__months {
         gap: 3rem;
     }
 
     .register-entries a {
-        grid-template-columns: 5.25rem minmax(0, 1fr);
-        gap: 1rem;
+        grid-template-columns: 2.5rem 4.75rem minmax(0, 1fr);
+        gap: 0.75rem;
+
         padding: 0.9rem 0;
     }
 
+    .observation-number,
     .register-entries time {
         font-size: 0.7rem;
     }
 
-    .register-entries span {
+    .observation-title {
         font-size: 0.95rem;
+    }
+
+    .logbook-entry {
+        width: min(100% - 1.5rem, 44rem);
+        padding: 3rem 0 4rem;
+    }
+
+    .logbook-entry__header {
+        margin-bottom: 2.25rem;
+    }
+
+    .logbook-entry__content {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .entry-navigation {
+        gap: 0.75rem;
+        margin-top: 3.5rem;
+    }
+
+    .entry-navigation__label,
+    .entry-navigation__index {
+        font-size: 0.7rem;
+    }
+
+    .entry-navigation__title {
+        font-size: 0.8rem;
     }
 }
