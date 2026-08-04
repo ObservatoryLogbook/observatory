@@ -51,3 +51,11 @@ export async function getObservations(): Promise<Observation[]> {
         };
     });
 }
+
+export async function getObservationsForProject(slug: string) {
+    const observations = await getObservations();
+
+    return observations.filter((observation) =>
+        observation.data.projects?.includes(slug)
+    );
+}

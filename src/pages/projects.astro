@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getProjects } from "../lib/projects";
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="Projects">
+    <main>
+        <h1>Projects</h1>
+
+        <ul>
+            {
+                projects.map((project) => (
+                    <li>
+                        <a href={`/projects/${project.id.replace(/\.md$/, "")}`}>
+                            {project.data.title}
+                        </a>
+                        <span> — {project.data.status}</span>
+                    </li>
+                ))
+            }
+        </ul>
+    </main>
+</BaseLayout>

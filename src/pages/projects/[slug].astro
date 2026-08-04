@@ -1,0 +1,61 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjects } from "../../lib/projects";
+import { getObservationsForProject } from "../../lib/logbook";
+
+export async function getStaticPaths() {
+    const projects = await getProjects();
+
+    return projects.map((project) => ({
+        params: {
+            slug: project.id.replace(/\.md$/, ""),
+        },
+        props: {
+            project,
+        },
+    }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const slug = project.id.replace(/\.md$/, "");
+
+const observations =
+    await getObservationsForProject(slug);
+---
+
+<BaseLayout title={project.data.title}>
+    <main>
+        <h1>{project.data.title}</h1>
+
+        <p>Status: {project.data.status}</p>
+
+        <p>Started: {project.data.started.toLocaleDateString("en-GB")}</p>
+
+        {
+            observations.length > 0 && (
+                <>
+                    <h2>Related observations</h2>
+
+                    <ul>
+                        {observations.map((observation) => (
+                            <li>
+                                <a href={`/logbook/${observation.slug}`}>
+                                    {observation.formattedNumber} · {observation.data.title}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <hr />
+                </>
+            )
+        }
+
+        <hr />
+
+        <Content />
+    </main>
+</BaseLayout>

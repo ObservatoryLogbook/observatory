@@ -1,6 +1,8 @@
 ---
 title: Logbook register page
 date: 2026-07-28
+projects:
+	- observatory
 ---
 
 I continued working on the structure of this little corner of the Internet with my trusted partner in crime. Yesterday evening we reached an important milestone by creating individual pages for every observation using Astro. This had been a goal since [this observation a few days ago](2026-07-24-building-first-rss-feed). At first, the pages consisted of nothing more than plain text, but they confirmed that Astro was correctly generating the site structure.

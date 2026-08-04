@@ -1,6 +1,8 @@
 ---
 title: Today, the logbook came online.
 date: 2026-07-20
+projects:
+	- observatory
 ---
 
 The first observation is that the Logbook is now online.
