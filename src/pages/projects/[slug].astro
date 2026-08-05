@@ -1,5 +1,6 @@
 ---
 import { render } from "astro:content";
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjects } from "../../lib/projects";
 import { getObservationsForProject } from "../../lib/logbook";
@@ -21,41 +22,74 @@ const { project } = Astro.props;
 const { Content } = await render(project);
 
 const slug = project.id.replace(/\.md$/, "");
+const observations = await getObservationsForProject(slug);
 
-const observations =
-    await getObservationsForProject(slug);
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+});
 ---
 
 <BaseLayout title={project.data.title}>
-    <main>
-        <h1>{project.data.title}</h1>
+    <main class="project-page">
+        <header class="project-header">
+            <div class="project-header__top">
+                <h1>{project.data.title}</h1>
 
-        <p>Status: {project.data.status}</p>
+                <span class="project-header__status">
+                    {project.data.status}
+                </span>
+            </div>
 
-        <p>Started: {project.data.started.toLocaleDateString("en-GB")}</p>
+            <p class="project-header__purpose">
+                {project.data.purpose}
+            </p>
+
+            <dl class="project-header__meta">
+                <div>
+                    <dt>Started</dt>
+                    <dd>{dateFormatter.format(project.data.started)}</dd>
+                </div>
+
+                <div>
+                    <dt>Observations</dt>
+                    <dd>{observations.length}</dd>
+                </div>
+            </dl>
+        </header>
+
+        <article class="project-content">
+            <Content />
+        </article>
 
         {
             observations.length > 0 && (
-                <>
-                    <h2>Related observations</h2>
+                <section
+                    class="project-observations"
+                    aria-labelledby="related-observations"
+                >
+                    <h2 id="related-observations">
+                        Related observations
+                    </h2>
 
-                    <ul>
+                    <ol>
                         {observations.map((observation) => (
                             <li>
                                 <a href={`/logbook/${observation.slug}`}>
-                                    {observation.formattedNumber} · {observation.data.title}
+                                    <span>
+                                        {observation.formattedNumber}
+                                    </span>
+
+                                    <span>
+                                        {observation.data.title}
+                                    </span>
                                 </a>
                             </li>
                         ))}
-                    </ul>
-
-                    <hr />
-                </>
+                    </ol>
+                </section>
             )
         }
-
-        <hr />
-
-        <Content />
     </main>
 </BaseLayout>

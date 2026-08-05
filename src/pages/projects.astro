@@ -1,25 +1,74 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getProjects } from "../lib/projects";
+import { getObservationsForProject } from "../lib/logbook";
 
 const projects = await getProjects();
+
+const projectSummaries = await Promise.all(
+    projects.map(async (project) => {
+        const slug = project.id.replace(/\.md$/, "");
+        const observations = await getObservationsForProject(slug);
+
+        return {
+            project,
+            slug,
+            observationCount: observations.length,
+        };
+    })
+);
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+});
+
 ---
 
 <BaseLayout title="Projects">
     <main>
         <h1>Projects</h1>
 
-        <ul>
+        <div class="project-grid">
             {
-                projects.map((project) => (
-                    <li>
-                        <a href={`/projects/${project.id.replace(/\.md$/, "")}`}>
-                            {project.data.title}
+                projectSummaries.map(
+                    ({ project, slug, observationCount }) => (
+                        <a
+                            class="project-card"
+                            href={`/projects/${slug}`}
+                        >
+                            <div class="project-card__header">
+                                <h2>{project.data.title}</h2>
+
+                                <span class="project-card__status">
+                                    {project.data.status}
+                                </span>
+                            </div>
+
+                            <p class="project-card__description">
+                                {project.data.purpose}
+                            </p>
+
+                            <dl class="project-card__meta">
+                                <div>
+                                    <dt>Started</dt>
+                                    <dd>
+                                        {dateFormatter.format(
+                                            project.data.started
+                                        )}
+                                    </dd>
+                                </div>
+
+                                <div>
+                                    <dt>Observations</dt>
+                                    <dd>{observationCount}</dd>
+                                </div>
+                            </dl>
                         </a>
-                        <span> — {project.data.status}</span>
-                    </li>
-                ))
+                    )
+                )
             }
-        </ul>
+        </div>
     </main>
 </BaseLayout>
