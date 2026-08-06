@@ -1,19 +1,17 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getLatestObservations } from "../lib/logbook";
+import { getActiveProjects } from "../lib/projects.ts";
 
 import NotebookTabs from "@lucide/astro/icons/notebook-tabs";
-import LayoutDashboard from "@lucide/astro/icons/layout-dashboard";
-import Waypoints from "@lucide/astro/icons/waypoints";
+import CircleGauge from "@lucide/astro/icons/circle-gauge";
+import Orbit from "@lucide/astro/icons/orbit";
 
 const entries = await getCollection("logbook");
 
-const latestEntries = entries
-    .sort(
-        (a, b) =>
-            b.data.date.getTime() - a.data.date.getTime()
-    )
-    .slice(0, 3);
+const latestEntries = await getLatestObservations(3);
+const activeProjects = await getActiveProjects();
 ---
 
 <BaseLayout title="Observatory">
@@ -62,6 +60,38 @@ const latestEntries = entries
                 </div>
             </a>
 
+            <a
+                class="observatory-card observatory-card--active"
+                href="/projects/"
+            >
+                <div class="observatory-card__header">
+                    <h2>Science</h2>
+
+                    <Orbit
+                        class="observatory-card__icon"
+                        aria-hidden="true"
+                    />
+                </div>
+
+                <p class="observatory-card__description">
+                    Long-running investigations, projects, and accumulated knowledge.
+                </p>
+
+                <div class="observatory-card__content">
+                    <p class="observatory-card__label">
+                        Active projects
+                    </p>
+
+                    <ul>
+                        {
+                            activeProjects.map((project) => (
+                                <li>{project.data.title}</li>
+                            ))
+                        }
+                    </ul>
+                </div>
+            </a>
+
             <article
                 class="
                     observatory-card
@@ -69,17 +99,16 @@ const latestEntries = entries
                 "
             >
                 <div class="observatory-card__header">
-                    <h2>Dashboards</h2>
+                    <h2>Engineering</h2>
 
-					<LayoutDashboard
+					<CircleGauge
 					    class="observatory-card__icon"
 					    aria-hidden="true"
 					/>
                 </div>
 
                 <p class="observatory-card__description">
-                    Personal data, statistics, and
-                    visualisations.
+                    Build and maintain the systems that support everyday life.
                 </p>
 
                 <p class="observatory-card__status">
@@ -87,29 +116,6 @@ const latestEntries = entries
                 </p>
             </article>
 
-            <article
-                class="
-                    observatory-card
-                    observatory-card--inactive
-                "
-            >
-                <div class="observatory-card__header">
-                    <h2>Projects</h2>
-
-					<Waypoints
-					    class="observatory-card__icon"
-					    aria-hidden="true"
-					/>
-                </div>
-
-                <p class="observatory-card__description">
-                    Larger experiments, systems, and ideas.
-                </p>
-
-                <p class="observatory-card__status">
-                    In development
-                </p>
-            </article>
         </section>
     </main>
 </BaseLayout>

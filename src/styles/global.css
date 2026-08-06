@@ -596,47 +596,6 @@ h1 {
     line-height: 1.2;
 }
 
-.project-observations ol {
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
-    border-top: 1px solid #e7e7e1;
-}
-
-.project-observations li {
-    border-bottom: 1px solid #e7e7e1;
-}
-
-.project-observations a {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    align-items: baseline;
-    gap: 1.25rem;
-
-    padding: 0.9rem 0;
-
-    color: inherit;
-    text-decoration: none;
-}
-
-.project-observations a span:first-child {
-    color: #9a9d96;
-
-    font-size: 0.75rem;
-    font-variant-numeric: tabular-nums;
-}
-
-.project-observations a span:last-child {
-    font-size: 0.95rem;
-    line-height: 1.45;
-}
-
-.project-observations a:hover span:last-child {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-}
 
 
 /* Project pages on smaller screens */

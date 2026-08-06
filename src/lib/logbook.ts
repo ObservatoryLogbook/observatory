@@ -55,7 +55,17 @@ export async function getObservations(): Promise<Observation[]> {
 export async function getObservationsForProject(slug: string) {
     const observations = await getObservations();
 
-    return observations.filter((observation) =>
-        observation.data.projects?.includes(slug)
-    );
+    return observations
+        .filter((observation) =>
+            observation.data.projects?.includes(slug)
+        )
+        .toReversed();
+}
+
+export async function getLatestObservations(limit?: number) {
+    const observations = await getObservations();
+
+    return limit
+        ? observations.toReversed().slice(0, limit)
+        : observations.toReversed();
 }

@@ -4,6 +4,7 @@ import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjects } from "../../lib/projects";
 import { getObservationsForProject } from "../../lib/logbook";
+import ObservationList from "../../components/ObservationList.astro";
 
 export async function getStaticPaths() {
     const projects = await getProjects();
@@ -28,6 +29,11 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
+});
+
+const observationDateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
 });
 ---
 
@@ -73,21 +79,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
                         Related observations
                     </h2>
 
-                    <ol>
-                        {observations.map((observation) => (
-                            <li>
-                                <a href={`/logbook/${observation.slug}`}>
-                                    <span>
-                                        {observation.formattedNumber}
-                                    </span>
-
-                                    <span>
-                                        {observation.data.title}
-                                    </span>
-                                </a>
-                            </li>
-                        ))}
-                    </ol>
+                    <ObservationList observations={observations} />
                 </section>
             )
         }

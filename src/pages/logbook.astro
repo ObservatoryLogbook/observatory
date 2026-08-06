@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import { getObservations } from "../lib/logbook";
+import ObservationList from "../components/ObservationList.astro";
 
 import NotebookTabs from "@lucide/astro/icons/notebook-tabs";
 
@@ -72,43 +73,7 @@ const groupedObservations = observations.reduce((years, observation) => {
                                     <section class="register-month">
                                         <h3>{monthGroup.monthName}</h3>
 
-                                        <ol class="register-entries">
-                                            {monthGroup.entries.map(
-                                                (observation) => (
-                                                    <li>
-                                                        <a
-                                                            href={`/logbook/${observation.slug}`}
-                                                        >
-                                                            <span class="observation-number">
-                                                                {
-                                                                    observation.formattedNumber
-                                                                }
-                                                            </span>
-
-                                                            <time
-                                                                datetime={observation.data.date.toISOString()}
-                                                            >
-                                                                {
-                                                                    dateFormatter.format(
-                                                                        observation
-                                                                            .data
-                                                                            .date
-                                                                    )
-                                                                }
-                                                            </time>
-
-                                                            <span class="observation-title">
-                                                                {
-                                                                    observation
-                                                                        .data
-                                                                        .title
-                                                                }
-                                                            </span>
-                                                        </a>
-                                                    </li>
-                                                )
-                                            )}
-                                        </ol>
+                                        <ObservationList observations={monthGroup.entries} />
                                     </section>
                                 ))}
                             </div>
