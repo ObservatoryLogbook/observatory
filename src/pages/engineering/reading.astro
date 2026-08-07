@@ -1,0 +1,293 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+    getCurrentlyReading,
+    getReadingList,
+    getReadBooks,
+} from "../../lib/reading";
+import Rocket from "@lucide/astro/icons/rocket";
+
+const currentlyReading = await getCurrentlyReading();
+const readingList = await getReadingList();
+const readBooks = await getReadBooks();
+---
+
+<BaseLayout title="Reading">
+    <main class="reading">
+        <header class="reading-header">
+            <h1>Reading</h1>
+        </header>
+
+        <section class="reading-section reading-section--current">
+            <div class="reading-section__header">
+                <h2>Currently reading</h2>
+            </div>
+
+            <ul class="book-list">
+                {currentlyReading.map((book) => (
+                    <li class="book-entry book-entry--current">
+                        <div class="book-entry__main">
+                            <h3 class="book-entry__title">
+                                {book.data.title}
+                            </h3>
+
+                            <p class="book-entry__author">
+                                {book.data.author}
+                            </p>
+                        </div>
+
+                        <div class="book-entry__meta">
+                            {book.data.started && (
+                                <div class="book-entry__meta-item">
+                                    <span class="book-entry__label">
+                                        Started
+                                    </span>
+
+                                    <span>
+                                        {book.data.started.toLocaleDateString(
+                                            "en-GB",
+                                            {
+                                                day: "numeric",
+                                                month: "long",
+                                                year: "numeric",
+                                            }
+                                        )}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </section>
+
+        <section class="reading-section reading-section--list">
+            <div class="reading-section__header">
+                <h2>Reading list</h2>
+            </div>
+
+            <ul class="book-list">
+                {readingList.map((book) => (
+                    <li class="book-entry">
+                        <div class="book-entry__main">
+                            <h3 class="book-entry__title">
+                                {book.data.title}
+                            </h3>
+
+                            <p class="book-entry__author">
+                                {book.data.author}
+                            </p>
+                        </div>
+
+                        <div class="book-entry__meta">
+                            <div class="book-entry__meta-item">
+                                <span class="book-entry__label">
+                                    Category
+                                </span>
+
+                                <span>
+                                    {book.data.category}
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </section>
+
+        <section class="reading-section reading-section--read">
+            <div class="reading-section__header">
+                <h2>Read</h2>
+            </div>
+
+            <ul class="book-list">
+                {readBooks.map((book) => (
+                    <li class="book-entry">
+                        <div class="book-entry__main">
+                            <h3 class="book-entry__title">
+                                {book.data.title}
+                            </h3>
+
+                            <p class="book-entry__author">
+                                {book.data.author}
+                            </p>
+                        </div>
+
+                        <div class="book-entry__meta">
+                            {book.data.finished && (
+                                <div class="book-entry__meta-item">
+                                    <span class="book-entry__label">
+                                        Finished
+                                    </span>
+
+                                    <span>
+                                        {book.data.finished.toLocaleDateString(
+                                            "en-GB",
+                                            {
+                                                day: "numeric",
+                                                month: "long",
+                                                year: "numeric",
+                                            }
+                                        )}
+                                    </span>
+                                </div>
+                            )}
+
+                            {book.data.rating && (
+                                <div class="book-entry__meta-item">
+                                    <span class="book-entry__label">
+                                        Rating
+                                    </span>
+
+                                    <div
+                                        class="book-rating"
+                                        aria-label={`${book.data.rating} out of 5`}
+                                    >
+                                        {
+                                            Array.from(
+                                                { length: book.data.rating },
+                                                () => (
+                                                    <Rocket aria-hidden="true" />
+                                                )
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    </main>
+</BaseLayout>
+
+<style>
+    .reading {
+        width: min(100%, 52rem);
+        margin: 0 auto;
+    }
+
+    .reading-header {
+        margin-bottom: 4rem;
+    }
+
+    .reading-header h1 {
+        margin: 0;
+
+        font-size: 2.5rem;
+        font-weight: 500;
+        line-height: 1.1;
+    }
+
+    .reading-section {
+        margin-top: 4rem;
+    }
+
+    .reading-section__header {
+        padding-bottom: 0.8rem;
+
+        border-bottom: 1px solid #d3d8cc;
+    }
+
+    .reading-section__header h2 {
+        margin: 0;
+
+        font-size: 1.35rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .book-list {
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    .book-entry {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 2rem;
+
+        padding: 1.25rem 0;
+
+        border-bottom: 1px solid #e7e7e1;
+    }
+
+    .book-entry__title {
+        margin: 0;
+
+        font-size: 1.05rem;
+        font-weight: 500;
+        line-height: 1.35;
+    }
+
+    .book-entry__author {
+        margin: 0.25rem 0 0;
+
+        color: #70756c;
+
+        font-size: 0.9rem;
+    }
+
+    .book-entry__meta {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-end;
+        gap: 2rem;
+    }
+
+    .book-entry__meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .book-entry__label {
+        color: #73796d;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .book-entry--current {
+        padding-inline: 1rem;
+
+        background: #f1f3ee;
+        border-left: 2px solid #aab6a3;
+    }
+
+    .book-rating {
+        display: flex;
+        gap: 0.2rem;
+    }
+
+    .book-rating :global(svg) {
+        width: 1.05rem;
+        height: 1.05rem;
+
+        stroke-width: 1.6;
+    }
+
+    .book-entry__meta-item > span:last-child {
+        color: #53584f;
+
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+        .book-entry {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .book-entry__meta {
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+    }
+</style>

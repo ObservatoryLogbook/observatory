@@ -33,7 +33,21 @@ const projects = defineCollection({
     }),
 });
 
+const engineeringBooks = defineCollection({
+    type: "content",
+
+    schema: z.object({
+        title: z.string(),
+        author: z.string(),
+        category: z.string(),
+        started: z.date().optional(),
+        finished: z.date().optional(),
+        rating: z.number().min(1).max(5).optional(),
+    }),
+});
+
 export const collections = {
     logbook,
     projects,
+    engineeringBooks,
 };
