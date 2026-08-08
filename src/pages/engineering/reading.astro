@@ -207,7 +207,7 @@ const readBooks = await getReadBooks();
 
     .book-entry {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr) 14.5rem;
         align-items: center;
         gap: 2rem;
 
@@ -233,10 +233,11 @@ const readBooks = await getReadBooks();
     }
 
     .book-entry__meta {
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-end;
-        gap: 2rem;
+        display: grid;
+        grid-template-columns: 7rem 6rem;
+        gap: 1.5rem;
+
+        align-items: start;
     }
 
     .book-entry__meta-item {

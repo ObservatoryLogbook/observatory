@@ -1,19 +1,19 @@
-import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import rss from "@astrojs/rss";
+import { getObservations } from "../lib/logbook";
 
 export async function GET(context) {
-  const allLogs = (await getCollection('logbook')).sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime()
-  );
+    const observations = (await getObservations()).toReversed();
 
-  return rss({
-    title: 'Logbook',
-    description: 'A personal notebook on science, technology, research, and life.',
-    site: context.site,
-    items: allLogs.map((log) => ({
-      title: log.data.title,
-      pubDate: log.data.date,
-      link: '/logbook/',
-    })),
-  });
+    return rss({
+        title: "Observatory Logbook",
+        description:
+            "A personal notebook on science, technology, research, and life.",
+        site: context.site,
+
+        items: observations.map((observation) => ({
+            title: observation.data.title,
+            pubDate: observation.data.date,
+            link: `/logbook/${observation.slug}`,
+        })),
+    });
 }
