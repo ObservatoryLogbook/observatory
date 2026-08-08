@@ -46,8 +46,44 @@ const engineeringBooks = defineCollection({
     }),
 });
 
+
+const strengthGoal = z.object({
+    type: z.literal("strength"),
+    name: z.string(),
+    target: z.number(),
+    unit: z.literal("kg"),
+    reps: z.number().int().positive(),
+    started: z.date(),
+    targetDate: z.date().optional(),
+    achieved: z.date().optional(),
+});
+
+const skillGoal = z.object({
+    type: z.literal("skill"),
+    name: z.string(),
+    target: z.number().int().positive(),
+    started: z.date(),
+    targetDate: z.date().optional(),
+    achieved: z.date().optional(),
+});
+
+const trainingGoal = z.discriminatedUnion("type", [
+    strengthGoal,
+    skillGoal,
+]);
+
+const engineeringTraining = defineCollection({
+    type: "content",
+
+    schema: z.object({
+        title: z.string(),
+        goals: z.array(trainingGoal),
+    }),
+});
+
 export const collections = {
     logbook,
     projects,
-    engineeringBooks,
+    "engineering-books": engineeringBooks,
+    "engineering-training": engineeringTraining,
 };
