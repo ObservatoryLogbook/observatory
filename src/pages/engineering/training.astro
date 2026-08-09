@@ -1,0 +1,284 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+    getTraining, 
+    getStrengthGoals,
+    getSkillGoals,
+    getLatestAchievedStrengthGoals,
+    getAchievedGoals,
+} from "../../lib/training";
+
+const strengthGoals = await getStrengthGoals();
+const skillGoals = await getSkillGoals();
+
+const achievedStrengthGoals =
+    await getLatestAchievedStrengthGoals();
+
+const achievedGoals = await getAchievedGoals();
+
+const achievedSkillGoals = achievedGoals.filter(
+    (goal) => goal.type === "skill"
+);
+
+const training = await getTraining();
+const { Content } = await training.render();
+---
+
+<BaseLayout title="Training">
+    <main class="training">
+        <header>
+            <h1>Training</h1>
+        </header>
+
+        <section class="training-goals">
+            <h2>Goals</h2>
+
+            <div class="training-goals__active">
+                <div class="goal-group">
+                    <h3>Strength</h3>
+
+                    <ul class="goal-list">
+                        {strengthGoals.map((goal) => (
+                            <li class="goal">
+                                <span class="goal__name">
+                                    {goal.name}
+                                </span>
+
+                                <span class="goal__target">
+                                    {goal.target} {goal.unit} x {goal.reps}
+                                </span>
+                                {goal.targetDate && (
+                                    <time
+                                        class="goal__date"
+                                        datetime={goal.targetDate.toISOString()}
+                                    >
+                                        Target{" "}
+                                        {goal.targetDate.toLocaleDateString(
+                                            "en-GB",
+                                            {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                            }
+                                        )}
+                                    </time>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div class="goal-group">
+                    <h3>Skills</h3>
+
+                    <ul class="goal-list">
+                        {skillGoals.map((goal) => (
+                            <li class="goal">
+                                <span class="goal__name">
+                                    {goal.name}
+                                </span>
+
+                                <span class="goal__target">
+                                    {goal.target} rep
+                                </span>
+                                {goal.targetDate && (
+                                    <time
+                                        class="goal__date"
+                                        datetime={goal.targetDate.toISOString()}
+                                    >
+                                        Target{" "}
+                                        {goal.targetDate.toLocaleDateString(
+                                            "en-GB",
+                                            {
+                                                day: "numeric",
+                                                month: "short",
+                                                year: "numeric",
+                                            }
+                                        )}
+                                    </time>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="training-goals__achieved">
+                <h3>Achieved</h3>
+
+                <div class="training-goals__achieved-grid">
+                    <div class="goal-group">
+                        <h4>Strength</h4>
+
+                        <ul class="goal-list">
+                            {achievedStrengthGoals.map((goal) => (
+                                <li class="goal goal--achieved">
+                                    <span class="goal__name">
+                                        {goal.name}
+                                    </span>
+
+                                    {goal.type === "strength" && (
+                                        <span class="goal__target">
+                                            {goal.target} {goal.unit} x {goal.reps}
+                                        </span>
+                                    )}
+
+                                    {goal.achieved && (
+                                        <time datetime={goal.achieved.toISOString()}>
+                                            Achieved{" "}
+                                            {goal.achieved.toLocaleDateString(
+                                                "en-GB",
+                                                {
+                                                    day: "numeric",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                }
+                                            )}
+                                        </time>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div class="goal-group">
+                        <h4>Skills</h4>
+
+                        <ul class="goal-list">
+                            {achievedSkillGoals.map((goal) => (
+                                <li class="goal goal--achieved">
+                                    <span class="goal__name">
+                                        {goal.name}
+                                    </span>
+
+                                    <span class="goal__target">
+                                        {goal.target} rep
+                                    </span>
+
+                                    {goal.achieved && (
+                                        <time datetime={goal.achieved.toISOString()}>
+                                            Achieved{" "}
+                                            {goal.achieved.toLocaleDateString(
+                                                "en-GB",
+                                                {
+                                                    day: "numeric",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                }
+                                            )}
+                                        </time>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="training-focus">
+            <Content />
+        </section>
+    </main>
+</BaseLayout>
+
+<style>
+    .training {
+        width: min(100%, 52rem);
+        margin: 0 auto;
+    }
+
+    .training-goals {
+        margin-top: 3rem;
+    }
+
+    .training-goals > h2 {
+        margin-bottom: 1.5rem;
+    }
+
+    .training-goals__active,
+    .training-goals__achieved-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3rem;
+    }
+
+    .goal-group h3,
+    .goal-group h4 {
+        margin: 0 0 1rem;
+
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .goal-list {
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    .goal {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+
+        padding: 0.8rem 0;
+
+        border-bottom: 1px solid #e7e7e1;
+    }
+
+    .goal__name {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .goal__target {
+        color: #70756c;
+
+        font-size: 0.9rem;
+    }
+
+    .goal__date {
+        margin-top: 0.15rem;
+
+        color: #8a8e87;
+
+        font-size: 0.75rem;
+    }
+
+    .training-goals__achieved {
+        margin-top: 2rem;
+        padding-top: 1rem;
+    }
+
+    .training-goals__achieved > h3 {
+        margin: 0 0 1rem;
+
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .goal--achieved time {
+        margin-top: 0.25rem;
+
+        color: #8a8e87;
+
+        font-size: 0.75rem;
+    }
+
+    .training-focus {
+        margin-top: 4rem;
+    }
+
+    @media (max-width: 600px) {
+        .training-goals__active,
+        .training-goals__achieved-grid {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+</style>
+
