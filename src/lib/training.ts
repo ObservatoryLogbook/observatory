@@ -60,3 +60,9 @@ export async function getLatestAchievedStrengthGoals() {
             ) === index
     );
 }
+
+export async function getTrainingContext() {
+    const training = await getTraining();
+
+    return training.data.context;
+}

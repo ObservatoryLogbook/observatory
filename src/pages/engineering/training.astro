@@ -1,11 +1,12 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import {
-    getTraining, 
     getStrengthGoals,
     getSkillGoals,
     getLatestAchievedStrengthGoals,
     getAchievedGoals,
+    getTraining,
+    getTrainingContext,
 } from "../../lib/training";
 
 const strengthGoals = await getStrengthGoals();
@@ -22,6 +23,7 @@ const achievedSkillGoals = achievedGoals.filter(
 
 const training = await getTraining();
 const { Content } = await training.render();
+const trainingContext = await getTrainingContext();
 ---
 
 <BaseLayout title="Training">
@@ -179,6 +181,35 @@ const { Content } = await training.render();
         <section class="training-focus">
             <Content />
         </section>
+
+        <section class="training-context">
+            <h2>Training context</h2>
+
+            <ul class="context-list">
+                {trainingContext.map((item) => (
+                    <li class="context-entry">
+                        <h3>{item.title}</h3>
+
+                        <p class="context-entry__meta">
+                            Since{" "}
+                            {item.affectedFrom.toLocaleDateString(
+                                "en-GB",
+                                {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                }
+                            )}
+                            {" · "}
+                            {item.status}
+                        </p>
+
+                        <p>{item.notes}</p>
+                    </li>
+                ))}
+            </ul>
+        </section>
+
     </main>
 </BaseLayout>
 
@@ -271,6 +302,41 @@ const { Content } = await training.render();
 
     .training-focus {
         margin-top: 4rem;
+    }
+
+    .training-context {
+        margin-top: 4rem;
+    }
+
+    .context-list {
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    .context-entry {
+        margin-top: 1.5rem;
+    }
+
+    .context-entry h3 {
+        margin: 0;
+
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .context-entry__meta {
+        margin: 0.25rem 0 0.75rem;
+
+        color: #8a8e87;
+
+        font-size: 0.75rem;
+        text-transform: capitalize;
+    }
+
+    .context-entry > p:last-child {
+        margin-bottom: 0;
     }
 
     @media (max-width: 600px) {

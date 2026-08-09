@@ -77,7 +77,24 @@ const engineeringTraining = defineCollection({
 
     schema: z.object({
         title: z.string(),
+
         goals: z.array(trainingGoal),
+
+        context: z.array(
+            z.object({
+                title: z.string(),
+                eventDate: z.date().optional(),
+                affectedFrom: z.date(),
+                affectedUntil: z.date().optional(),
+                status: z.enum([
+                    "acute",
+                    "recovering",
+                    "residual",
+                    "resolved",
+                ]),
+                notes: z.string(),
+            })
+        ).default([]),
     }),
 });
 

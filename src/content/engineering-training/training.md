@@ -37,6 +37,16 @@ goals:
     target: 1
     started: 2026-01-16
     targetDate: 2026-12-31
+
+context:
+  - title: Lower back issue
+    affectedFrom: 2026-07-01
+    status: residual
+    notes: >
+      Daily symptoms have resolved, but the issue still affects
+      training. Heavy squats currently show a protective movement
+      pattern, with a tendency to keep the back too upright under
+      load. Full strength has not yet returned.
 ---
 
 ## Current focus
