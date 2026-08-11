@@ -32,7 +32,11 @@ const trainingContext = await getTrainingContext();
             <h1>Training</h1>
         </header>
 
-        <section class="training-goals">
+        <p class="training-header__motto">
+            I can, and I will. Just keep showing up.
+        </p>
+
+        <section class="training-section">
             <h2>Goals</h2>
 
             <div class="training-goals__active">
@@ -178,11 +182,11 @@ const trainingContext = await getTrainingContext();
             </div>
         </section>
 
-        <section class="training-focus">
+        <section class="training-content">
             <Content />
         </section>
 
-        <section class="training-context">
+        <section class="training-section">
             <h2>Training context</h2>
 
             <ul class="context-list">
@@ -217,6 +221,42 @@ const trainingContext = await getTrainingContext();
     .training {
         width: min(100%, 52rem);
         margin: 0 auto;
+    }
+
+    .training-section {
+        margin-top: 4.5rem;
+        padding-top: 1.5rem;
+
+        border-top: 1px solid #deded8;
+    }
+
+    .training-section > h2 {
+        margin: 0 0 2rem;
+
+        font-size: 1.45rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .training-header__motto {
+        margin: 0.75rem 0 0;
+
+        color: #70756c;
+
+        font-size: 1rem;
+        font-style: italic;
+        line-height: 1.5;
+    }
+
+    .training-content :global(h2) {
+        margin: 4.5rem 0 2rem;
+        padding-top: 1.5rem;
+
+        border-top: 1px solid #deded8;
+
+        font-size: 1.45rem;
+        font-weight: 500;
+        line-height: 1.2;
     }
 
     .training-goals {
