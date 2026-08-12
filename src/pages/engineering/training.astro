@@ -8,6 +8,11 @@ import {
     getTraining,
     getTrainingContext,
 } from "../../lib/training";
+import { 
+    loadTrainingCsv, 
+    calculateE1RM, 
+    getPerformanceData, 
+} from "../../lib/training-data";
 
 const strengthGoals = await getStrengthGoals();
 const skillGoals = await getSkillGoals();

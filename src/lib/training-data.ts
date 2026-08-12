@@ -1,0 +1,107 @@
+import { readFile } from "node:fs/promises";
+
+const trainingCsvPath = new URL(
+    "../data/training.csv",
+    import.meta.url
+);
+
+export async function loadTrainingCsv() {
+    return await readFile(trainingCsvPath, "utf-8");
+}
+
+export async function parseTrainingCsv() {
+    const csv = await loadTrainingCsv();
+
+    const lines = csv
+        .split(/\r?\n/)
+        .filter((line) => line.trim() !== "");
+
+    const [headerLine, ...dataLines] = lines;
+
+    const headers = headerLine.split(",");
+
+    return dataLines.map((line) => {
+        const values = line.split(",");
+
+        return Object.fromEntries(
+            headers.map((header, index) => [
+                header,
+                values[index] ?? "",
+            ])
+        );
+    });
+}
+
+export type PerformancePoint = {
+    date: Date;
+    exercise: "squat" | "bench" | "deadlift";
+    weight: number;
+    reps: number;
+    rpe: number;
+};
+
+function normaliseExercise(
+    exercise: string
+): PerformancePoint["exercise"] {
+    switch (exercise) {
+        case "Squat":
+            return "squat";
+
+        case "Bænkpres":
+            return "bench";
+
+        case "Dødløft":
+            return "deadlift";
+
+        default:
+            throw new Error(
+                `Unknown exercise: ${exercise}`
+            );
+    }
+}
+
+function parseDate(value: string) {
+    const datePart = value.split(" ")[0];
+
+    const [day, month, year] = datePart
+        .split("/")
+        .map(Number);
+
+    return new Date(
+        Date.UTC(year, month - 1, day)
+    );
+}
+
+export async function getPerformanceData():
+    Promise<PerformancePoint[]> {
+
+    const rows = await parseTrainingCsv();
+
+    return rows
+        .filter(
+            (row) =>
+                row["SætRolle"] === "Top single"
+        )
+        .map((row) => ({
+            date: parseDate(row["Dato"]),
+            exercise: normaliseExercise(
+                row["Øvelse"]
+            ),
+            weight: Number(row["Vægt"]),
+            reps: Number(row["Reps"]),
+            rpe: Number(row["RPE"]),
+        }));
+}
+
+export function calculateE1RM(
+    weight: number,
+    reps: number,
+    rpe: number
+) {
+    const e1RM =
+        weight * (
+            1 + (reps + (10 - rpe)) / 30
+        );
+
+    return Math.round(e1RM * 10) / 10;
+}
