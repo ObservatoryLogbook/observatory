@@ -11,7 +11,9 @@ import {
 import { 
     loadTrainingCsv, 
     calculateE1RM, 
-    getPerformanceData, 
+    getPerformanceData,
+    getCurrentE1RM, 
+    getOneRepPR, 
 } from "../../lib/training-data";
 
 const strengthGoals = await getStrengthGoals();
@@ -29,6 +31,49 @@ const achievedSkillGoals = achievedGoals.filter(
 const training = await getTraining();
 const { Content } = await training.render();
 const trainingContext = await getTrainingContext();
+
+const performanceData = await getPerformanceData(); 
+
+const exercises = [
+    {
+        key: "squat",
+        name: "Squat",
+        goalName: "Squat",
+    },
+    {
+        key: "bench",
+        name: "Bench press",
+        goalName: "Bench press",
+    },
+    {
+        key: "deadlift",
+        name: "Deadlift",
+        goalName: "Deadlift",
+    },
+] as const;
+
+const performanceCards = exercises.map((exercise) => {
+    const goal = strengthGoals.find(
+        (goal) =>
+            goal.type === "strength" &&
+            goal.name === exercise.goalName
+    );
+
+    return {
+        exercise: exercise.key,
+        name: exercise.name,
+        currentE1RM: getCurrentE1RM(
+            performanceData,
+            exercise.key
+        ),
+        pr: getOneRepPR(
+            performanceData,
+            exercise.key
+        ),
+        goal,
+    };
+});
+
 ---
 
 <BaseLayout title="Training">
@@ -113,77 +158,82 @@ const trainingContext = await getTrainingContext();
                     </ul>
                 </div>
             </div>
+        </section>
 
-            <div class="training-goals__achieved">
-                <h3>Achieved</h3>
 
-                <div class="training-goals__achieved-grid">
-                    <div class="goal-group">
-                        <h4>Strength</h4>
 
-                        <ul class="goal-list">
-                            {achievedStrengthGoals.map((goal) => (
-                                <li class="goal goal--achieved">
-                                    <span class="goal__name">
-                                        {goal.name}
-                                    </span>
+        <section class="training-section">
+            <h2>Performance</h2>
 
-                                    {goal.type === "strength" && (
-                                        <span class="goal__target">
-                                            {goal.target} {goal.unit} x {goal.reps}
+            <div class="performance-cards">
+                {performanceCards.map((card) => (
+                    <article class="performance-card">
+                        <h3>{card.name}</h3>
+
+                        <dl class="performance-card__metrics">
+                            <div class="performance-metric">
+                                <dt>Current e1RM</dt>
+
+                                <dd>
+                                    <strong>
+                                        {card.currentE1RM?.toFixed(1)} kg
+                                    </strong>
+
+                                    <span>28-day best</span>
+                                </dd>
+                            </div>
+
+                            {card.pr && (
+                                <div class="performance-metric">
+                                    <dt>1RM PR</dt>
+
+                                    <dd>
+                                        <strong>
+                                            {card.pr.weight} kg
+                                        </strong>
+
+                                        <span>
+                                            RPE {card.pr.rpe} ·{" "}
+                                            {card.pr.date.toLocaleDateString(
+                                                "en-GB",
+                                                {
+                                                    day: "numeric",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                }
+                                            )}
                                         </span>
-                                    )}
+                                    </dd>
+                                </div>
+                            )}
 
-                                    {goal.achieved && (
-                                        <time datetime={goal.achieved.toISOString()}>
-                                            Achieved{" "}
-                                            {goal.achieved.toLocaleDateString(
-                                                "en-GB",
-                                                {
-                                                    day: "numeric",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                }
-                                            )}
-                                        </time>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                            {card.goal && (
+                                <div class="performance-metric">
+                                    <dt>Goal</dt>
 
-                    <div class="goal-group">
-                        <h4>Skills</h4>
+                                    <dd>
+                                        <strong>
+                                            {card.goal.target} kg x {card.goal.reps}
+                                        </strong>
 
-                        <ul class="goal-list">
-                            {achievedSkillGoals.map((goal) => (
-                                <li class="goal goal--achieved">
-                                    <span class="goal__name">
-                                        {goal.name}
-                                    </span>
-
-                                    <span class="goal__target">
-                                        {goal.target} rep
-                                    </span>
-
-                                    {goal.achieved && (
-                                        <time datetime={goal.achieved.toISOString()}>
-                                            Achieved{" "}
-                                            {goal.achieved.toLocaleDateString(
-                                                "en-GB",
-                                                {
-                                                    day: "numeric",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                }
-                                            )}
-                                        </time>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
+                                        {card.goal.targetDate && (
+                                            <span>
+                                                {card.goal.targetDate.toLocaleDateString(
+                                                    "en-GB",
+                                                    {
+                                                        day: "numeric",
+                                                        month: "short",
+                                                        year: "numeric",
+                                                    }
+                                                )}
+                                            </span>
+                                        )}
+                                    </dd>
+                                </div>
+                            )}
+                        </dl>
+                    </article>
+                ))}
             </div>
         </section>
 
@@ -330,6 +380,84 @@ const trainingContext = await getTrainingContext();
         padding-top: 1rem;
     }
 
+    .performance-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+    }
+
+    .performance-card {
+        min-width: 0;
+    }
+
+    .performance-card:not(:last-child) {
+        padding-right: 2rem;
+
+        border-right: 1px solid #e7e7e1;
+    }
+
+    .performance-card h3 {
+        margin: 0 0 1.5rem;
+
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .performance-card__metrics {
+        margin: 0;
+    }
+
+    .performance-metric {
+        padding: 0.9rem 0;
+
+        border-top: 1px solid #e7e7e1;
+    }
+
+    .performance-metric dt {
+        margin-bottom: 0.3rem;
+
+        color: #73796d;
+
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .performance-metric dd {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+
+        margin: 0;
+    }
+
+    .performance-metric strong {
+        font-size: 1.15rem;
+        font-weight: 500;
+    }
+
+    .performance-metric span {
+        color: #8a8e87;
+
+        font-size: 0.75rem;
+    }
+
+    @media (max-width: 700px) {
+        .performance-cards {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        .performance-card:not(:last-child) {
+            padding-right: 0;
+            padding-bottom: 2.5rem;
+
+            border-right: 0;
+            border-bottom: 1px solid #e7e7e1;
+        }
+    }
+
     .training-goals__achieved > h3 {
         margin: 0 0 1rem;
 
@@ -347,6 +475,13 @@ const trainingContext = await getTrainingContext();
 
     .training-focus {
         margin-top: 4rem;
+    }
+
+    .motivation-details summary {
+        cursor: pointer;
+        color: #70756c;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
 
     .training-context {

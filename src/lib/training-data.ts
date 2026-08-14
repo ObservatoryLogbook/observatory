@@ -105,3 +105,62 @@ export function calculateE1RM(
 
     return Math.round(e1RM * 10) / 10;
 }
+
+export function getCurrentE1RM(
+    data: PerformancePoint[],
+    exercise: PerformancePoint["exercise"]
+) {
+    const exerciseData = data.filter(
+        (point) => point.exercise === exercise
+    );
+
+    if (exerciseData.length === 0) {
+        return null;
+    }
+
+    const latestDate = Math.max(
+        ...exerciseData.map((point) => point.date.getTime())
+    );
+
+    const windowStart = latestDate - 27 * 24 * 60 * 60 * 1000;
+
+    const recentData = exerciseData.filter(
+        (point) => point.date.getTime() >= windowStart
+    );
+
+    return Math.max(
+        ...recentData.map((point) =>
+            calculateE1RM(
+                point.weight,
+                point.reps,
+                point.rpe
+            )
+        )
+    );
+}
+
+export function getOneRepPR(
+    data: PerformancePoint[],
+    exercise: PerformancePoint["exercise"]
+) {
+    const singles = data.filter(
+        (point) =>
+            point.exercise === exercise &&
+            point.reps === 1
+    );
+
+    if (singles.length === 0) {
+        return null;
+    }
+
+    const maxWeight = Math.max(
+        ...singles.map((point) => point.weight)
+    );
+
+    return singles
+        .filter((point) => point.weight === maxWeight)
+        .toSorted(
+            (a, b) =>
+                a.date.getTime() - b.date.getTime()
+        )[0];
+}
