@@ -1,12 +1,7 @@
-import { readFile } from "node:fs/promises";
-
-const trainingCsvPath = new URL(
-    "../data/training.csv",
-    import.meta.url
-);
+import trainingCsv from "../data/training.csv?raw";
 
 export async function loadTrainingCsv() {
-    return await readFile(trainingCsvPath, "utf-8");
+    return trainingCsv;
 }
 
 export async function parseTrainingCsv() {
