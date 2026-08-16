@@ -1,0 +1,342 @@
+---
+const {
+    title,
+    data,
+    trend,
+    width = 568,
+    height = 400,
+} = Astro.props;
+
+const padding = {
+    top: 20,
+    right: 20,
+    bottom: 48,
+    left: 58,
+};
+
+const plotWidth =
+    width - padding.left - padding.right;
+
+const plotHeight =
+    height - padding.top - padding.bottom;
+
+const minDate = Math.min(
+    ...data.map((point) => point.date.getTime())
+);
+
+const maxDate = Math.max(
+    ...data.map((point) => point.date.getTime())
+);
+
+const firstDataDate = new Date(
+    Math.min(...data.map((point) => point.date.getTime()))
+);
+
+const lastDataDate = new Date(
+    Math.max(...data.map((point) => point.date.getTime()))
+);
+
+const domainStart = Date.UTC(
+    firstDataDate.getUTCFullYear(),
+    firstDataDate.getUTCMonth(),
+    1
+);
+
+const domainEnd = Date.UTC(
+    lastDataDate.getUTCFullYear(),
+    lastDataDate.getUTCMonth() + 1,
+    1
+);
+
+const values = data.map((point) => point.e1RM);
+
+const yMin =
+    Math.floor(Math.min(...values) / 5) * 5;
+
+const yMax =
+    Math.ceil(Math.max(...values) / 5) * 5;
+
+const yTicks = [];
+
+for (let value = yMin; value <= yMax; value += 5) {
+    yTicks.push(value);
+}
+
+const xTicks = [];
+
+let tickDate = new Date(
+    Date.UTC(
+        new Date(minDate).getUTCFullYear(),
+        new Date(minDate).getUTCMonth(),
+        1
+    )
+);
+
+while (tickDate.getTime() <= maxDate) {
+    xTicks.push(new Date(tickDate));
+
+    tickDate = new Date(
+        Date.UTC(
+            tickDate.getUTCFullYear(),
+            tickDate.getUTCMonth() + 1,
+            1
+        )
+    );
+}
+
+const x = (date) =>
+    padding.left +
+    ((date.getTime() - domainStart) /
+        (domainEnd - domainStart || 1)) *
+        plotWidth;
+
+const y = (value) =>
+    padding.top +
+    (1 - (value - yMin) / (yMax - yMin || 1)) *
+        plotHeight;
+
+const monthFormatter = new Intl.DateTimeFormat(
+    "en-GB",
+    {
+        month: "short",
+    }
+);
+
+const formatTick = (date) => {
+    const month = date.toLocaleDateString("en-GB", {
+        month: "short",
+        timeZone: "UTC",
+    });
+
+    if (
+        date.getUTCMonth() === 0 ||
+        date.getTime() === domainStart
+    ) {
+        return `${month} ${date.getUTCFullYear()}`;
+    }
+
+    return month;
+};
+
+const dateFormatter = new Intl.DateTimeFormat(
+    "en-GB",
+    {
+        day: "numeric",
+        month: "short",
+    }
+);
+
+const trendStartX = trend
+    ? x(trend.startDate)
+    : null;
+
+const trendEndX = trend
+    ? x(trend.endDate)
+    : null;
+
+const trendStartY = trend
+    ? y(trend.start)
+    : null;
+
+const trendEndY = trend
+    ? y(trend.end)
+    : null;
+---
+
+<h4>{title}</h4>
+{trend && (
+    <p class="performance-chart__trend">
+        56-day trend ·{" "}
+        {`${trend.change >= 0 ? "+" : ""}${trend.change.toFixed(1)} kg`}
+    </p>
+)}
+
+<section class="performance-chart">
+
+    <svg
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={`${title} estimated one-rep max over time`}
+    >
+        <line
+            x1={padding.left}
+            y1={padding.top + plotHeight}
+            x2={padding.left + plotWidth}
+            y2={padding.top + plotHeight}
+            class="axis"
+        />
+
+        <line
+            x1={padding.left}
+            y1={padding.top}
+            x2={padding.left}
+            y2={padding.top + plotHeight}
+            class="axis"
+        />
+
+        {
+            yTicks.map((value) => (
+                <>
+                    <line
+                        x1={padding.left}
+                        y1={y(value)}
+                        x2={padding.left + plotWidth}
+                        y2={y(value)}
+                        class="grid-line"
+                    />
+
+                    <text
+                        x={padding.left - 10}
+                        y={y(value)}
+                        class="axis-label y-tick"
+                    >
+                        {value}
+                    </text>
+                </>
+            ))
+        }
+
+        <text
+            x="14"
+            y={padding.top + plotHeight / 2}
+            class="axis-title"
+            transform={`rotate(-90 14 ${padding.top + plotHeight / 2})`}
+        >
+            e1RM (kg)
+        </text>
+
+        {
+            xTicks.map((date) => (
+                <line
+                    x1={x(date)}
+                    y1={padding.top}
+                    x2={x(date)}
+                    y2={padding.top + plotHeight}
+                    class="month-grid-line"
+                />
+                <text
+                    x={x(date)}
+                    y={padding.top + plotHeight + 22}
+                    class="axis-label x-tick"
+                >
+                    {formatTick(date)}
+                </text>
+            ))
+        }
+
+        <text
+            x={padding.left + plotWidth / 2}
+            y={height - 2}
+            class="axis-title x-title"
+        >
+            Date
+        </text>
+
+        {trend && (
+            <line
+                x1={trendStartX}
+                y1={trendStartY}
+                x2={trendEndX}
+                y2={trendEndY}
+                class="trend-line"
+            />
+        )}
+
+        {
+            data.map((point) => (
+                <circle
+                    cx={x(point.date)}
+                    cy={y(point.e1RM)}
+                    r="4.0"
+                    class="data-point"
+                >
+                    <title>
+                        {dateFormatter.format(point.date)}
+                        {" · "}
+                        {point.e1RM.toFixed(1)} kg
+                        {" · "}
+                        {point.weight} kg x {point.reps}
+                        {" @ "}
+                        {point.rpe}
+                    </title>
+                </circle>
+            ))
+        }
+    </svg>
+</section>
+
+<style>
+    .performance-chart {
+        width: min(100%, 36rem);
+        margin: 2rem auto 0;
+    }
+
+    .performance-chart h3 {
+        margin: 0 0 1rem;
+
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .axis {
+        stroke: #d9ddd4;
+        stroke-width: 1;
+    }
+
+    .data-point {
+        fill: #f8f8f4;
+        stroke: #6f756b;
+        stroke-width: 1.5;
+    }
+
+    .grid-line {
+        stroke: #e5e7e1;
+        stroke-width: 1;
+    }
+
+    .month-grid-line {
+        stroke: #eef0eb;
+        stroke-width: 1;
+    }
+
+    .axis-label {
+        fill: #7b8077;
+        font-size: 11px;
+    }
+
+    .y-tick {
+        text-anchor: end;
+        dominant-baseline: middle;
+    }
+
+    .x-tick {
+        text-anchor: middle;
+    }
+
+    .axis-title {
+        fill: #7b8077;
+        font-size: 11px;
+        text-anchor: middle;
+    }
+
+    .performance-chart__trend {
+        margin: 0.25rem 0 0;
+
+        color: #8a8e87;
+        font-size: 0.8rem;
+    }
+
+    .trend-line {
+        stroke: #aeb4aa;
+        stroke-width: 3;
+        stroke-linecap: round;
+        opacity: 0.35;
+    }
+</style>

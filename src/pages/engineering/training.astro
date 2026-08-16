@@ -8,13 +8,14 @@ import {
     getTraining,
     getTrainingContext,
 } from "../../lib/training";
-import { 
-    loadTrainingCsv, 
-    calculateE1RM, 
+import {
     getPerformanceData,
-    getCurrentE1RM, 
-    getOneRepPR, 
+    getCurrentE1RM,
+    getOneRepPR,
+    getE1RMSeries,
+    getTrend,
 } from "../../lib/training-data";
+import PerformanceChart from "../../components/PerformanceChart.astro";
 
 const strengthGoals = await getStrengthGoals();
 const skillGoals = await getSkillGoals();
@@ -33,6 +34,44 @@ const { Content } = await training.render();
 const trainingContext = await getTrainingContext();
 
 const performanceData = await getPerformanceData(); 
+
+const latestTrainingDate = new Date(
+    Math.max(
+        ...performanceData.map(
+            (point) => point.date.getTime()
+        )
+    )
+);
+
+const squatSeries = getE1RMSeries(
+    performanceData,
+    "squat"
+);
+
+const squatTrend = getTrend(
+    squatSeries,
+    latestTrainingDate
+);
+
+const benchSeries = getE1RMSeries(
+    performanceData,
+    "bench"
+);
+
+const benchTrend = getTrend(
+    benchSeries,
+    latestTrainingDate
+);
+
+const deadliftSeries = getE1RMSeries(
+    performanceData,
+    "deadlift"
+);
+
+const deadliftTrend = getTrend(
+    deadliftSeries,
+    latestTrainingDate
+);
 
 const exercises = [
     {
@@ -73,7 +112,6 @@ const performanceCards = exercises.map((exercise) => {
         goal,
     };
 });
-
 ---
 
 <BaseLayout title="Training">
@@ -176,7 +214,9 @@ const performanceCards = exercises.map((exercise) => {
 
                                 <dd>
                                     <strong>
-                                        {card.currentE1RM?.toFixed(1)} kg
+                                        {card.currentE1RM !== null
+                                            ? `${card.currentE1RM.toFixed(1)} kg`
+                                            : "No recent data"}
                                     </strong>
 
                                     <span>28-day best</span>
@@ -236,6 +276,24 @@ const performanceCards = exercises.map((exercise) => {
                 ))}
             </div>
         </section>
+
+        <PerformanceChart
+            title="Squat"
+            data={squatSeries}
+            trend={squatTrend}
+        />
+
+        <PerformanceChart
+            title="Bench press"
+            data={benchSeries}
+            trend={benchTrend}
+        />
+
+        <PerformanceChart
+            title="Deadlift"
+            data={deadliftSeries}
+            trend={deadliftTrend}
+        />
 
         <section class="training-content">
             <Content />
