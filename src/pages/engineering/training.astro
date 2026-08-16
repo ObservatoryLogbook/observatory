@@ -1,13 +1,17 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PerformanceChart from "../../components/PerformanceChart.astro";
+
 import {
     getStrengthGoals,
     getSkillGoals,
     getLatestAchievedStrengthGoals,
     getAchievedGoals,
-    getTraining,
+    getTrainingSection,
     getTrainingContext,
+    getTrainingProgrammes,
 } from "../../lib/training";
+
 import {
     getPerformanceData,
     getCurrentE1RM,
@@ -15,7 +19,11 @@ import {
     getE1RMSeries,
     getTrend,
 } from "../../lib/training-data";
-import PerformanceChart from "../../components/PerformanceChart.astro";
+
+
+// -----------------------------------------------------------------------------
+// Goals
+// -----------------------------------------------------------------------------
 
 const strengthGoals = await getStrengthGoals();
 const skillGoals = await getSkillGoals();
@@ -29,11 +37,45 @@ const achievedSkillGoals = achievedGoals.filter(
     (goal) => goal.type === "skill"
 );
 
-const training = await getTraining();
-const { Content } = await training.render();
-const trainingContext = await getTrainingContext();
 
-const performanceData = await getPerformanceData(); 
+// -----------------------------------------------------------------------------
+// Editorial content
+// -----------------------------------------------------------------------------
+
+const focus = await getTrainingSection("focus");
+const motivation = await getTrainingSection("motivation");
+
+const { Content: FocusContent } =
+    await focus.render();
+
+const { Content: MotivationContent } =
+    await motivation.render();
+
+
+// -----------------------------------------------------------------------------
+// Training programmes
+// -----------------------------------------------------------------------------
+
+const trainingProgrammes =
+    await getTrainingProgrammes();
+
+const renderedProgrammes = await Promise.all(
+    trainingProgrammes.map(async (programme) => {
+        const { Content } = await programme.render();
+
+        return {
+            ...programme,
+            Content,
+        };
+    })
+);
+
+
+// -----------------------------------------------------------------------------
+// Performance data
+// -----------------------------------------------------------------------------
+
+const performanceData = await getPerformanceData();
 
 const latestTrainingDate = new Date(
     Math.max(
@@ -41,36 +83,6 @@ const latestTrainingDate = new Date(
             (point) => point.date.getTime()
         )
     )
-);
-
-const squatSeries = getE1RMSeries(
-    performanceData,
-    "squat"
-);
-
-const squatTrend = getTrend(
-    squatSeries,
-    latestTrainingDate
-);
-
-const benchSeries = getE1RMSeries(
-    performanceData,
-    "bench"
-);
-
-const benchTrend = getTrend(
-    benchSeries,
-    latestTrainingDate
-);
-
-const deadliftSeries = getE1RMSeries(
-    performanceData,
-    "deadlift"
-);
-
-const deadliftTrend = getTrend(
-    deadliftSeries,
-    latestTrainingDate
 );
 
 const exercises = [
@@ -101,28 +113,67 @@ const performanceCards = exercises.map((exercise) => {
     return {
         exercise: exercise.key,
         name: exercise.name,
+
         currentE1RM: getCurrentE1RM(
             performanceData,
             exercise.key
         ),
+
         pr: getOneRepPR(
             performanceData,
             exercise.key
         ),
+
         goal,
     };
 });
+
+const performanceCharts = exercises.map((exercise) => {
+    const data = getE1RMSeries(
+        performanceData,
+        exercise.key
+    );
+
+    return {
+        exercise: exercise.key,
+        title: exercise.name,
+        data,
+        trend: getTrend(
+            data,
+            latestTrainingDate
+        ),
+    };
+});
+
+
+// -----------------------------------------------------------------------------
+// Training context
+// -----------------------------------------------------------------------------
+
+const trainingContext = await getTrainingContext();
 ---
+
+
 
 <BaseLayout title="Training">
     <main class="training">
-        <header>
+
+        <!-- ===============================================================
+             Header
+             =============================================================== -->
+
+        <header class="training-header">
             <h1>Training</h1>
+
+            <p class="training-header__motto">
+                I can, and I will. Just keep showing up.
+            </p>
         </header>
 
-        <p class="training-header__motto">
-            I can, and I will. Just keep showing up.
-        </p>
+
+        <!-- ===============================================================
+             Goals
+             =============================================================== -->
 
         <section class="training-section">
             <h2>Goals</h2>
@@ -199,6 +250,75 @@ const performanceCards = exercises.map((exercise) => {
         </section>
 
 
+        <!-- ===============================================================
+             Current focus
+             =============================================================== -->
+
+        <section class="training-content">
+            <FocusContent />
+        </section>
+
+
+        <!-- ===============================================================
+             Current programmes
+             =============================================================== -->
+
+        <section class="training-section">
+            <h2>Current programmes</h2>
+
+            <div class="training-programmes">
+                {renderedProgrammes.map((programme) => {
+                    const { Content } = programme;
+
+                    return (
+                        <details class="training-programme">
+                            <summary>
+                                <div class="training-programme__summary">
+                                    <div>
+                                        <h3>{programme.data.day}</h3>
+
+                                        <p>
+                                            {programme.data.description}
+                                        </p>
+                                    </div>
+
+                                    {programme.data.started && (
+                                        <time
+                                            datetime={
+                                                programme.data.started.toISOString()
+                                            }
+                                        >
+                                            Since{" "}
+                                            {programme.data.started.toLocaleDateString(
+                                                "en-GB",
+                                                {
+                                                    day: "numeric",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                }
+                                            )}
+                                        </time>
+                                    )}
+                                </div>
+
+                                <span class="training-programme__toggle">
+                                    View programme
+                                </span>
+                            </summary>
+
+                            <div class="training-programme__content">
+                                <Content />
+                            </div>
+                        </details>
+                    );
+                })}
+            </div>
+        </section>
+
+
+        <!-- ===============================================================
+             Performance
+             =============================================================== -->
 
         <section class="training-section">
             <h2>Performance</h2>
@@ -275,29 +395,31 @@ const performanceCards = exercises.map((exercise) => {
                     </article>
                 ))}
             </div>
+
+            <div class="performance-charts">
+                {performanceCharts.map((chart) => (
+                    <PerformanceChart
+                        title={chart.title}
+                        data={chart.data}
+                        trend={chart.trend}
+                    />
+                ))}
+            </div>
         </section>
 
-        <PerformanceChart
-            title="Squat"
-            data={squatSeries}
-            trend={squatTrend}
-        />
 
-        <PerformanceChart
-            title="Bench press"
-            data={benchSeries}
-            trend={benchTrend}
-        />
-
-        <PerformanceChart
-            title="Deadlift"
-            data={deadliftSeries}
-            trend={deadliftTrend}
-        />
+        <!-- ===============================================================
+             Motivation
+             =============================================================== -->
 
         <section class="training-content">
-            <Content />
+            <MotivationContent />
         </section>
+
+
+        <!-- ===============================================================
+             Training context
+             =============================================================== -->
 
         <section class="training-section">
             <h2>Training context</h2>
@@ -329,6 +451,9 @@ const performanceCards = exercises.map((exercise) => {
 
     </main>
 </BaseLayout>
+
+
+
 
 <style>
     .training {
@@ -540,6 +665,85 @@ const performanceCards = exercises.map((exercise) => {
         color: #70756c;
         font-size: 0.9rem;
         font-weight: 500;
+    }
+
+    .training-programmes {
+        border-top: 1px solid #e7e7e1;
+    }
+
+    .training-programme {
+        padding: 1.25rem 0;
+
+        border-bottom: 1px solid #e7e7e1;
+    }
+
+    .training-programme summary {
+        cursor: pointer;
+        list-style: none;
+    }
+
+    .training-programme summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .training-programme__summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .training-programme__summary h3 {
+        margin: 0;
+
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .training-programme__summary p {
+        margin: 0.25rem 0 0;
+
+        color: #70756c;
+        font-size: 0.9rem;
+    }
+
+    .training-programme__summary time {
+        flex-shrink: 0;
+
+        color: #8a8e87;
+        font-size: 0.75rem;
+    }
+
+    .training-programme__toggle {
+        display: inline-block;
+        margin-top: 0.75rem;
+
+        color: #70756c;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .training-programme[open]
+        .training-programme__toggle {
+        margin-bottom: 1rem;
+    }
+
+    .training-programme__content {
+        padding-top: 0.5rem;
+    }
+
+    .training-programme__content :global(h3) {
+        margin: 1rem 0 0.15rem;
+
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .training-programme__content :global(p) {
+        margin: 0;
+
+        color: #70756c;
+        font-size: 0.85rem;
+        line-height: 1.5;
     }
 
     .training-context {

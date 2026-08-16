@@ -72,29 +72,57 @@ const trainingGoal = z.discriminatedUnion("type", [
     skillGoal,
 ]);
 
+const trainingContext = z.object({
+    title: z.string(),
+    eventDate: z.date().optional(),
+    affectedFrom: z.date(),
+    affectedUntil: z.date().optional(),
+    status: z.enum([
+        "acute",
+        "recovering",
+        "residual",
+        "resolved",
+    ]),
+    notes: z.string(),
+});
+
 const engineeringTraining = defineCollection({
     type: "content",
 
+    schema: z.union([
+        z.object({
+            title: z.string(),
+            goals: z.array(trainingGoal),
+            context: z.array(trainingContext).default([]),
+        }),
+
+        z.object({
+            section: z.enum([
+                "focus",
+                "motivation",
+            ]),
+        }),
+    ]),
+});
+
+const trainingProgrammes = defineCollection({
+    type: "content",
     schema: z.object({
-        title: z.string(),
-
-        goals: z.array(trainingGoal),
-
-        context: z.array(
-            z.object({
-                title: z.string(),
-                eventDate: z.date().optional(),
-                affectedFrom: z.date(),
-                affectedUntil: z.date().optional(),
-                status: z.enum([
-                    "acute",
-                    "recovering",
-                    "residual",
-                    "resolved",
-                ]),
-                notes: z.string(),
-            })
-        ).default([]),
+        day: z.enum([
+            "Monday",
+            "Wednesday",
+            "Friday",
+            "Sunday",
+        ]),
+        started: z.preprocess(
+            (value) =>
+                value === null || value === ""
+                    ? undefined
+                    : value,
+            z.coerce.date().optional()
+        ),
+        description: z.string(),
+        order: z.number(),
     }),
 });
 
@@ -103,4 +131,5 @@ export const collections = {
     projects,
     "engineering-books": engineeringBooks,
     "engineering-training": engineeringTraining,
+    "training-programmes": trainingProgrammes,
 };
