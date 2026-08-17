@@ -1,4 +1,12 @@
 /* =========================================================
+   Colour scheme
+
+--green-surface: #edf0e8;
+--green-accent: #7d8973;
+   ========================================================= */
+
+
+/* =========================================================
    Foundation
    ========================================================= */
 
@@ -49,6 +57,19 @@ h1 {
     font-style: italic;
 }
 
+.colour {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+}
+
+.colour__swatch {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #deded8;
+    border-radius: 0.25rem;
+}
 
 /* =========================================================
    Site header and navigation
