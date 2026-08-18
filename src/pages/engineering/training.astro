@@ -42,11 +42,7 @@ const achievedSkillGoals = achievedGoals.filter(
 // Editorial content
 // -----------------------------------------------------------------------------
 
-const focus = await getTrainingSection("focus");
 const motivation = await getTrainingSection("motivation");
-
-const { Content: FocusContent } =
-    await focus.render();
 
 const { Content: MotivationContent } =
     await motivation.render();
@@ -251,15 +247,6 @@ const trainingContext = await getTrainingContext();
 
 
         <!-- ===============================================================
-             Current focus
-             =============================================================== -->
-
-        <section class="training-content">
-            <FocusContent />
-        </section>
-
-
-        <!-- ===============================================================
              Current programmes
              =============================================================== -->
 
@@ -456,40 +443,43 @@ const trainingContext = await getTrainingContext();
 
 
 <style>
+    /* ---------------------------------------------------------------------
+       Page
+       --------------------------------------------------------------------- */
+
     .training {
         width: min(100%, 52rem);
         margin: 0 auto;
-    }
-
-    .training-section {
-        margin-top: 4.5rem;
-    }
-
-    .training-section > h2 {
-        margin: 0 0 2rem;
-        padding: 0.75rem 1rem;
-
-        background: #edf0e8;
-        border-radius: 0.3rem;
-
-        color: #4f574a;
-        font-size: 1.45rem;
-        font-weight: 500;
-        line-height: 1.2;
     }
 
     .training-header__motto {
         margin: 0.75rem 0 0;
 
         color: #70756c;
-
         font-size: 1rem;
         font-style: italic;
         line-height: 1.5;
     }
 
+    /* ---------------------------------------------------------------------
+       Typography hierarchy
+       --------------------------------------------------------------------- */
+
+    .training-section {
+        margin-top: 4.5rem;
+    }
+
+    .training h1 {
+        margin: 0;
+
+        font-size: 3.5rem;
+        font-weight: 600;
+        line-height: 1.05;
+    }
+
+    .training-section > h2,
     .training-content :global(h2) {
-        margin: 0 0 2rem;
+        margin: 0 -1rem 2rem;
         padding: 0.75rem 1rem;
 
         background: #edf0e8;
@@ -501,13 +491,18 @@ const trainingContext = await getTrainingContext();
         line-height: 1.2;
     }
 
-    .training-goals {
-        margin-top: 3rem;
+    .training h3,
+    .training-content :global(h3) {
+        margin: 0 0 1rem;
+
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.3;
     }
 
-    .training-goals > h2 {
-        margin-bottom: 1.5rem;
-    }
+    /* ---------------------------------------------------------------------
+       Goals
+       --------------------------------------------------------------------- */
 
     .training-goals__active,
     .training-goals__achieved-grid {
@@ -520,7 +515,7 @@ const trainingContext = await getTrainingContext();
     .goal-group h4 {
         margin: 0 0 1rem;
 
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
         letter-spacing: 0.08em;
         text-transform: uppercase;
@@ -529,7 +524,6 @@ const trainingContext = await getTrainingContext();
     .goal-list {
         margin: 0;
         padding: 0;
-
         list-style: none;
     }
 
@@ -550,15 +544,14 @@ const trainingContext = await getTrainingContext();
 
     .goal__target {
         color: #70756c;
-
         font-size: 0.9rem;
     }
 
-    .goal__date {
+    .goal__date,
+    .goal--achieved time {
         margin-top: 0.15rem;
 
         color: #8a8e87;
-
         font-size: 0.75rem;
     }
 
@@ -567,109 +560,9 @@ const trainingContext = await getTrainingContext();
         padding-top: 1rem;
     }
 
-    .performance-cards {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 2rem;
-    }
-
-    .performance-card {
-        min-width: 0;
-    }
-
-    .performance-card:not(:last-child) {
-        padding-right: 2rem;
-
-        border-right: 1px solid #e7e7e1;
-    }
-
-    .performance-card h3 {
-        margin: 0 0 1.5rem;
-
-        font-size: 1rem;
-        font-weight: 600;
-    }
-
-    .performance-card__metrics {
-        margin: 0;
-    }
-
-    .performance-metric {
-        padding: 0.9rem 0;
-
-        border-top: 1px solid #e7e7e1;
-    }
-
-    .performance-metric dt {
-        margin-bottom: 0.3rem;
-
-        color: #73796d;
-
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-
-    .performance-metric dd {
-        display: flex;
-        flex-direction: column;
-        gap: 0.15rem;
-
-        margin: 0;
-    }
-
-    .performance-metric strong {
-        font-size: 1.15rem;
-        font-weight: 500;
-    }
-
-    .performance-metric span {
-        color: #8a8e87;
-
-        font-size: 0.75rem;
-    }
-
-    @media (max-width: 700px) {
-        .performance-cards {
-            grid-template-columns: 1fr;
-            gap: 2.5rem;
-        }
-
-        .performance-card:not(:last-child) {
-            padding-right: 0;
-            padding-bottom: 2.5rem;
-
-            border-right: 0;
-            border-bottom: 1px solid #e7e7e1;
-        }
-    }
-
-    .training-goals__achieved > h3 {
-        margin: 0 0 1rem;
-
-        font-size: 1.1rem;
-        font-weight: 500;
-    }
-
-    .goal--achieved time {
-        margin-top: 0.25rem;
-
-        color: #8a8e87;
-
-        font-size: 0.75rem;
-    }
-
-    .training-focus {
-        margin-top: 4rem;
-    }
-
-    .motivation-details summary {
-        cursor: pointer;
-        color: #70756c;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
+    /* ---------------------------------------------------------------------
+       Programmes
+       --------------------------------------------------------------------- */
 
     .training-programmes {
         border-top: 1px solid #e7e7e1;
@@ -694,13 +587,6 @@ const trainingContext = await getTrainingContext();
         display: flex;
         justify-content: space-between;
         gap: 2rem;
-    }
-
-    .training-programme__summary h3 {
-        margin: 0;
-
-        font-size: 1rem;
-        font-weight: 500;
     }
 
     .training-programme__summary p {
@@ -735,13 +621,6 @@ const trainingContext = await getTrainingContext();
         padding-top: 0.5rem;
     }
 
-    .training-programme__content :global(h3) {
-        margin: 1rem 0 0.15rem;
-
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-
     .training-programme__content :global(p) {
         margin: 0;
 
@@ -750,9 +629,82 @@ const trainingContext = await getTrainingContext();
         line-height: 1.5;
     }
 
-    .training-context {
-        margin-top: 4rem;
+
+    /* ---------------------------------------------------------------------
+       Performance
+       --------------------------------------------------------------------- */
+
+    .performance-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
     }
+
+    .performance-card {
+        min-width: 0;
+    }
+
+    .performance-card:not(:last-child) {
+        padding-right: 2rem;
+
+        border-right: 1px solid #e7e7e1;
+    }
+
+    .performance-card__metrics {
+        margin: 0;
+    }
+
+    .performance-metric {
+        padding: 0.9rem 0;
+
+        border-top: 1px solid #e7e7e1;
+    }
+
+    .performance-metric dt {
+        margin-bottom: 0.3rem;
+
+        color: #73796d;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .performance-metric dd {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+
+        margin: 0;
+    }
+
+    .performance-metric strong {
+        font-size: 1.15rem;
+        font-weight: 500;
+    }
+
+    .performance-metric span {
+        color: #8a8e87;
+        font-size: 0.75rem;
+    }
+
+
+    /* ---------------------------------------------------------------------
+       Motivation
+       --------------------------------------------------------------------- */
+
+    .motivation-details summary {
+        cursor: pointer;
+
+        color: #70756c;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+
+    /* ---------------------------------------------------------------------
+       Training context
+       --------------------------------------------------------------------- */
 
     .context-list {
         margin: 0;
@@ -765,24 +717,36 @@ const trainingContext = await getTrainingContext();
         margin-top: 1.5rem;
     }
 
-    .context-entry h3 {
-        margin: 0;
-
-        font-size: 1rem;
-        font-weight: 500;
-    }
-
     .context-entry__meta {
         margin: 0.25rem 0 0.75rem;
 
         color: #8a8e87;
-
         font-size: 0.75rem;
         text-transform: capitalize;
     }
 
     .context-entry > p:last-child {
         margin-bottom: 0;
+    }
+
+
+    /* ---------------------------------------------------------------------
+       Responsive
+       --------------------------------------------------------------------- */
+
+    @media (max-width: 700px) {
+        .performance-cards {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        .performance-card:not(:last-child) {
+            padding-right: 0;
+            padding-bottom: 2.5rem;
+
+            border-right: 0;
+            border-bottom: 1px solid #e7e7e1;
+        }
     }
 
     @media (max-width: 600px) {
@@ -793,4 +757,3 @@ const trainingContext = await getTrainingContext();
         }
     }
 </style>
-
