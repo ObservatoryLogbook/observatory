@@ -286,28 +286,28 @@ const trendEndY = trend
     }
 
     .axis {
-        stroke: #d9ddd4;
+        stroke: var(--line-default);
         stroke-width: 1;
     }
 
     .data-point {
-        fill: #f8f8f4;
-        stroke: #6f756b;
+        fill: var(--page-background);
+        stroke: var(--chart-data);
         stroke-width: 1.5;
     }
 
     .grid-line {
-        stroke: #e5e7e1;
+        stroke: var(--line-subtle);
         stroke-width: 1;
     }
 
     .month-grid-line {
-        stroke: #eef0eb;
+        stroke: var(--green-surface);
         stroke-width: 1;
     }
 
     .axis-label {
-        fill: #7b8077;
+        fill: var(--text-muted);
         font-size: 11px;
     }
 
@@ -321,7 +321,7 @@ const trendEndY = trend
     }
 
     .axis-title {
-        fill: #7b8077;
+        fill: var(--text-muted);
         font-size: 11px;
         text-anchor: middle;
     }
@@ -329,12 +329,12 @@ const trendEndY = trend
     .performance-chart__trend {
         margin: 0.25rem 0 0;
 
-        color: #8a8e87;
+        color: var(--text-meta);
         font-size: 0.8rem;
     }
 
     .trend-line {
-        stroke: #7d8973;
+        stroke: var(--green-accent);
         stroke-width: 3;
         stroke-linecap: round;
         opacity: 0.8;

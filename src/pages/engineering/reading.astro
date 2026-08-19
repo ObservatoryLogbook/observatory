@@ -187,7 +187,7 @@ const readBooks = await getReadBooks();
     .reading-section__header {
         padding-bottom: 0.8rem;
 
-        border-bottom: 1px solid #d3d8cc;
+        border-bottom: 1px solid var(--line-green);
     }
 
     .reading-section__header h2 {
@@ -213,7 +213,7 @@ const readBooks = await getReadBooks();
 
         padding: 1.25rem 0;
 
-        border-bottom: 1px solid #e7e7e1;
+        border-bottom: 1px solid var(--line-subtle);
     }
 
     .book-entry__title {
@@ -227,7 +227,7 @@ const readBooks = await getReadBooks();
     .book-entry__author {
         margin: 0.25rem 0 0;
 
-        color: #70756c;
+        color: var(--text-muted);
 
         font-size: 0.9rem;
     }
@@ -247,7 +247,7 @@ const readBooks = await getReadBooks();
     }
 
     .book-entry__label {
-        color: #73796d;
+        color: var(--text-muted);
         font-size: 0.7rem;
         font-weight: 600;
         letter-spacing: 0.08em;
@@ -257,8 +257,8 @@ const readBooks = await getReadBooks();
     .book-entry--current {
         padding-inline: 1rem;
 
-        background: #f1f3ee;
-        border-left: 2px solid #aab6a3;
+        background: var(--surface-neutral);
+        border-left: 2px solid var(--green-accent);
     }
 
     .book-rating {
@@ -274,7 +274,7 @@ const readBooks = await getReadBooks();
     }
 
     .book-entry__meta-item > span:last-child {
-        color: #53584f;
+        color: var(--text-secondary);
 
         font-size: 0.9rem;
         line-height: 1.4;

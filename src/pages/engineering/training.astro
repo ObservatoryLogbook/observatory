@@ -455,7 +455,7 @@ const trainingContext = await getTrainingContext();
     .training-header__motto {
         margin: 0.75rem 0 0;
 
-        color: #70756c;
+        color: var(--text-muted);
         font-size: 1rem;
         font-style: italic;
         line-height: 1.5;
@@ -482,10 +482,10 @@ const trainingContext = await getTrainingContext();
         margin: 0 -1rem 2rem;
         padding: 0.75rem 1rem;
 
-        background: #edf0e8;
+        background: var(--green-surface);
         border-radius: 0.3rem;
 
-        color: #4f574a;
+        color: var(--text-secondary);
         font-size: 1.45rem;
         font-weight: 500;
         line-height: 1.2;
@@ -534,7 +534,7 @@ const trainingContext = await getTrainingContext();
 
         padding: 0.8rem 0;
 
-        border-bottom: 1px solid #e7e7e1;
+        border-bottom: 1px solid var(--line-subtle);
     }
 
     .goal__name {
@@ -543,7 +543,7 @@ const trainingContext = await getTrainingContext();
     }
 
     .goal__target {
-        color: #70756c;
+        color: var(--text-muted);
         font-size: 0.9rem;
     }
 
@@ -551,7 +551,7 @@ const trainingContext = await getTrainingContext();
     .goal--achieved time {
         margin-top: 0.15rem;
 
-        color: #8a8e87;
+        color: var(--text-meta);
         font-size: 0.75rem;
     }
 
@@ -565,13 +565,13 @@ const trainingContext = await getTrainingContext();
        --------------------------------------------------------------------- */
 
     .training-programmes {
-        border-top: 1px solid #e7e7e1;
+        border-top: 1px solid var(--line-subtle);
     }
 
     .training-programme {
         padding: 1.25rem 0;
 
-        border-bottom: 1px solid #e7e7e1;
+        border-bottom: 1px solid var(--line-subtle);
     }
 
     .training-programme summary {
@@ -592,14 +592,14 @@ const trainingContext = await getTrainingContext();
     .training-programme__summary p {
         margin: 0.25rem 0 0;
 
-        color: #70756c;
+        color: var(--text-muted);
         font-size: 0.9rem;
     }
 
     .training-programme__summary time {
         flex-shrink: 0;
 
-        color: #8a8e87;
+        color: var(--text-meta);
         font-size: 0.75rem;
     }
 
@@ -607,7 +607,7 @@ const trainingContext = await getTrainingContext();
         display: inline-block;
         margin-top: 0.75rem;
 
-        color: #70756c;
+        color: var(--text-muted);
         font-size: 0.8rem;
         font-weight: 500;
     }
@@ -624,7 +624,7 @@ const trainingContext = await getTrainingContext();
     .training-programme__content :global(p) {
         margin: 0;
 
-        color: #70756c;
+        color: var(--text-muted);
         font-size: 0.85rem;
         line-height: 1.5;
     }
@@ -647,7 +647,7 @@ const trainingContext = await getTrainingContext();
     .performance-card:not(:last-child) {
         padding-right: 2rem;
 
-        border-right: 1px solid #e7e7e1;
+        border-right: 1px solid var(--line-subtle);
     }
 
     .performance-card__metrics {
@@ -657,13 +657,13 @@ const trainingContext = await getTrainingContext();
     .performance-metric {
         padding: 0.9rem 0;
 
-        border-top: 1px solid #e7e7e1;
+        border-top: 1px solid var(--line-subtle);
     }
 
     .performance-metric dt {
         margin-bottom: 0.3rem;
 
-        color: #73796d;
+        color: var(--text-muted);
         font-size: 0.75rem;
         font-weight: 600;
         letter-spacing: 0.08em;
@@ -684,7 +684,7 @@ const trainingContext = await getTrainingContext();
     }
 
     .performance-metric span {
-        color: #8a8e87;
+        color: var(--text-meta);
         font-size: 0.75rem;
     }
 
@@ -696,7 +696,7 @@ const trainingContext = await getTrainingContext();
     .motivation-details summary {
         cursor: pointer;
 
-        color: #70756c;
+        color: var(--text-muted);
         font-size: 0.9rem;
         font-weight: 500;
     }
@@ -720,7 +720,7 @@ const trainingContext = await getTrainingContext();
     .context-entry__meta {
         margin: 0.25rem 0 0.75rem;
 
-        color: #8a8e87;
+        color: var(--text-meta);
         font-size: 0.75rem;
         text-transform: capitalize;
     }
@@ -745,7 +745,7 @@ const trainingContext = await getTrainingContext();
             padding-bottom: 2.5rem;
 
             border-right: 0;
-            border-bottom: 1px solid #e7e7e1;
+            border-bottom: 1px solid var(--line-subtle);
         }
     }
 

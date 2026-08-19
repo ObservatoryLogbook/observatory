@@ -3,13 +3,24 @@
    ========================================================= */
 
 :root {
+    /* Colour */
     --green-surface: #edf0e8;
     --green-accent: #7d8973;
+
+    --text-primary: #222;
+    --text-secondary: #53584f;
     --text-muted: #70756c;
     --text-meta: #8a8e87;
-    --line-subtle: #e7e7e1;
-}
 
+    --line-default: #deded8;
+    --line-subtle: #e7e7e1;
+    --line-green: #dfe3d8;
+
+    --page-background: #f7f7f3;
+    --surface-neutral: #f1f2ee;
+
+    --chart-data: #6f756b;
+}
 
 /* =========================================================
    Foundation
@@ -23,8 +34,8 @@ html {
         "Segoe UI",
         sans-serif;
 
-    color: #222;
-    background: #f7f7f3;
+    color: var(--text-primary);
+    background: var(--page-background);
 }
 
 body {
@@ -58,7 +69,7 @@ h1 {
 .tagline {
     margin-top: 0;
 
-    color: #666;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -72,7 +83,7 @@ h1 {
 .colour__swatch {
     width: 2rem;
     height: 2rem;
-    border: 1px solid #deded8;
+    border: 1px solid var(--line-default);
     border-radius: 0.25rem;
 }
 
@@ -88,8 +99,8 @@ h1 {
     padding: 2rem 0;
     margin-bottom: 4rem;
 
-    background: #f7f7f3;
-    border-bottom: 1px solid #deded8;
+    background: var(--page-background);
+    border-bottom: 1px solid var(--line-default);
 }
 
 .site-nav {
@@ -150,8 +161,8 @@ h1 {
     padding: 2rem;
 
     color: inherit;
-    background: #edf0e8;
-    border: 1px solid #dfe3d8;
+    background: var(--green-surface);
+    border: 1px solid var(--line-green);
     border-radius: 0.4rem;
 
     box-shadow:
@@ -182,7 +193,7 @@ h1 {
 
 .observatory-card--inactive {
     color: #5d6259;
-    background: #f1f2ee;
+    background: var(--surface-neutral);
 
     box-shadow:
         0 0.1rem 0.3rem rgb(34 34 34 / 3%),
@@ -221,7 +232,7 @@ h1 {
 .observatory-card__description {
     max-width: 25rem;
 
-    color: #53584f;
+    color: var(--text-secondary);
 }
 
 .observatory-card__content {
@@ -285,8 +296,8 @@ h1 {
     padding: 1.75rem;
 
     color: inherit;
-    background: #f1f2ee;
-    border: 1px solid #dfe3d8;
+    background: var(--surface-neutral);
+    border: 1px solid var(--line-green);
     border-radius: 0.4rem;
 
     box-shadow:
@@ -346,7 +357,7 @@ h1 {
     max-width: 34rem;
     margin: 0;
 
-    color: #53584f;
+    color: var(--text-secondary);
 
     font-size: 0.98rem;
     line-height: 1.6;
@@ -455,7 +466,7 @@ h1 {
     max-width: 42rem;
     margin: 0;
 
-    color: #53584f;
+    color: var(--text-secondary);
 
     font-size: 1.05rem;
     line-height: 1.65;
@@ -524,9 +535,9 @@ h1 {
     margin: 4.5rem 0 1.5rem;
     padding-top: 1rem;
 
-    border-top: 1px solid #dfe3d8;
+    border-top: 1px solid var(--line-green);
 
-    color: #222;
+    color: var(--text-primary);
     font-size: 1.75rem;
     font-weight: 500;
     line-height: 1.2;
@@ -572,8 +583,8 @@ h1 {
     margin: 1.5rem 0;
     padding: 1rem 1.25rem;
 
-    background: #f1f2ee !important;
-    border: 1px solid #dfe3d8;
+    background: var(--surface-neutral) !important;
+    border: 1px solid var(--line-green);
     border-radius: 0.4rem;
 
     overflow-x: auto;
@@ -611,7 +622,7 @@ h1 {
     margin: 4.5rem auto 0;
     padding-top: 2rem;
 
-    border-top: 1px solid #deded8;
+    border-top: 1px solid var(--line-default);
 }
 
 .project-observations h2 {
@@ -742,7 +753,7 @@ h1 {
 .register-year > h2 {
     margin: 0 0 2.5rem;
 
-    color: #70756c;
+    color: var(--text-muted);
 
     font-size: 0.875rem;
     line-height: 1.4;
@@ -767,13 +778,13 @@ h1 {
     margin: 0;
     padding: 0;
 
-    border-top: 1px solid #deded8;
+    border-top: 1px solid var(--line-default);
 
     list-style: none;
 }
 
 .register-entries li {
-    border-bottom: 1px solid #e7e7e1;
+    border-bottom: 1px solid var(--line-subtle);
 }
 
 .register-entries a {
@@ -799,7 +810,7 @@ h1 {
 }
 
 .register-entries time {
-    color: #70756c;
+    color: var(--text-muted);
 
     font-size: 0.8rem;
     font-weight: 600;
@@ -837,7 +848,7 @@ h1 {
 .logbook-entry__date {
     margin: 0 0 1.25rem;
 
-    color: #70756c;
+    color: var(--text-muted);
 
     font-size: 0.875rem;
     line-height: 1.4;
@@ -930,7 +941,7 @@ h1 {
     margin-top: 3.5rem;
     padding-top: 2rem;
 
-    border-top: 1px solid #deded8;
+    border-top: 1px solid var(--line-default);
 }
 
 .entry-navigation a {
@@ -955,7 +966,7 @@ h1 {
 }
 
 .entry-navigation__label {
-    color: #70756c;
+    color: var(--text-muted);
 
     font-size: 0.75rem;
     font-weight: 600;
