@@ -14,3 +14,9 @@ Still, I feel like I did nothing today. I haven't produced any real, concrete re
 Tonight's work on Observatory was not too different conceptually. I have made a large number of changes that will forever be invisible. I have standardised colours across Observatory, and I have made `global.css` the source of truth by defining colour variables that are now used throughout. This meant making microscopic adjustments to a few colours here and there, but nothing that is visible to my eye.
 
 I'll keep repeating to myself that my day was productive. And I know that by any external measure, it was a highly productive day. That doesn't mean it was a fulfilling day, though, but then again, not every day has to be. And that is OK.
+
+And then I realised something: today marks exactly one month since Observatory went online. Somehow, during that month, it has grown from a small website into something much larger, with projects, dashboards, design systems, icons, colours, training data, and countless decisions about tiny details.
+
+Most importantly, there has been an observation every single day. Including today. Apparently, even an all-day meeting and complete exhaustion couldn’t break the streak.
+
+Happy one-month anniversary, Observatory!
