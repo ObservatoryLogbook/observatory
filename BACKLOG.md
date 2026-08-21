@@ -3,4 +3,8 @@
 ## Private sider
 ## Besøgsstatistik
 ## Under logbog, tilføj entry titel til top menuen
-## Reassess visual balance and Motivation collapse after visualisations.
+## Visual for træningsstatistik
+## Automatisering af træningsdataflow
+## Tekst knyttet til hver bog entry
+## Landingsside til Engineering
+## Flere Engineering og Projektsider
