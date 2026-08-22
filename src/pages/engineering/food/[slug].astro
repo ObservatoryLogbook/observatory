@@ -1,0 +1,210 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+    const recipes = await getCollection("food-recipes");
+
+    return recipes.map((recipe) => ({
+        params: {
+            slug: recipe.slug,
+        },
+        props: {
+            recipe,
+        },
+    }));
+}
+
+const { recipe } = Astro.props;
+
+const { Content } = await recipe.render();
+---
+
+<BaseLayout title={recipe.data.title}>
+    <main class="recipe-page">
+
+        <header class="recipe-header">
+            <p class="recipe-header__eyebrow">
+                {recipe.data.category}
+                {" · "}
+                {recipe.data.status}
+            </p>
+
+            <h1>{recipe.data.title}</h1>
+
+            {recipe.data.tags.length > 0 && (
+                <p class="recipe-header__tags">
+                    {recipe.data.tags.join(" · ")}
+                </p>
+            )}
+
+            {recipe.data.source && (
+                <p class="recipe-header__source">
+                    Source: {recipe.data.source.name}
+                    {recipe.data.source.note && (
+                        <>
+                            {" · "}
+                            {recipe.data.source.note}
+                        </>
+                    )}
+                </p>
+            )}
+        </header>
+
+
+        <section class="recipe-section">
+            <h2>Ingredients</h2>
+
+            <div class="ingredient-groups">
+                {recipe.data.ingredients.map((group) => (
+                    <section class="ingredient-group">
+                        <h3>{group.group}</h3>
+
+                        <ul>
+                            {group.items.map((item) => (
+                                <li>
+                                    <span class="ingredient-amount">
+                                        {item.amount !== undefined && (
+                                            <>
+                                                {item.amount}
+                                                {item.unit && ` ${item.unit}`}
+                                            </>
+                                        )}
+                                    </span>
+
+                                    <span class="ingredient-name">
+                                        {item.name}
+
+                                        {item.optional && (
+                                            <span class="ingredient-note">
+                                                {" "}
+                                                · optional
+                                            </span>
+                                        )}
+
+                                        {item.note && (
+                                            <span class="ingredient-note">
+                                                {" "}
+                                                · {item.note}
+                                            </span>
+                                        )}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                ))}
+            </div>
+        </section>
+
+
+        <section class="recipe-section recipe-method">
+            <Content />
+        </section>
+
+    </main>
+</BaseLayout>
+
+<style>
+    .recipe-page {
+        width: min(100%, 52rem);
+        margin: 0 auto;
+    }
+
+    .recipe-header {
+        margin-bottom: 4rem;
+    }
+
+    .recipe-header__eyebrow {
+        margin: 0 0 0.75rem;
+
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .recipe-header__tags,
+    .recipe-header__source {
+        margin: 0.5rem 0 0;
+
+        color: var(--text-meta);
+        font-size: 0.85rem;
+    }
+
+    .recipe-section {
+        margin-top: 4.5rem;
+    }
+
+    .recipe-section > h2,
+    .recipe-method :global(h2) {
+        margin: 0 -1rem 2rem;
+        padding: 0.75rem 1rem;
+
+        background: var(--green-surface);
+        border-radius: 0.3rem;
+
+        color: var(--text-secondary);
+        font-size: 1.45rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .ingredient-group + .ingredient-group {
+        margin-top: 2rem;
+    }
+
+    .ingredient-group h3 {
+        margin: 0 0 0.75rem;
+
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .ingredient-group ul {
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    .ingredient-group li {
+        display: grid;
+        grid-template-columns: 5rem minmax(0, 1fr);
+        gap: 1rem;
+
+        padding: 0.4rem 0;
+
+        border-bottom: 1px solid var(--line-subtle);
+    }
+
+    .ingredient-amount {
+        color: var(--text-muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .ingredient-note {
+        color: var(--text-meta);
+        font-size: 0.85rem;
+    }
+
+    .recipe-method :global(h3) {
+        margin: 2rem 0 0.75rem;
+
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .recipe-method :global(p) {
+        margin: 0 0 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+        .ingredient-group li {
+            grid-template-columns: 4rem minmax(0, 1fr);
+            gap: 0.75rem;
+        }
+    }
+</style>

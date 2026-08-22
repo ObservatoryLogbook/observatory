@@ -1,0 +1,122 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const recipes = await getCollection("food-recipes");
+
+const sortedRecipes = recipes.toSorted((a, b) =>
+    a.data.title.localeCompare(b.data.title)
+);
+---
+
+<BaseLayout title="Food">
+    <main class="food">
+        <header>
+            <h1>Food</h1>
+
+            <p class="tagline">
+                Recipes, ideas, and experiments from my kitchen.
+            </p>
+        </header>
+
+        <section class="food-section">
+            <h2>Recipes</h2>
+
+            <ul class="recipe-list">
+                {sortedRecipes.map((recipe) => (
+                    <li class="recipe-entry">
+                        <a href={`/engineering/food/${recipe.slug}/`}>
+                            <h3>{recipe.data.title}</h3>
+
+                            <p class="recipe-entry__meta">
+                                {recipe.data.category}
+                                {" · "}
+                                {recipe.data.status}
+                            </p>
+
+                            {recipe.data.tags.length > 0 && (
+                                <p class="recipe-entry__tags">
+                                    {recipe.data.tags.join(" · ")}
+                                </p>
+                            )}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    </main>
+</BaseLayout>
+
+￼<style>
+     .food {
+        width: min(100%, 52rem);
+        margin: 0 auto;
+    }
+
+    .food-section {
+        margin-top: 4.5rem;
+    }
+
+    .food-section > h2 {
+        margin: 0 -1rem 2rem;
+        padding: 0.75rem 1rem;
+
+        background: var(--green-surface);
+        border-radius: 0.3rem;
+
+        color: var(--text-secondary);
+        font-size: 1.45rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .recipe-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        border-top: 1px solid var(--line-subtle);
+    }
+
+    .recipe-entry {
+        border-bottom: 1px solid var(--line-subtle);
+    }
+
+    .recipe-entry a {
+        display: block;
+        padding: 1.25rem 0;
+
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .recipe-entry h3 {
+        margin: 0;
+
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    .recipe-entry__meta {
+        margin: 0.35rem 0 0;
+
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .recipe-entry__tags {
+        margin: 0.25rem 0 0;
+
+        color: var(--text-meta);
+        font-size: 0.75rem;
+    }
+
+    .recipe-entry a:hover h3 {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.2em;
+    }
+</style>
+￼
+￼

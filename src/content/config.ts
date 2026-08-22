@@ -1,5 +1,9 @@
 import { defineCollection, z } from "astro:content";
 
+/* =========================================================
+   Logbook
+   ========================================================= */
+
 const logbook = defineCollection({
     type: "content",
 
@@ -10,6 +14,10 @@ const logbook = defineCollection({
         projects: z.array(z.string()).optional(),
     }),
 });
+
+/* =========================================================
+   Projects
+   ========================================================= */
 
 const projects = defineCollection({
     type: "content",
@@ -33,6 +41,10 @@ const projects = defineCollection({
     }),
 });
 
+/* =========================================================
+   Books
+   ========================================================= */
+
 const engineeringBooks = defineCollection({
     type: "content",
 
@@ -46,6 +58,9 @@ const engineeringBooks = defineCollection({
     }),
 });
 
+/* =========================================================
+   Training
+   ========================================================= */
 
 const strengthGoal = z.object({
     type: z.literal("strength"),
@@ -126,10 +141,65 @@ const trainingProgrammes = defineCollection({
     }),
 });
 
+/* =========================================================
+   Food
+   ========================================================= */
+
+const recipeIngredient = z.object({
+    name: z.string(),
+
+    amount: z.union([
+        z.number(),
+        z.string(),
+    ]).optional(),
+
+    unit: z.string().optional(),
+    note: z.string().optional(),
+    optional: z.boolean().optional(),
+});
+
+const recipeIngredientGroup = z.object({
+    group: z.string(),
+    items: z.array(recipeIngredient),
+});
+
+const foodRecipes = defineCollection({
+    type: "content",
+
+    schema: z.object({
+        title: z.string(),
+        category: z.string(),
+
+        status: z.enum([
+            "idea",
+            "tested",
+            "favourite",
+        ]),
+
+        tags: z.array(z.string()).default([]),
+
+        source: z.object({
+            name: z.string(),
+            note: z.string().optional(),
+        }).optional(),
+
+        servings: z.number().positive().optional(),
+
+        ingredients: z.array(
+            recipeIngredientGroup
+        ),
+    }),
+});
+
+/* =========================================================
+   Exports
+   ========================================================= */
+
 export const collections = {
     logbook,
     projects,
     "engineering-books": engineeringBooks,
     "engineering-training": engineeringTraining,
     "training-programmes": trainingProgrammes,
+    "food-recipes": foodRecipes,
 };
