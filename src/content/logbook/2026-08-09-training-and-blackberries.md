@@ -3,6 +3,8 @@ title: Training and blackberries
 date: 2026-08-09
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 The Training page is beginning to take shape. We now have a nice layout and language for Current goals (including what has already been achieved), Current focus, and Training context.

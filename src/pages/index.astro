@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getLatestObservations } from "../lib/logbook";
 import { getActiveProjects } from "../lib/projects.ts";
+import { getLatestEngineeringActivity } from "../lib/logbook";
 
 import NotebookTabs from "@lucide/astro/icons/notebook-tabs";
 import CircleGauge from "@lucide/astro/icons/circle-gauge";
@@ -12,6 +13,7 @@ const entries = await getCollection("logbook");
 
 const latestEntries = await getLatestObservations(3);
 const activeProjects = await getActiveProjects();
+const latestEngineeringActivity = await getLatestEngineeringActivity();
 ---
 
 <BaseLayout title="Observatory">
@@ -92,11 +94,9 @@ const activeProjects = await getActiveProjects();
                 </div>
             </a>
 
-            <article
-                class="
-                    observatory-card
-                    observatory-card--inactive
-                "
+            <a
+                class="observatory-card observatory-card--active"
+                    href="\engineering"
             >
                 <div class="observatory-card__header">
                     <h2>Engineering</h2>
@@ -111,11 +111,51 @@ const activeProjects = await getActiveProjects();
                     Build and maintain the systems that support everyday life.
                 </p>
 
-                <p class="observatory-card__status">
-                    In development
-                </p>
-            </article>
+                <div class="observatory-card__content">
+                    <p class="observatory-card__label">
+                        Latest activity
+                    </p>
+
+                    {latestEngineeringActivity && (
+                        <>
+                            <p class="engineering-activity__area">
+                                {
+                                    latestEngineeringActivity.data.engineering?.[0]
+                                }
+                            </p>
+
+                            <p class="engineering-activity__date">
+                                {latestEngineeringActivity.data.date.toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                        day: "numeric",
+                                        month: "short",
+                                        year: "numeric",
+                                    }
+                                )}
+                            </p>
+                        </>
+                    )}
+                </div>
+            </a>
 
         </section>
     </main>
 </BaseLayout>
+
+<style>
+    .engineering-activity__area {
+        margin: 0;
+
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: capitalize;
+    }
+
+    .engineering-activity__date {
+        margin: 0.25rem 0 0;
+
+        color: var(--text-meta);
+        font-size: 0.75rem;
+    }
+</style>

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PerformanceChart from "../../components/PerformanceChart.astro";
+import { getObservationsForEngineering } from "../../lib/logbook"
+import ObservationList from "../../components/ObservationList.astro"
 
 import {
     getStrengthGoals,
@@ -47,6 +49,8 @@ const motivation = await getTrainingSection("motivation");
 const { Content: MotivationContent } =
     await motivation.render();
 
+
+const observations = await getObservationsForEngineering("training")
 
 // -----------------------------------------------------------------------------
 // Training programmes
@@ -436,6 +440,26 @@ const trainingContext = await getTrainingContext();
             </ul>
         </section>
 
+        <!-- ===============================================================
+             Related observations
+             =============================================================== -->
+
+        {
+            observations.length > 0 && (
+                <section
+                    class="training-observations"
+                    aria-labelledby="related-observations"
+                >
+                    <h2 id="related-observations">
+                        Related observations
+                    </h2>
+
+                    <ObservationList observations={observations} />
+                </section>
+            )
+        }
+    </main>
+
     </main>
 </BaseLayout>
 
@@ -729,6 +753,30 @@ const trainingContext = await getTrainingContext();
         margin-bottom: 0;
     }
 
+    /* ---------------------------------------------------------------------
+       Related observations
+       --------------------------------------------------------------------- */
+
+    .training-observations {
+        width: 100%;
+        margin: 4.5rem 0 0;
+        padding-top: 2rem;
+
+        border-top: 1px solid var(--line-subtle);
+    }
+
+    .training-observations h2 {
+        margin: 0 -1rem 2rem;
+        padding: 0.75rem 1rem;
+
+        background: var(--green-surface);
+        border-radius: 0.3rem;
+
+        color: var(--text-secondary);
+        font-size: 1.45rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
 
     /* ---------------------------------------------------------------------
        Responsive

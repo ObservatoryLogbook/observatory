@@ -3,6 +3,8 @@ title: I started Training
 date: 2026-08-08
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 I started Training. Not as in *I started to train*, no, I started building the Training page under Engineering, which will be one of the core pages of the Observatory. We are of course breaking it down into smaller pieces, but starting work on that page is a huge step forward. Over the coming days and weeks, expect to see visualisations and other fun stuff appearing.

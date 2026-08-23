@@ -87,3 +87,15 @@ export async function getLatestObservations(limit?: number) {
         ? observations.toReversed().slice(0, limit)
         : observations.toReversed();
 }
+
+export async function getLatestEngineeringActivity() {
+    const observations = await getObservations();
+
+    return observations
+        .filter(
+            (observation) =>
+                observation.data.engineering &&
+                observation.data.engineering.length > 0
+        )
+        .toReversed()[0];
+}

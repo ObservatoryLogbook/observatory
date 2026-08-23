@@ -3,6 +3,8 @@ title: Training charts
 date: 2026-08-16
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 When we set out to make Observatory, one of the initial goals was to produce nice-looking dashboards, where I could track my training progress. I had already experimented with something like that in Apple Numbers, which worked fine in the sense that I could track progress. However, visually speaking it was lacking. 

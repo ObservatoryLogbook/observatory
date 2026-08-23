@@ -3,6 +3,8 @@ title: Designing Performance
 date: 2026-08-13
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 Yesterday I managed to get my first real training data into Observatory. Today was about deciding what to do with them.

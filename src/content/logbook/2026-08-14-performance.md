@@ -3,6 +3,8 @@ title: Performance and tomato salad
 date: 2026-08-14
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 Summer is definitely not over yet! Today we reached a high of 28°C, which is not too bad for the season. Dinner needed to be light, filling, tasty and easy to make, because, once again, work ran a little late. 

@@ -3,6 +3,8 @@ title: Data import during a solar eclipse
 date: 2026-08-12
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 Tonight there was a partial solar eclipse in Copenhagen, with more than 80% of the Sun hidden behind the Moon. It was magnificent to follow from my own homemade solar observatory, consisting of two pieces of paper: one with a small hole in it, placed in front of the other. The light is very special during such a celestial event.

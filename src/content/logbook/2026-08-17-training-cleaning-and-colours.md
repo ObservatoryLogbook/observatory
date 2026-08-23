@@ -3,6 +3,8 @@ title: Training cleaning and colours
 date: 2026-08-17
 projects:
   - observatory
+engineering: 
+    - training
 ---
 
 I'm tired today. A new colleague joined my team, and she had her first day today. The day was spent socializing and showing her around, introducing her to us as a team, and to us as individuals, and to the rest of the workplace. It was a lot of fun, she brings a very good energy, but also a bit tiring. And not because of her at all, but because I want to make sure we all put our best foot forward, that we give her just the right amount of information at just the right time, etc. Overthinking, me? Noooo! 

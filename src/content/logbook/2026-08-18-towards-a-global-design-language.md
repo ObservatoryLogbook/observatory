@@ -3,6 +3,8 @@ title: Towards a global design language
 date: 2026-08-18
 projects:
   - observatory
+engineering: 
+  - training
 ---
 
 Today's plan was simple and easy: clean up various heading styles, quickly extend a header bar, and then be done.

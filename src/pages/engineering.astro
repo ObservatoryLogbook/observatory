@@ -1,0 +1,357 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCurrentlyReading } from "../lib/reading";
+import { getCollection } from "astro:content";
+import { getStrengthGoals } from "../lib/training";
+
+// -----------------------------------------------------------------------------
+// Reading
+// -----------------------------------------------------------------------------
+
+const currentlyReading = await getCurrentlyReading();
+
+const currentBook = currentlyReading[0];
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+});
+
+// -----------------------------------------------------------------------------
+// Food
+// -----------------------------------------------------------------------------
+
+const recipes = await getCollection("food-recipes");
+
+const foodStats = {
+    idea: recipes.filter(
+        (recipe) => recipe.data.status === "idea"
+    ).length,
+
+    tested: recipes.filter(
+        (recipe) => recipe.data.status === "tested"
+    ).length,
+
+    favourite: recipes.filter(
+        (recipe) => recipe.data.status === "favourite"
+    ).length,
+};
+
+// -----------------------------------------------------------------------------
+// Training
+// -----------------------------------------------------------------------------
+
+const strengthGoals = await getStrengthGoals();
+
+---
+
+<BaseLayout title="Engineering">
+    <main class="engineering">
+        <header class="engineering-header">
+            <h1>Engineering</h1>
+        </header>
+
+        <section class="engineering-grid">
+
+        <!-- ===============================================================
+             Reading
+             =============================================================== -->
+
+            <a
+                class="engineering-card"
+                href="/engineering/reading/"
+            >
+                <div class="engineering-card__header">
+                    <h2>Reading</h2>
+                </div>
+
+                <p class="engineering-card__description">
+                    Books currently in progress and recently completed.
+                </p>
+
+                <div class="engineering-card__content">
+                    <p class="engineering-card__label">
+                        Currently reading
+                    </p>
+
+                    {currentBook ? (
+                        <>
+                            <h3 class="engineering-card__primary">
+                                {currentBook.data.title}
+                            </h3>
+
+                            <p class="engineering-card__secondary">
+                                {currentBook.data.author}
+                            </p>
+
+                            {currentBook.data.started && (
+                                <p class="engineering-card__meta">
+                                    Started{" "}
+                                    {dateFormatter.format(
+                                        currentBook.data.started
+                                    )}
+                                </p>
+                            )}
+                        </>
+                    ) : (
+                        <p class="engineering-card__secondary">
+                            Nothing currently in progress
+                        </p>
+                    )}
+                </div>
+            </a>
+
+        <!-- ===============================================================
+             Food
+             =============================================================== -->
+
+            <a
+                class="engineering-card"
+                href="/engineering/food/"
+            >
+                <div class="engineering-card__header">
+                    <h2>Food</h2>
+                </div>
+
+                <p class="engineering-card__description">
+                    Recipes, ideas, and experiments from my kitchen.
+                </p>
+
+                <div class="engineering-card__content">
+                    <p class="engineering-card__label">
+                        Recipe status
+                    </p>
+
+                    <div class="engineering-card__metrics">
+                        <div>
+                            <span class="engineering-card__metric-name">
+                                Ideas
+                            </span>
+
+                            <strong>{foodStats.idea}</strong>
+                        </div>
+
+                        <div>
+                            <span class="engineering-card__metric-name">
+                                Tested
+                            </span>
+
+                            <strong>{foodStats.tested}</strong>
+                        </div>
+
+                        <div>
+                            <span class="engineering-card__metric-name">
+                                Favourites
+                            </span>
+
+                            <strong>{foodStats.favourite}</strong>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+        <!-- ===============================================================
+             Training
+             =============================================================== -->
+
+            <a
+                class="engineering-card"
+                href="/engineering/training/"
+            >
+                <div class="engineering-card__header">
+                    <h2>Training</h2>
+                </div>
+
+                <p class="engineering-card__description">
+                    Training programmes, goals, and progress.
+                </p>
+
+                <div class="engineering-card__content">
+                    <p class="engineering-card__label">
+                        Current strength goals
+                    </p>
+
+                    <div class="engineering-card__goals">
+                        {strengthGoals.map((goal) => (
+                            <div>
+                                <span class="engineering-card__goal-name">
+                                    {goal.name}
+                                </span>
+
+                                <strong>
+                                    {goal.target} {goal.unit} × {goal.reps}
+                                </strong>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </a>
+
+
+        </section>
+    </main>
+</BaseLayout>
+
+<style>
+    .engineering {
+        width: min(100%, 72rem);
+        margin: 0 auto;
+    }
+
+    .engineering-header {
+        margin-bottom: 2rem;
+    }
+
+    .engineering-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .engineering-card {
+        display: flex;
+        flex-direction: column;
+
+        min-height: 18rem;
+        padding: 2rem;
+
+        color: inherit;
+        background: var(--surface-neutral);
+        border: 1px solid var(--line-green);
+        border-radius: 0.4rem;
+
+        box-shadow:
+            0 0.1rem 0.3rem rgb(34 34 34 / 3%),
+            0 0.4rem 1.2rem rgb(34 34 34 / 4%);
+
+        text-decoration: none;
+
+        transition:
+            transform 160ms ease,
+            box-shadow 160ms ease,
+            border-color 160ms ease;
+    }
+
+    .engineering-card:hover {
+        transform: translateY(-0.15rem);
+
+        border-color: #cbd2c0;
+
+        box-shadow:
+            0 0.2rem 0.45rem rgb(34 34 34 / 4%),
+            0 0.75rem 1.75rem rgb(34 34 34 / 7%);
+    }
+
+    .engineering-card__header {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+
+        border-bottom: 1px solid var(--line-green);
+    }
+
+    .engineering-card__header h2 {
+        margin: 0;
+
+        font-size: 1.5rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .engineering-card__description {
+        margin: 0;
+
+        color: var(--text-secondary);
+        font-size: 0.98rem;
+        line-height: 1.6;
+    }
+
+    .engineering-card__content {
+        margin-top: auto;
+        padding-top: 2rem;
+    }
+
+    .engineering-card__label {
+        margin: 0 0 0.75rem;
+
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .engineering-card__primary {
+        margin: 0;
+
+        font-size: 1.05rem;
+        font-weight: 500;
+        line-height: 1.35;
+    }
+
+    .engineering-card__secondary {
+        margin: 0.25rem 0 0;
+
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .engineering-card__meta {
+        margin: 0.75rem 0 0;
+
+        color: var(--text-meta);
+        font-size: 0.75rem;
+    }
+
+    .engineering-card__metric-name {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .engineering-card__metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .engineering-card__metrics > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .engineering-card__metrics strong {
+        font-size: 1.15rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .engineering-card__goals {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+    }
+
+    .engineering-card__goals > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .engineering-card__goal-name {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+
+    .engineering-card__goals strong {
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    @media (max-width: 48rem) {
+        .engineering-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

@@ -1,6 +1,8 @@
 ---
 title: Motivation and training
 date: 2026-08-11
+engineering: 
+    - training
 ---
 
 What motivates me to train four times a week?

@@ -3,6 +3,8 @@ title: First week at work
 date: 2026-08-07
 projects:
   - observatory
+engineering:
+  - reading
 ---
 
 Today is Friday, and this marks the first week at work after the summer holidays. I'm exhausted.
