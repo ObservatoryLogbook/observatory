@@ -37,11 +37,11 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
         padding: 0;
 
         list-style: none;
-        border-top: 1px solid #deded8;
+        border-top: 1px solid var(--line-default);
     }
 
     .observation-list li {
-        border-bottom: 1px solid #e7e7e1;
+        border-bottom: 1px solid var(--line-subtle);
     }
 
     .observation-list a {
@@ -57,7 +57,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
     }
 
     .observation-number {
-        color: #9a9d96;
+        color: var(--text-muted);
 
         font-size: 0.8rem;
         font-weight: 300;

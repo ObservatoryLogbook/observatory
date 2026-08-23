@@ -1,7 +1,10 @@
 ---
 title: Chocolate Chip Cookies
-category: Baking
+category: Sweets
 status: favourite
+
+tags:
+  - sweets
 
 source:
   name: America's Test Kitchen

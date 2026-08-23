@@ -1,6 +1,6 @@
 ---
 title: Chili con carne
-category: dinner
+category: Dinner
 status: favourite
 
 tags:

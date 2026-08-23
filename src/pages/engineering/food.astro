@@ -1,12 +1,31 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { getObservationsForEngineering } from "../../lib/logbook"
+import ObservationList from "../../components/ObservationList.astro"
 
 const recipes = await getCollection("food-recipes");
 
-const sortedRecipes = recipes.toSorted((a, b) =>
-    a.data.title.localeCompare(b.data.title)
-);
+const categoryOrder = [
+    "Dinner",
+    "Sweets",
+    "Snacks",
+    "Bread",
+    "Other",
+] as const;
+
+const recipesByCategory = categoryOrder
+    .map((category) => ({
+        category,
+        recipes: recipes
+            .filter((recipe) => recipe.data.category === category)
+            .toSorted((a, b) =>
+                a.data.title.localeCompare(b.data.title)
+            ),
+    }))
+    .filter((group) => group.recipes.length > 0);
+
+const observations = await getObservationsForEngineering("food")
 ---
 
 <BaseLayout title="Food">
@@ -22,28 +41,51 @@ const sortedRecipes = recipes.toSorted((a, b) =>
         <section class="food-section">
             <h2>Recipes</h2>
 
-            <ul class="recipe-list">
-                {sortedRecipes.map((recipe) => (
-                    <li class="recipe-entry">
-                        <a href={`/engineering/food/${recipe.slug}/`}>
-                            <h3>{recipe.data.title}</h3>
+            <div class="recipe-categories">
+                {recipesByCategory.map((group) => (
+                    <section class="recipe-category">
+                        <h3>{group.category}</h3>
 
-                            <p class="recipe-entry__meta">
-                                {recipe.data.category}
-                                {" · "}
-                                {recipe.data.status}
-                            </p>
+                        <ul class="recipe-list">
+                            {group.recipes.map((recipe) => (
+                                <li class="recipe-entry">
+                                    <a href={`/engineering/food/${recipe.slug}/`}>
+                                        <div class="recipe-entry__header">
+                                            <h4>{recipe.data.title}</h4>
 
-                            {recipe.data.tags.length > 0 && (
-                                <p class="recipe-entry__tags">
-                                    {recipe.data.tags.join(" · ")}
-                                </p>
-                            )}
-                        </a>
-                    </li>
+                                            <span class="recipe-entry__meta">
+                                                {recipe.data.status}
+                                            </span>
+                                        </div>
+
+                                        {recipe.data.tags.length > 0 && (
+                                            <p class="recipe-entry__tags">
+                                                {recipe.data.tags.join(" · ")}
+                                            </p>
+                                        )}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
                 ))}
-            </ul>
+            </div>
         </section>
+
+        {
+            observations.length > 0 && (
+                <section
+                    class="food-observations"
+                    aria-labelledby="related-observations"
+                >
+                    <h2 id="related-observations">
+                        Related observations
+                    </h2>
+
+                    <ObservationList observations={observations} />
+                </section>
+            )
+        }
     </main>
 </BaseLayout>
 
@@ -78,19 +120,34 @@ const sortedRecipes = recipes.toSorted((a, b) =>
         border-top: 1px solid var(--line-subtle);
     }
 
+    .recipe-category + .recipe-category {
+        margin-top: 3rem;
+    }
+
+    .recipe-category > h3 {
+        margin: 0 0 1rem;
+
+        color: var(--green-accent);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
     .recipe-entry {
         border-bottom: 1px solid var(--line-subtle);
     }
 
     .recipe-entry a {
         display: block;
-        padding: 1.25rem 0;
+        padding: 1rem 0;
 
         color: inherit;
         text-decoration: none;
     }
 
-    .recipe-entry h3 {
+    .recipe-entry h4 {
         margin: 0;
 
         font-size: 1rem;
@@ -98,8 +155,15 @@ const sortedRecipes = recipes.toSorted((a, b) =>
         line-height: 1.3;
     }
 
+    .recipe-entry__header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
     .recipe-entry__meta {
-        margin: 0.35rem 0 0;
+        flex-shrink: 0;
 
         color: var(--text-muted);
         font-size: 0.8rem;
@@ -112,10 +176,31 @@ const sortedRecipes = recipes.toSorted((a, b) =>
         font-size: 0.75rem;
     }
 
-    .recipe-entry a:hover h3 {
+    .recipe-entry a:hover h4 {
         text-decoration: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 0.2em;
+    }
+
+    .food-observations {
+        width: 100%;
+        margin: 4.5rem 0 0;
+        padding-top: 2rem;
+
+        border-top: 1px solid var(--line-subtle);
+    }
+
+    .food-observations h2 {
+        margin: 0 -1rem 2rem;
+        padding: 0.75rem 1rem;
+
+        background: var(--green-surface);
+        border-radius: 0.3rem;
+
+        color: var(--text-secondary);
+        font-size: 1.45rem;
+        font-weight: 500;
+        line-height: 1.2;
     }
 </style>
 ￼

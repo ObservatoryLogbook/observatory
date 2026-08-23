@@ -52,12 +52,30 @@ export async function getObservations(): Promise<Observation[]> {
     });
 }
 
+/**
+ * Return all logbook observations that are related to individual projects
+ */
 export async function getObservationsForProject(slug: string) {
     const observations = await getObservations();
 
     return observations
         .filter((observation) =>
             observation.data.projects?.includes(slug)
+        )
+        .toReversed();
+}
+
+/**
+ * Return all logbook observations that are related to Engineering pages
+ */
+export async function getObservationsForEngineering(
+    engineering: "training" | "reading" | "food"
+) {
+    const observations = await getObservations();
+
+    return observations
+        .filter((observation) =>
+            observation.data.engineering?.includes(engineering)
         )
         .toReversed();
 }

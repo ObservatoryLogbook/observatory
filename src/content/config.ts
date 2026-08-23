@@ -12,6 +12,14 @@ const logbook = defineCollection({
         date: z.date(),
 
         projects: z.array(z.string()).optional(),
+
+        engineering: z.array(
+            z.enum([
+                "training", 
+                "reading", 
+                "food",
+            ])
+        ).optional(), 
     }),
 });
 
@@ -168,7 +176,14 @@ const foodRecipes = defineCollection({
 
     schema: z.object({
         title: z.string(),
-        category: z.string(),
+
+        category: z.enum([
+            "Dinner",
+            "Sweets",
+            "Snacks",
+            "Bread",
+            "Other",
+        ]),
 
         status: z.enum([
             "idea",

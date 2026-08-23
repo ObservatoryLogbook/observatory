@@ -1,24 +1,22 @@
 ---
-title: Planning ahead for Observatory
-date: 2026-08-21
+title: Engineering Food
+date: 2026-08-22
 projects:
   - observatory
+engineering: 
+  - food
 ---
 
-I do most of my thinking in the morning, and today is no different. As mentioned yesterday, work today will finish with the big summer party, and I expect to arrive home very late with zero energy for the daily Observation.
+Today went by almost entirely as expected.
 
-Instead, I wanted to take a few minutes this morning to jot down some ideas for Observatory, both for the immediate future and for the longer term. After celebrating the first month of Observatory yesterday, I thought it only fitting to spend some time looking ahead.
+I was home late from the summer party last night, well past midnight. This is tough on a morning person. And I had done my part in supporting basic free research through a healthy consumption of beer. Perhaps a little too much. But it was well worth it! I have some of the best colleagues in the world, and I very much enjoy spending time with them, laughing and joking, learning about their lives outside of work, and so on. This is definitely one of the highlights of the social calendar.
 
-**Data flow to Training.** Currently, I am recording my training on my iPhone using an automation that updates a Numbers file. I then export the relevant table to CSV format, move it to my Observatory folders, and ingest it into the Training page. This needs to be automated, otherwise updates will be patchy at best.
+However, it also meant there was very little energy today. We ended up setting up the Engineering page now called Food. The purpose is to record some of my stable recipes or recipes I would like to test, but also just ideas and experiments from the kitchen. That is why I see it as broader than just a recipe collection, and hence why it is called Food.
 
-**Training log visualisation.** I have an idea for a visualisation of when I train: a grid view of every day of the year, with the training days coloured in. The heavy training days can be taken directly from the CSV file mentioned above, but there needs to be a record of the other training days as well. And again, it needs to be as automatic as possible.
+Constructing the page was surprisingly smooth. After about an hour and a half, we had a fully functioning version 1 with a list of recipes, links to individual recipes, and a data format for storing them. This was largely due to the fact that, when designing the Training page, we ended up with a global design language that could now easily be implemented on the Food page.
 
-**Other Engineering pages.** I need an Engineering page to keep track of my recipes and my thoughts about food in general. I love to cook, and currently I have some of my best recipes written down by hand in a notebook. Not very convenient for searching, keeping track of macros, or anything like that. Similarly, my partner and I are constantly thinking about vacation ideas, and I believe that would make for a good Engineering page. Finally, I want to make at least one private Engineering page where I can keep track of my body measurements, i.e. weight, muscle and fat percentages, circumference of shoulders and chest compared with stomach and hips, and blood pressure.
+I started copying over recipes from my old notebook. That will be an ongoing project for the next few days, even with the help of AI to interpret the handwritten recipes and translate them into our data format.
 
-**Engineering landing page.** Engineering is still under construction, at least until I have a couple more pages and know what will make sense to record on the landing page.
+The next steps will include linking observations to the Food page, and I think they will serve as my record of ideas and thoughts.
 
-**Project pages.** I have a number of small and large projects going on at the moment. I just need to sit down and start working on them, one at a time. The infrastructure is in place.
-
-**Observatory infrastructure.** There are still a number of small things I want to do with the overall Observatory infrastructure. These include adding a search feature, visitor statistics, and maybe even a custom domain.
-
-These are all just thoughts and ideas for the moment, and I will need to sit down and flesh them out at some point. They should definitely be able to keep me busy for the coming month and beyond!
+Even though it was a tired day, it was still a productive day. I am looking forward to a good night's sleep, though...
