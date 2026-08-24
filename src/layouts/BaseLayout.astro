@@ -43,12 +43,43 @@ const pageTitle =
                     <Telescope class="site-brand__icon" aria-hidden="true" />
                     <span>Observatory</span>
                 </a>
-                <a href="/logbook/">Logbook</a>
-                <a href="/projects/">Projects</a>
-                <a href="/engineering/">Engineering</a>
-                <a href="/about/">About</a>
+
+                <button
+                    class="site-nav__toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="site-nav-links"
+                >
+                    Menu
+                </button>
+
+                <div class="site-nav__links" id="site-nav-links">
+                    <a href="/logbook/">Logbook</a>
+                    <a href="/projects/">Projects</a>
+                    <a href="/engineering/">Engineering</a>
+                    <a href="/about/">About</a>
+                </div>
             </nav>
         </header>
+
+        <script>
+            const toggle = document.querySelector(".site-nav__toggle");
+            const links = document.querySelector(".site-nav__links");
+
+            if (toggle && links) {
+                toggle.addEventListener("click", () => {
+                    const isOpen =
+                        toggle.getAttribute("aria-expanded") === "true";
+
+                    toggle.setAttribute(
+                        "aria-expanded",
+                        String(!isOpen)
+                    );
+
+                    links.classList.toggle("site-nav__links--open");
+                });
+            }
+        </script>
 
         <link
             rel="alternate"
