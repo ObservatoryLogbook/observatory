@@ -32,39 +32,7 @@ const latestEngineeringActivity = await getLatestEngineeringActivity();
         >
             <a
                 class="observatory-card observatory-card--active"
-                href="/logbook/"
-            >
-                <div class="observatory-card__header">
-                    <h2>Logbook</h2>
-
-					<NotebookTabs
-					    class="observatory-card__icon"
-					    aria-hidden="true"
-					/>
-                </div>
-
-                <p class="observatory-card__description">
-                    Observations recorded over time.
-                </p>
-
-                <div class="observatory-card__content">
-                    <p class="observatory-card__label">
-                        Latest observations
-                    </p>
-
-                    <ul>
-                        {
-                            latestEntries.map((entry) => (
-                                <li>{entry.data.title}</li>
-                            ))
-                        }
-                    </ul>
-                </div>
-            </a>
-
-            <a
-                class="observatory-card observatory-card--active"
-                href="/projects/"
+                href="/science/"
             >
                 <div class="observatory-card__header">
                     <h2>Science</h2>
@@ -136,6 +104,38 @@ const latestEngineeringActivity = await getLatestEngineeringActivity();
                             </p>
                         </>
                     )}
+                </div>
+            </a>
+
+            <a
+                class="observatory-card observatory-card--active"
+                href="/logbook/"
+            >
+                <div class="observatory-card__header">
+                    <h2>Logbook</h2>
+
+                    <NotebookTabs
+                        class="observatory-card__icon"
+                        aria-hidden="true"
+                    />
+                </div>
+
+                <p class="observatory-card__description">
+                    Observations recorded over time.
+                </p>
+
+                <div class="observatory-card__content">
+                    <p class="observatory-card__label">
+                        Latest observations
+                    </p>
+
+                    <ul>
+                        {
+                            latestEntries.map((entry) => (
+                                <li>{entry.data.title}</li>
+                            ))
+                        }
+                    </ul>
                 </div>
             </a>
 

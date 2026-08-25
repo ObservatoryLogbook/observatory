@@ -26,9 +26,15 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 
 ---
 
-<BaseLayout title="Projects">
+<BaseLayout title="Science">
     <main>
-        <h1>Projects</h1>
+        <header class="science-header">
+            <h1>Science</h1>
+
+            <p class="tagline">
+                Long-running investigations, projects, and accumulated knowledge.
+            </p>
+        </header>
 
         <div class="project-grid">
             {
@@ -36,7 +42,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
                     ({ project, slug, observationCount }) => (
                         <a
                             class="project-card"
-                            href={`/projects/${slug}`}
+                            href={`/science/${slug}`}
                         >
                             <div class="project-card__header">
                                 <h2>{project.data.title}</h2>
