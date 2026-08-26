@@ -28,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 
 <BaseLayout title="Science">
     <main>
-        <header class="science-header">
+        <header class="landing-header">
             <h1>Science</h1>
 
             <p class="tagline">
@@ -41,29 +41,26 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
                 projectSummaries.map(
                     ({ project, slug, observationCount }) => (
                         <a
-                            class="project-card"
+                            class="landing-card"
                             href={`/science/${slug}`}
                         >
-                            <div class="project-card__header">
+                            <div class="landing-card__header">
                                 <h2>{project.data.title}</h2>
-
-                                <span class="project-card__status">
-                                    {project.data.status}
-                                </span>
                             </div>
 
-                            <p class="project-card__description">
+                            <p class="landing-card__description">
                                 {project.data.purpose}
                             </p>
 
                             <dl class="project-card__meta">
                                 <div>
+                                    <dt>Status</dt>
+                                    <dd>{project.data.status}</dd>
+                                </div>
+
+                                <div>
                                     <dt>Started</dt>
-                                    <dd>
-                                        {dateFormatter.format(
-                                            project.data.started
-                                        )}
-                                    </dd>
+                                    <dd>{dateFormatter.format(project.data.started)}</dd>
                                 </div>
 
                                 <div>

@@ -42,10 +42,6 @@ const observationDateFormatter = new Intl.DateTimeFormat("en-GB", {
         <header class="project-header">
             <div class="project-header__top">
                 <h1>{project.data.title}</h1>
-
-                <span class="project-header__status">
-                    {project.data.status}
-                </span>
             </div>
 
             <p class="project-header__purpose">
@@ -53,6 +49,11 @@ const observationDateFormatter = new Intl.DateTimeFormat("en-GB", {
             </p>
 
             <dl class="project-header__meta">
+                <div>
+                    <dt>Status</dt>
+                    <dd>{project.data.status}</dd>
+                </div>
+
                 <div>
                     <dt>Started</dt>
                     <dd>{dateFormatter.format(project.data.started)}</dd>

@@ -1,0 +1,181 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import Rocket from "@lucide/astro/icons/rocket";
+
+export async function getStaticPaths() {
+    const books = await getCollection("engineering-books");
+
+    return books.map((book) => ({
+        params: {
+            slug: book.slug,
+        },
+        props: {
+            book,
+        },
+    }));
+}
+
+const { book } = Astro.props;
+const { Content } = await book.render();
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+});
+---
+
+<BaseLayout title={book.data.title}>
+    <main class="book-page">
+        <header class="book-header">
+            <p class="book-header__category">
+                {book.data.category}
+            </p>
+
+            <h1>{book.data.title}</h1>
+
+            <p class="book-header__author">
+                {book.data.author}
+            </p>
+
+            <dl class="book-header__meta">
+                {book.data.started && (
+                    <div>
+                        <dt>Started</dt>
+                        <dd>
+                            {dateFormatter.format(book.data.started)}
+                        </dd>
+                    </div>
+                )}
+
+                {book.data.finished && (
+                    <div>
+                        <dt>Finished</dt>
+                        <dd>
+                            {dateFormatter.format(book.data.finished)}
+                        </dd>
+                    </div>
+                )}
+
+                {book.data.rating && (
+                    <div>
+                        <dt>Rating</dt>
+                        <dd>
+                            <span
+                                class="book-rating"
+                                aria-label={`${book.data.rating} out of 5`}
+                            >
+                                {
+                                    Array.from(
+                                        { length: book.data.rating },
+                                        () => (
+                                            <Rocket aria-hidden="true" />
+                                        )
+                                    )
+                                }
+                            </span>
+                        </dd>
+                    </div>
+                )}
+            </dl>
+        </header>
+
+        <article class="book-content">
+            <Content />
+        </article>
+    </main>
+</BaseLayout>
+
+<style>
+    .book-page {
+        width: min(100%, 52rem);
+        margin: 0 auto;
+    }
+
+    .book-header {
+        margin-bottom: 4rem;
+    }
+
+    .book-header__category {
+        margin: 0 0 0.75rem;
+
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .book-header h1 {
+        margin-bottom: 0.5rem;
+    }
+
+    .book-header__author {
+        margin: 0;
+
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .book-header__meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+
+        margin: 2rem 0 0;
+        padding-top: 1.5rem;
+
+        border-top: 1px solid var(--line-subtle);
+    }
+
+    .book-header__meta div {
+        min-width: 0;
+    }
+
+    .book-header__meta dt {
+        margin-bottom: 0.3rem;
+
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .book-header__meta dd {
+        margin: 0;
+
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .book-rating {
+        display: flex;
+        gap: 0.2rem;
+    }
+
+    .book-rating :global(svg) {
+        width: 1.05rem;
+        height: 1.05rem;
+
+        stroke-width: 1.6;
+    }
+
+    .book-content {
+        font-size: 1.05rem;
+        line-height: 1.75;
+    }
+
+    .book-content :global(p) {
+        margin: 0 0 1.5rem;
+    }
+
+    @media (max-width: 600px) {
+        .book-header__meta {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+</style>

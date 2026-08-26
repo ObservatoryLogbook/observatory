@@ -32,9 +32,10 @@ const observations = await getObservationsForEngineering("reading")
                     <li class="book-entry book-entry--current">
                         <div class="book-entry__main">
                             <h3 class="book-entry__title">
-                                {book.data.title}
+                                <a href={`/engineering/reading/${book.slug}/`}>
+                                    {book.data.title}
+                                </a>
                             </h3>
-
                             <p class="book-entry__author">
                                 {book.data.author}
                             </p>
@@ -75,9 +76,10 @@ const observations = await getObservationsForEngineering("reading")
                     <li class="book-entry">
                         <div class="book-entry__main">
                             <h3 class="book-entry__title">
-                                {book.data.title}
+                                <a href={`/engineering/reading/${book.slug}/`}>
+                                    {book.data.title}
+                                </a>
                             </h3>
-
                             <p class="book-entry__author">
                                 {book.data.author}
                             </p>
@@ -109,9 +111,10 @@ const observations = await getObservationsForEngineering("reading")
                     <li class="book-entry">
                         <div class="book-entry__main">
                             <h3 class="book-entry__title">
-                                {book.data.title}
+                                <a href={`/engineering/reading/${book.slug}/`}>
+                                    {book.data.title}
+                                </a>
                             </h3>
-
                             <p class="book-entry__author">
                                 {book.data.author}
                             </p>
@@ -191,14 +194,6 @@ const observations = await getObservationsForEngineering("reading")
         margin-bottom: 4rem;
     }
 
-    .reading-header h1 {
-        margin: 0;
-
-        font-size: 2.5rem;
-        font-weight: 500;
-        line-height: 1.1;
-    }
-
     .reading-section {
         margin-top: 4rem;
     }
@@ -241,6 +236,17 @@ const observations = await getObservationsForEngineering("reading")
         font-size: 1.05rem;
         font-weight: 500;
         line-height: 1.35;
+    }
+
+    .book-entry__title a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .book-entry__title a:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.2em;
     }
 
     .book-entry__author {

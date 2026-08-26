@@ -48,7 +48,7 @@ const strengthGoals = await getStrengthGoals();
 
 <BaseLayout title="Engineering">
     <main class="engineering">
-        <header class="engineering-header">
+        <header class="landing-header">
             <h1>Engineering</h1>
 
             <p class="tagline">
@@ -63,14 +63,14 @@ const strengthGoals = await getStrengthGoals();
              =============================================================== -->
 
             <a
-                class="engineering-card"
+                class="landing-card"
                 href="/engineering/reading/"
             >
-                <div class="engineering-card__header">
+                <div class="landing-card__header">
                     <h2>Reading</h2>
                 </div>
 
-                <p class="engineering-card__description">
+                <p class="landing-card__description">
                     Books currently in progress and recently completed.
                 </p>
 
@@ -111,14 +111,14 @@ const strengthGoals = await getStrengthGoals();
              =============================================================== -->
 
             <a
-                class="engineering-card"
+                class="landing-card"
                 href="/engineering/food/"
             >
-                <div class="engineering-card__header">
+                <div class="landing-card__header">
                     <h2>Food</h2>
                 </div>
 
-                <p class="engineering-card__description">
+                <p class="landing-card__description">
                     Recipes, ideas, and experiments from my kitchen.
                 </p>
 
@@ -160,14 +160,14 @@ const strengthGoals = await getStrengthGoals();
              =============================================================== -->
 
             <a
-                class="engineering-card"
+                class="landing-card"
                 href="/engineering/training/"
             >
-                <div class="engineering-card__header">
+                <div class="landing-card__header">
                     <h2>Training</h2>
                 </div>
 
-                <p class="engineering-card__description">
+                <p class="landing-card__description">
                     Training programmes, goals, and progress.
                 </p>
 
@@ -211,63 +211,6 @@ const strengthGoals = await getStrengthGoals();
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 1.5rem;
-    }
-
-    .engineering-card {
-        display: flex;
-        flex-direction: column;
-
-        min-height: 18rem;
-        padding: 2rem;
-
-        color: inherit;
-        background: var(--surface-neutral);
-        border: 1px solid var(--line-green);
-        border-radius: 0.4rem;
-
-        box-shadow:
-            0 0.1rem 0.3rem rgb(34 34 34 / 3%),
-            0 0.4rem 1.2rem rgb(34 34 34 / 4%);
-
-        text-decoration: none;
-
-        transition:
-            transform 160ms ease,
-            box-shadow 160ms ease,
-            border-color 160ms ease;
-    }
-
-    .engineering-card:hover {
-        transform: translateY(-0.15rem);
-
-        border-color: #cbd2c0;
-
-        box-shadow:
-            0 0.2rem 0.45rem rgb(34 34 34 / 4%),
-            0 0.75rem 1.75rem rgb(34 34 34 / 7%);
-    }
-
-    .engineering-card__header {
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-
-        border-bottom: 1px solid var(--line-green);
-    }
-
-    .engineering-card__header h2 {
-        margin: 0;
-
-        font-size: 1.5rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
-
-    .engineering-card__description {
-        margin: 0;
-
-        color: var(--text-secondary);
-        font-size: 0.98rem;
-        line-height: 1.6;
     }
 
     .engineering-card__content {
