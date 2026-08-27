@@ -6,14 +6,11 @@ import {
     getReadBooks,
 } from "../../lib/reading";
 import Rocket from "@lucide/astro/icons/rocket";
-import { getObservationsForEngineering } from "../../lib/logbook"
-import ObservationList from "../../components/ObservationList.astro"
+import RelatedObservations from "../../components/RelatedObservations.astro";
 
 const currentlyReading = await getCurrentlyReading();
 const readingList = await getReadingList();
 const readBooks = await getReadBooks();
-
-const observations = await getObservationsForEngineering("reading")
 ---
 
 <BaseLayout title="Reading">
@@ -24,7 +21,7 @@ const observations = await getObservationsForEngineering("reading")
 
         <section class="reading-section reading-section--current">
             <div class="reading-section__header">
-                <h2>Currently reading</h2>
+                <h2 class="section-heading">Currently reading</h2>
             </div>
 
             <ul class="book-list">
@@ -68,7 +65,7 @@ const observations = await getObservationsForEngineering("reading")
 
         <section class="reading-section reading-section--list">
             <div class="reading-section__header">
-                <h2>Reading list</h2>
+                <h2 class="section-heading">Reading list</h2>
             </div>
 
             <ul class="book-list">
@@ -103,7 +100,7 @@ const observations = await getObservationsForEngineering("reading")
 
         <section class="reading-section reading-section--read">
             <div class="reading-section__header">
-                <h2>Read</h2>
+                <h2 class="section-heading">Read</h2>
             </div>
 
             <ul class="book-list">
@@ -167,20 +164,7 @@ const observations = await getObservationsForEngineering("reading")
             </ul>
         </section>
 
-        {
-            observations.length > 0 && (
-                <section
-                    class="reading-observations"
-                    aria-labelledby="related-observations"
-                >
-                    <h2 id="related-observations">
-                        Related observations
-                    </h2>
-
-                    <ObservationList observations={observations} />
-                </section>
-            )
-        }
+        <RelatedObservations keyword="reading" />
     </main>
 </BaseLayout>
 
@@ -202,14 +186,6 @@ const observations = await getObservationsForEngineering("reading")
         padding-bottom: 0.8rem;
 
         border-bottom: 1px solid var(--line-green);
-    }
-
-    .reading-section__header h2 {
-        margin: 0;
-
-        font-size: 1.35rem;
-        font-weight: 500;
-        line-height: 1.2;
     }
 
     .book-list {
@@ -303,27 +279,6 @@ const observations = await getObservationsForEngineering("reading")
 
         font-size: 0.9rem;
         line-height: 1.4;
-    }
-
-    .reading-observations {
-        width: 100%;
-        margin: 4.5rem 0 0;
-        padding-top: 2rem;
-
-        border-top: 1px solid var(--line-subtle);
-    }
-
-    .reading-observations h2 {
-        margin: 0 -1rem 2rem;
-        padding: 0.75rem 1rem;
-
-        background: var(--green-surface);
-        border-radius: 0.3rem;
-
-        color: var(--text-secondary);
-        font-size: 1.45rem;
-        font-weight: 500;
-        line-height: 1.2;
     }
 
     @media (max-width: 600px) {

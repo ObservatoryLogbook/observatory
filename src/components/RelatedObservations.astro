@@ -1,0 +1,44 @@
+---
+import ObservationList from "./ObservationList.astro";
+import { getObservationsForEngineering } from "../lib/logbook";
+
+interface Props {
+    keyword: "training" | "reading" | "food";
+}
+
+const { keyword } = Astro.props;
+
+const observations = await getObservationsForEngineering(keyword);
+---
+
+<!-- ===============================================================
+     Related observations
+     =============================================================== -->
+
+{
+    observations.length > 0 && (
+        <section
+            class="observations"
+            aria-labelledby="related-observations"
+        >
+            <h2
+                class="section-heading"
+                id="related-observations"
+            >
+                Related observations
+            </h2>
+
+            <ObservationList observations={observations} />
+        </section>
+    )
+}
+
+<style>
+    .observations {
+        width: 100%;
+        margin: 4.5rem 0 0;
+        padding-top: 2rem;
+
+        border-top: 1px solid var(--line-subtle);
+    }
+</style>

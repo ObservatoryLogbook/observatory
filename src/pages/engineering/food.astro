@@ -1,8 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { getObservationsForEngineering } from "../../lib/logbook"
-import ObservationList from "../../components/ObservationList.astro"
+import RelatedObservations from "../../components/RelatedObservations.astro";
 
 const recipes = await getCollection("food-recipes");
 
@@ -24,8 +23,6 @@ const recipesByCategory = categoryOrder
             ),
     }))
     .filter((group) => group.recipes.length > 0);
-
-const observations = await getObservationsForEngineering("food")
 ---
 
 <BaseLayout title="Food">
@@ -39,7 +36,7 @@ const observations = await getObservationsForEngineering("food")
         </header>
 
         <section class="food-section">
-            <h2>Recipes</h2>
+            <h2 class="section-heading">Recipes</h2>
 
             <div class="recipe-categories">
                 {recipesByCategory.map((group) => (
@@ -72,20 +69,7 @@ const observations = await getObservationsForEngineering("food")
             </div>
         </section>
 
-        {
-            observations.length > 0 && (
-                <section
-                    class="food-observations"
-                    aria-labelledby="related-observations"
-                >
-                    <h2 id="related-observations">
-                        Related observations
-                    </h2>
-
-                    <ObservationList observations={observations} />
-                </section>
-            )
-        }
+        <RelatedObservations keyword="food" />
     </main>
 </BaseLayout>
 
@@ -100,19 +84,6 @@ const observations = await getObservationsForEngineering("food")
 
     .food-section {
         margin-top: 4.5rem;
-    }
-
-    .food-section > h2 {
-        margin: 0 -1rem 2rem;
-        padding: 0.75rem 1rem;
-
-        background: var(--green-surface);
-        border-radius: 0.3rem;
-
-        color: var(--text-secondary);
-        font-size: 1.45rem;
-        font-weight: 500;
-        line-height: 1.2;
     }
 
     .recipe-list {
@@ -183,27 +154,6 @@ const observations = await getObservationsForEngineering("food")
         text-decoration: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 0.2em;
-    }
-
-    .food-observations {
-        width: 100%;
-        margin: 4.5rem 0 0;
-        padding-top: 2rem;
-
-        border-top: 1px solid var(--line-subtle);
-    }
-
-    .food-observations h2 {
-        margin: 0 -1rem 2rem;
-        padding: 0.75rem 1rem;
-
-        background: var(--green-surface);
-        border-radius: 0.3rem;
-
-        color: var(--text-secondary);
-        font-size: 1.45rem;
-        font-weight: 500;
-        line-height: 1.2;
     }
 </style>
 ￼

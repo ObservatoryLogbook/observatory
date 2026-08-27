@@ -1,5 +1,4 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getLatestObservations } from "../lib/logbook";
 import { getActiveProjects } from "../lib/projects.ts";
@@ -8,8 +7,6 @@ import { getLatestEngineeringActivity } from "../lib/logbook";
 import NotebookTabs from "@lucide/astro/icons/notebook-tabs";
 import CircleGauge from "@lucide/astro/icons/circle-gauge";
 import Orbit from "@lucide/astro/icons/orbit";
-
-const entries = await getCollection("logbook");
 
 const latestEntries = await getLatestObservations(3);
 const activeProjects = await getActiveProjects();
@@ -64,7 +61,7 @@ const latestEngineeringActivity = await getLatestEngineeringActivity();
 
             <a
                 class="landing-card observatory-card--active"
-                    href="\engineering"
+                    href="/engineering"
             >
                 <div class="landing-card__header observatory-card__header">
                     <h2>Engineering</h2>

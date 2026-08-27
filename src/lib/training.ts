@@ -14,24 +14,14 @@ export async function getTrainingCore() {
     return training;
 }
 
-export async function getTrainingSection(
-    section: "focus" | "motivation"
-) {
+export async function getTrainingMotivation() {
     const entries = await getCollection("engineering-training");
 
-    const entry = entries.find(
+    return entries.find(
         (entry) =>
             "section" in entry.data &&
-            entry.data.section === section
+            entry.data.section === "motivation"
     );
-
-    if (!entry) {
-        throw new Error(
-            `Training section "${section}" not found`
-        );
-    }
-
-    return entry;
 }
 
 export async function getStrengthGoals() {
@@ -51,42 +41,6 @@ export async function getSkillGoals() {
         (goal) =>
             goal.type === "skill" &&
             !goal.achieved
-    );
-}
-
-export async function getAchievedGoals() {
-    const training = await getTrainingCore();
-
-    return training.data.goals
-        .filter((goal) => goal.achieved)
-        .toSorted(
-            (a, b) =>
-                b.achieved!.getTime() -
-                a.achieved!.getTime()
-        );
-}
-
-export async function getLatestAchievedStrengthGoals() {
-    const training = await getTrainingCore();
-
-    const achievedStrengthGoals = training.data.goals
-        .filter(
-            (goal) =>
-                goal.type === "strength" &&
-                goal.achieved
-        )
-        .toSorted(
-            (a, b) =>
-                b.achieved!.getTime() -
-                a.achieved!.getTime()
-        );
-
-    return achievedStrengthGoals.filter(
-        (goal, index, goals) =>
-            goals.findIndex(
-                (candidate) =>
-                    candidate.name === goal.name
-            ) === index
     );
 }
 

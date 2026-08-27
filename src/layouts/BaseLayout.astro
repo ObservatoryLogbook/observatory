@@ -29,6 +29,14 @@ const pageTitle =
             type="image/svg+xml"
             href="/favicon.svg?v=1"
         />
+
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="Observatory Logbook"
+            href="/rss.xml"
+        />
+
         <meta
             name="description"
             content="A personal collection of observations, projects, and data."
@@ -80,13 +88,6 @@ const pageTitle =
                 });
             }
         </script>
-
-        <link
-            rel="alternate"
-            type="application/rss+xml"
-            title="Observatory Logbook"
-            href="/rss.xml"
-        />
 
         <slot />
     </body>

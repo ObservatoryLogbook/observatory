@@ -2,8 +2,6 @@
 section: motivation
 ---
 
-## Motivation
-
 The strongest motivation for my training is progress. There is something almost magical about adding another plate to the bar, moving the pin down on the cable machine, or suddenly being able to do something I could not do before. Getting my first pull-up, my first three dips, and finally holding a good frog stand all gave me an almost indescribable sense of achievement.
 
 <details class="motivation-details">
