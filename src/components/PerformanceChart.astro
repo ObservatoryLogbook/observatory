@@ -1,4 +1,17 @@
 ---
+import type {
+    E1RMPoint,
+    TrendResult,
+} from "../lib/training-data";
+
+interface Props {
+    title: string;
+    data: E1RMPoint[];
+    trend: TrendResult | null;
+    width?: number;
+    height?: number;
+}
+
 const {
     title,
     data,
@@ -28,13 +41,8 @@ const maxDate = Math.max(
     ...data.map((point) => point.date.getTime())
 );
 
-const firstDataDate = new Date(
-    Math.min(...data.map((point) => point.date.getTime()))
-);
-
-const lastDataDate = new Date(
-    Math.max(...data.map((point) => point.date.getTime()))
-);
+const firstDataDate = new Date(minDate);
+const lastDataDate = new Date(maxDate);
 
 const domainStart = Date.UTC(
     firstDataDate.getUTCFullYear(),
@@ -66,8 +74,8 @@ const xTicks = [];
 
 let tickDate = new Date(
     Date.UTC(
-        new Date(minDate).getUTCFullYear(),
-        new Date(minDate).getUTCMonth(),
+        firstDataDate.getUTCFullYear(),
+        firstDataDate.getUTCMonth(),
         1
     )
 );
@@ -84,25 +92,18 @@ while (tickDate.getTime() <= maxDate) {
     );
 }
 
-const x = (date) =>
+const x = (date: Date) =>
     padding.left +
     ((date.getTime() - domainStart) /
         (domainEnd - domainStart || 1)) *
         plotWidth;
 
-const y = (value) =>
+const y = (value: number) =>
     padding.top +
     (1 - (value - yMin) / (yMax - yMin || 1)) *
         plotHeight;
 
-const monthFormatter = new Intl.DateTimeFormat(
-    "en-GB",
-    {
-        month: "short",
-    }
-);
-
-const formatTick = (date) => {
+const formatTick = (date: Date) => {
     const month = date.toLocaleDateString("en-GB", {
         month: "short",
         timeZone: "UTC",
