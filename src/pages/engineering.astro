@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCurrentlyReading } from "../lib/reading";
 import { getCollection } from "astro:content";
 import { getStrengthGoals } from "../lib/training";
+import { getRecipeStats } from "../lib/food.ts"
 
 // -----------------------------------------------------------------------------
 // Reading
@@ -22,21 +23,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 // Food
 // -----------------------------------------------------------------------------
 
-const recipes = await getCollection("food-recipes");
-
-const foodStats = {
-    idea: recipes.filter(
-        (recipe) => recipe.data.status === "idea"
-    ).length,
-
-    tested: recipes.filter(
-        (recipe) => recipe.data.status === "tested"
-    ).length,
-
-    favourite: recipes.filter(
-        (recipe) => recipe.data.status === "favourite"
-    ).length,
-};
+const foodStats = await getRecipeStats();
 
 // -----------------------------------------------------------------------------
 // Training

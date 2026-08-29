@@ -7,19 +7,31 @@ export async function getBooks() {
 export async function getCurrentlyReading() {
     const books = await getBooks();
 
-    return books.filter(
-        (book) =>
-            book.data.started &&
-            !book.data.finished
-    );
+    return books
+        .filter(
+            (book) =>
+                book.data.started &&
+                !book.data.finished
+        )
+        .toSorted(
+            (a, b) =>
+                b.data.started!.getTime() -
+                a.data.started!.getTime()
+        );
 }
 
 export async function getReadingList() {
     const books = await getBooks();
 
-    return books.filter(
-        (book) => !book.data.started
-    );
+    return books
+        .filter(
+            (book) =>
+                !book.data.started &&
+                !book.data.finished
+        )
+        .toSorted((a, b) =>
+            a.data.title.localeCompare(b.data.title)
+        );
 }
 
 export async function getReadBooks() {

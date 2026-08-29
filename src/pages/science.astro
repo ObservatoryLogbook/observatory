@@ -1,29 +1,37 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getProjects } from "../lib/projects";
-import { getObservationsForProject } from "../lib/logbook";
+import { getObservations } from "../lib/logbook";
 
 const projects = await getProjects();
+const observations = await getObservations();
 
-const projectSummaries = await Promise.all(
-    projects.map(async (project) => {
-        const slug = project.id.replace(/\.md$/, "");
-        const observations = await getObservationsForProject(slug);
+const observationCounts = new Map<string, number>();
 
-        return {
+for (const observation of observations) {
+    for (const project of observation.data.projects ?? []) {
+        observationCounts.set(
             project,
-            slug,
-            observationCount: observations.length,
-        };
-    })
-);
+            (observationCounts.get(project) ?? 0) + 1
+        );
+    }
+}
+
+const projectSummaries = projects.map((project) => {
+    const slug = project.id.replace(/\.md$/, "");
+
+    return {
+        project,
+        slug,
+        observationCount: observationCounts.get(slug) ?? 0,
+    };
+});
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
 });
-
 ---
 
 <BaseLayout title="Science">

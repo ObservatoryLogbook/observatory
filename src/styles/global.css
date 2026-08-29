@@ -220,24 +220,6 @@ h1 {
     gap: 1.5rem;
 }
 
-.observatory-card--active {
-    cursor: pointer;
-
-    transition:
-        transform 160ms ease,
-        box-shadow 160ms ease,
-        border-color 160ms ease;
-}
-
-.observatory-card--inactive {
-    color: #5d6259;
-    background: var(--surface-neutral);
-
-    box-shadow:
-        0 0.1rem 0.3rem rgb(34 34 34 / 3%),
-        0 0.4rem 1.2rem rgb(34 34 34 / 4%);
-}
-
 .observatory-card__header {
     display: flex;
     align-items: flex-start;
@@ -259,8 +241,7 @@ h1 {
     padding-top: 2rem;
 }
 
-.observatory-card__label,
-.observatory-card__status {
+.observatory-card__label {
     margin-bottom: 0.75rem;
 
     color: #73796d;
@@ -289,11 +270,6 @@ h1 {
 
 .observatory-card__content li:last-child {
     border-bottom: 0;
-}
-
-.observatory-card__status {
-    margin-top: auto;
-    margin-bottom: 0;
 }
 
 
@@ -368,17 +344,6 @@ h1 {
     gap: 1.5rem;
 }
 
-.project-card__status {
-    flex-shrink: 0;
-
-    color: #73796d;
-
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
 .project-card__meta {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -413,11 +378,6 @@ h1 {
 @media (max-width: 48rem) {
     .project-grid {
         grid-template-columns: 1fr;
-    }
-
-    .project-card {
-        min-height: 12rem;
-        padding: 1.5rem;
     }
 }
 
@@ -620,7 +580,6 @@ h1 {
 }
 
 
-
 /* Project pages on smaller screens */
 
 @media (max-width: 600px) {
@@ -640,11 +599,6 @@ h1 {
 
     .project-header h1 {
         font-size: clamp(2.5rem, 13vw, 3.5rem);
-    }
-
-    .project-header__status {
-        padding-top: 0.25rem;
-        font-size: 0.68rem;
     }
 
     .project-header__purpose {
@@ -668,49 +622,6 @@ h1 {
         grid-template-columns: 2.5rem minmax(0, 1fr);
         gap: 0.75rem;
     }
-}
-
-
-/* =========================================================
-   Standalone log entries
-   Retained because this may still be used outside Logbook.
-   ========================================================= */
-
-.log-entry {
-    max-width: 42rem;
-    margin-top: 5rem;
-}
-
-.log-entry time {
-    display: block;
-
-    margin-bottom: 0.75rem;
-
-    color: #666;
-
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-
-.log-entry h2 {
-    margin: 0 0 1.5rem;
-
-    font-size: 1.6rem;
-    font-weight: 500;
-    line-height: 1.25;
-}
-
-.log-entry p {
-    line-height: 1.7;
-}
-
-.log-entry img {
-    display: block;
-
-    max-width: 80%;
-    height: auto;
-    margin: 2rem auto;
 }
 
 

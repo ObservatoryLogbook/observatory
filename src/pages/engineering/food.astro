@@ -2,27 +2,10 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import RelatedObservations from "../../components/RelatedObservations.astro";
+import { getRecipesByCategory } from "../../lib/food.ts"
 
 const recipes = await getCollection("food-recipes");
-
-const categoryOrder = [
-    "Dinner",
-    "Sweets",
-    "Snacks",
-    "Bread",
-    "Other",
-] as const;
-
-const recipesByCategory = categoryOrder
-    .map((category) => ({
-        category,
-        recipes: recipes
-            .filter((recipe) => recipe.data.category === category)
-            .toSorted((a, b) =>
-                a.data.title.localeCompare(b.data.title)
-            ),
-    }))
-    .filter((group) => group.recipes.length > 0);
+const recipesByCategory = await getRecipesByCategory();
 ---
 
 <BaseLayout title="Food">
