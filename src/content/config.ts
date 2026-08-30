@@ -133,7 +133,8 @@ const trainingProgrammes = defineCollection({
     schema: z.object({
         day: z.enum([
             "Monday",
-            "Wednesday",
+            "Tuesday",
+            "Thursday",
             "Friday",
             "Sunday",
         ]),

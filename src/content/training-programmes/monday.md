@@ -1,29 +1,21 @@
 ---
 day: Monday
-started: 2026-05-17
-description: Mixed accessory and skill work.
+started: 2026-08-31
+description: Chest focus, all exercises done as tempo exercises (explosive concentric phase, pause 2 sec, 3 sec eccentric phase)
 order: 1
 ---
 
-### JM press
-3 sets · 5–8 reps
+### Single-arm lateral cable raises
+3 sets · 4-6 reps
 
-### Narrow neutral-grip lat pulldown
-2 sets · target 8 reps
-
-### Cable fly
-3 sets · 10–12 reps  
-Cable height 18
-
-### Progression to Nordic curls
-3 sets · target 8–10 reps
-
-### Dumbbell shoulder press
-3 sets · 6–10 reps
+### Inclince dumbbell presses
+3 sets · 4-6 reps
 
 ### High row
-3 sets · 15 reps  
-Wide bar
+3 sets · 6-8 reps  
+
+### Hammer preacher bicep curls
+2 sets · 6-8 (max 10) reps
 
 ### Pike push-ups
 2 sets · target 12 reps

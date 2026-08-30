@@ -56,9 +56,7 @@ function normaliseExercise(
 }
 
 function parseDate(value: string) {
-    const datePart = value.split(" ")[0];
-
-    const [day, month, year] = datePart
+    const [day, month, year] = value
         .split("/")
         .map(Number);
 
@@ -73,10 +71,6 @@ export async function getPerformanceData():
     const rows = await parseTrainingCsv();
 
     return rows
-        .filter(
-            (row) =>
-                row["SætRolle"] === "Top single"
-        )
         .map((row) => ({
             date: parseDate(row["Dato"]),
             exercise: normaliseExercise(
