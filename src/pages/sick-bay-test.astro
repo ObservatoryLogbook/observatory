@@ -1,0 +1,124 @@
+---
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Sick Bay Test | Observatory</title>
+  </head>
+
+  <body>
+    <main>
+      <h1>Sick Bay — Supabase Test</h1>
+
+      <form id="login-form">
+        <label>
+          Email
+          <input id="email" type="email" required />
+        </label>
+
+        <label>
+          Password
+          <input id="password" type="password" required />
+        </label>
+
+        <button type="submit">Log in</button>
+      </form>
+
+      <p id="status">Not authenticated.</p>
+
+      <section id="measurement" hidden>
+        <h2>Latest body measurement</h2>
+
+        <dl>
+          <dt>Measured</dt>
+          <dd id="measured-on"></dd>
+
+          <dt>Weight</dt>
+          <dd id="weight"></dd>
+
+          <dt>Body fat</dt>
+          <dd id="body-fat"></dd>
+
+          <dt>Muscle</dt>
+          <dd id="muscle"></dd>
+
+          <dt>Source</dt>
+          <dd id="source"></dd>
+        </dl>
+      </section>
+    </main>
+
+    <script>
+      import { createClient } from "@supabase/supabase-js";
+
+      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+      const supabaseKey = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const form = document.querySelector<HTMLFormElement>("#login-form");
+      const status = document.querySelector<HTMLParagraphElement>("#status");
+      const measurement =
+        document.querySelector<HTMLElement>("#measurement");
+
+      if (!form || !status || !measurement) {
+        throw new Error("Sick Bay test UI could not be initialized.");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email =
+          document.querySelector<HTMLInputElement>("#email")?.value;
+        const password =
+          document.querySelector<HTMLInputElement>("#password")?.value;
+
+        if (!email || !password) return;
+
+        status.textContent = "Authenticating…";
+        measurement.hidden = true;
+
+        const { error: authError } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+        if (authError) {
+          status.textContent = `Authentication failed: ${authError.message}`;
+          return;
+        }
+
+        status.textContent = "Authenticated ✓";
+
+        const { data, error: dataError } = await supabase
+          .from("body_measurements")
+          .select("*")
+          .order("measured_on", { ascending: false })
+          .limit(1)
+          .single();
+
+        if (dataError) {
+          status.textContent =
+            `Authenticated, but data retrieval failed: ${dataError.message}`;
+          return;
+        }
+
+        document.querySelector("#measured-on")!.textContent =
+          data.measured_on;
+        document.querySelector("#weight")!.textContent =
+          `${data.weight_kg} kg`;
+        document.querySelector("#body-fat")!.textContent =
+          `${data.body_fat_pct} %`;
+        document.querySelector("#muscle")!.textContent =
+          `${data.muscle_pct} %`;
+        document.querySelector("#source")!.textContent =
+          data.source;
+
+        measurement.hidden = false;
+      });
+    </script>
+  </body>
+</html>
