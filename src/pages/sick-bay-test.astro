@@ -48,6 +48,24 @@
           <dd id="source"></dd>
         </dl>
       </section>
+
+      <hr />
+
+      <h2>Write test</h2>
+
+      <button id="insert-test">
+        Insert ridiculous test measurement
+      </button>
+
+      <p id="write-status"></p>
+
+
+      <button id="delete-test">
+        Delete ridiculous test measurement
+      </button>
+
+      <p id="delete-status"></p>
+
     </main>
 
     <script>
@@ -118,6 +136,62 @@
           data.source;
 
         measurement.hidden = false;
+      });
+
+
+      const insertTestButton = document.querySelector<HTMLButtonElement>("#insert-test");
+      const writeStatus = document.querySelector<HTMLParagraphElement>("#write-status");
+
+      insertTestButton?.addEventListener("click", async () => {
+        if (!writeStatus) return;
+
+        writeStatus.textContent = "Attempting insert...";
+
+        const { data, error } = await supabase
+          .from("body_measurements")
+          .insert({
+            measured_on: "2026-09-09",
+            source: "write-test",
+            weight_kg: 999,
+            body_fat_pct: 99,
+            muscle_pct: 1,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          writeStatus.textContent = `Insert failed: ${error.message}`;
+          return;
+        }
+
+        writeStatus.textContent =
+          `Insert succeeded: ${data.weight_kg} kg, ` +
+          `${data.body_fat_pct}% fat, ${data.muscle_pct}% muscle`;
+      });
+
+      const deleteTestButton =
+        document.querySelector<HTMLButtonElement>("#delete-test");
+
+      const deleteStatus =
+        document.querySelector<HTMLParagraphElement>("#delete-status");
+
+      deleteTestButton?.addEventListener("click", async () => {
+        if (!deleteStatus) return;
+
+        deleteStatus.textContent = "Attempting delete...";
+
+        const { error } = await supabase
+          .from("body_measurements")
+          .delete()
+          .eq("source", "write-test")
+          .eq("weight_kg", 999);
+
+        if (error) {
+          deleteStatus.textContent = `Delete failed: ${error.message}`;
+          return;
+        }
+
+        deleteStatus.textContent = "Delete succeeded.";
       });
     </script>
   </body>
