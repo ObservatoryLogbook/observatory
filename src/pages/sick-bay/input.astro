@@ -1,0 +1,1343 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Observatory">
+  <main class="sick-bay-input">
+    <h1>Sick Bay Input</h1>
+
+    <form id="login-form">
+      <label>
+        Email
+        <input id="email" type="email" required />
+      </label>
+
+      <label>
+        Password
+        <input id="password" type="password" required />
+      </label>
+
+      <button type="submit">Log in</button>
+    </form>
+
+    <p id="auth-status">Checking authentication...</p>
+
+    <section id="input-area" hidden>
+
+      <!--- ------- Karada measurement ------- --->
+
+      <section
+        id="karada-entry"
+        class="sick-bay-entry"
+      >
+        <h2>KaradaScan</h2>
+
+        <form
+          id="karada-form"
+          class="sick-bay-form"
+        >
+          <label>
+            Date
+            <input
+              id="karada-date"
+              type="date"
+              required
+            />
+          </label>
+
+          <label>
+            Weight (kg)
+            <input
+              id="karada-weight"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Body fat (%)
+            <input
+              id="karada-body-fat"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Muscle (%)
+            <input
+              id="karada-muscle"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <button type="submit">
+            Save KaradaScan
+          </button>
+        </form>
+
+        <p
+          id="karada-status"
+          class="sick-bay-entry__status"
+        ></p>
+      </section>
+
+      <!--- ------- Circumferences ------- --->
+
+      <section
+        id="circumferences-entry"
+        class="sick-bay-entry"
+      >
+        <h2>Circumferences</h2>
+
+        <form
+          id="circumferences-form"
+          class="sick-bay-form"
+        >
+          <label>
+            Date
+            <input
+              id="circumference-date"
+              type="date"
+              required
+            />
+          </label>
+
+          <label>
+            Shoulders (cm)
+            <input
+              id="shoulders"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Chest (cm)
+            <input
+              id="chest"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Waist (cm)
+            <input
+              id="waist"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Hips (cm)
+            <input
+              id="hips"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Upper arm (cm)
+            <input
+              id="left-upper-arm"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <label>
+            Thigh (cm)
+            <input
+              id="left-thigh"
+              type="number"
+              step="0.1"
+              inputmode="decimal"
+              required
+            />
+          </label>
+
+          <button type="submit">
+            Save circumferences
+          </button>
+        </form>
+
+        <p
+          id="circumferences-status"
+          class="sick-bay-entry__status"
+        ></p>
+      </section>
+
+      <!--- ------- Blood pressure ------- --->
+
+      <section
+        id="blood-pressure-entry"
+        class="sick-bay-entry"
+      >
+        <h2>Blood pressure</h2>
+
+        <form
+          id="blood-pressure-form"
+          class="sick-bay-form"
+        >
+          <label>
+            Date
+            <input
+              id="blood-pressure-date"
+              type="date"
+              required
+            />
+          </label>
+
+          <fieldset>
+            <legend>Reading 1</legend>
+
+            <label>
+              Systolic
+              <input
+                id="bp1-systolic"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+
+            <label>
+              Diastolic
+              <input
+                id="bp1-diastolic"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+
+            <label>
+              Pulse
+              <input
+                id="bp1-pulse"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Reading 2</legend>
+
+            <label>
+              Systolic
+              <input
+                id="bp2-systolic"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+
+            <label>
+              Diastolic
+              <input
+                id="bp2-diastolic"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+
+            <label>
+              Pulse
+              <input
+                id="bp2-pulse"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Reading 3</legend>
+
+            <label>
+              Systolic
+              <input
+                id="bp3-systolic"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+
+            <label>
+              Diastolic
+              <input
+                id="bp3-diastolic"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+
+            <label>
+              Pulse
+              <input
+                id="bp3-pulse"
+                type="number"
+                inputmode="numeric"
+                required
+              />
+            </label>
+          </fieldset>
+
+          <button type="submit">
+            Save blood pressure
+          </button>
+        </form>
+
+        <p
+          id="blood-pressure-status"
+          class="sick-bay-entry__status"
+        ></p>
+      </section>
+
+      <!--- ------- InBody Scan ------- --->
+
+      <section
+        id="inbody-entry"
+        class="sick-bay-entry"
+      >
+        <h2>InBody</h2>
+
+        <form
+          id="inbody-form"
+          class="sick-bay-form"
+        >
+          <label>
+            Date
+            <input
+              id="inbody-date"
+              type="date"
+              required
+            />
+          </label>
+
+          <fieldset>
+            <legend>Assessment</legend>
+
+            <label>
+              Weight (kg)
+              <input
+                id="inbody-weight"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+                required
+              />
+            </label>
+
+            <label>
+              Total body water (L)
+              <input
+                id="inbody-water"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+              />
+            </label>
+
+            <label>
+              Protein (kg)
+              <input
+                id="inbody-protein"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+              />
+            </label>
+
+            <label>
+              Minerals (kg)
+              <input
+                id="inbody-minerals"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+              />
+            </label>
+
+            <label>
+              Body fat mass (kg)
+              <input
+                id="inbody-fat-mass"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+                required
+              />
+            </label>
+
+            <label>
+              Skeletal muscle mass (kg)
+              <input
+                id="inbody-muscle-mass"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+                required
+              />
+            </label>
+
+            <label>
+              Body fat (%)
+              <input
+                id="inbody-body-fat"
+                type="number"
+                step="0.1"
+                inputmode="decimal"
+                required
+              />
+            </label>
+
+            <label>
+              InBody Score
+              <input
+                id="inbody-score"
+                type="number"
+                step="1"
+                inputmode="numeric"
+              />
+            </label>
+
+            <label>
+              Visceral fat level
+              <input
+                id="inbody-visceral-fat"
+                type="number"
+                step="1"
+                inputmode="numeric"
+              />
+            </label>
+          </fieldset>
+
+          <fieldset class="impedance-fieldset">
+            <legend>Impedance</legend>
+
+
+            <div class="impedance-table">
+                <div></div>
+                <div class="impedance-label">Right arm</div>
+                <div class="impedance-label">Left arm</div>
+                <div class="impedance-label">Trunk</div>
+                <div class="impedance-label">Right leg</div>
+                <div class="impedance-label">Left leg</div>
+
+                <div class="impedance-frequency">20 kHz</div>
+                <input id="inbody-ra-20" type="number" step="0.1" inputmode="decimal" aria-label="Right arm, 20 kHz" />
+                <input id="inbody-la-20" type="number" step="0.1" inputmode="decimal" aria-label="Left arm, 20 kHz" />
+                <input id="inbody-trunk-20" type="number" step="0.1" inputmode="decimal" aria-label="Trunk, 20 kHz" />
+                <input id="inbody-rl-20" type="number" step="0.1" inputmode="decimal" aria-label="Right leg, 20 kHz" />
+                <input id="inbody-ll-20" type="number" step="0.1" inputmode="decimal" aria-label="Left leg, 20 kHz" />
+
+                <div class="impedance-frequency">100 kHz</div>
+                <input id="inbody-ra-100" type="number" step="0.1" inputmode="decimal" aria-label="Right arm, 100 kHz" />
+                <input id="inbody-la-100" type="number" step="0.1" inputmode="decimal" aria-label="Left arm, 100 kHz" />
+                <input id="inbody-trunk-100" type="number" step="0.1" inputmode="decimal" aria-label="Trunk, 100 kHz" />
+                <input id="inbody-rl-100" type="number" step="0.1" inputmode="decimal" aria-label="Right leg, 100 kHz" />
+                <input id="inbody-ll-100" type="number" step="0.1" inputmode="decimal" aria-label="Left leg, 100 kHz" />
+            </div>
+
+          </fieldset>
+
+          <button type="submit">
+            Save InBody scan
+          </button>
+        </form>
+
+        <p
+          id="inbody-status"
+          class="sick-bay-entry__status"
+        ></p>
+      </section>
+
+    </section>
+  </main>
+
+<!--- 
+---------------------------------------------------- 
+---------------------------------------------------- 
+--->
+
+  <script>
+    import { createClient } from "@supabase/supabase-js";
+
+    const supabaseUrl =
+      import.meta.env.PUBLIC_SUPABASE_URL;
+
+    const supabaseKey =
+      import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+    const supabase =
+      createClient(supabaseUrl, supabaseKey);
+
+    const loginForm =
+      document.querySelector<HTMLFormElement>("#login-form");
+
+    const authStatus =
+      document.querySelector<HTMLParagraphElement>("#auth-status");
+
+    const inputArea =
+      document.querySelector<HTMLElement>("#input-area");
+
+    const circumferenceForm =
+      document.querySelector<HTMLFormElement>(
+        "#circumferences-form"
+      );
+
+    const circumferenceStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#circumferences-status"
+      );
+
+    if (
+      !loginForm ||
+      !authStatus ||
+      !inputArea ||
+      !circumferenceForm ||
+      !circumferenceStatus
+    ) {
+      throw new Error(
+        "Sick Bay input UI could not be initialized."
+      );
+    }
+
+    function getLocalDate() {
+      const today = new Date();
+
+      const year = today.getFullYear();
+      const month = String(
+        today.getMonth() + 1
+      ).padStart(2, "0");
+      const day = String(
+        today.getDate()
+      ).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    const dateInput =
+      document.querySelector<HTMLInputElement>(
+        "#circumference-date"
+      );
+
+    if (dateInput) {
+      dateInput.value = getLocalDate();
+    }
+
+    async function checkWriteAccess() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        authStatus.textContent = "Not authenticated.";
+        loginForm.hidden = false;
+        inputArea.hidden = true;
+        return;
+      }
+
+      const {
+        data: canWrite,
+        error,
+      } = await supabase.rpc(
+        "can_write_domain",
+        {
+          requested_domain: "body",
+        }
+      );
+
+      if (error) {
+        authStatus.textContent =
+          `Could not check write access: ${error.message}`;
+
+        inputArea.hidden = true;
+        return;
+      }
+
+      loginForm.hidden = true;
+
+      if (!canWrite) {
+        authStatus.textContent =
+          "Authenticated, but you do not have write access.";
+
+        inputArea.hidden = true;
+        return;
+      }
+
+      authStatus.textContent =
+        "Authenticated · write access ✓";
+
+      inputArea.hidden = false;
+    }
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const email =
+          document.querySelector<HTMLInputElement>(
+            "#email"
+          )?.value;
+
+        const password =
+          document.querySelector<HTMLInputElement>(
+            "#password"
+          )?.value;
+
+        if (!email || !password) return;
+
+        authStatus.textContent =
+          "Authenticating...";
+
+        const { error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+        if (error) {
+          authStatus.textContent =
+            `Authentication failed: ${error.message}`;
+
+          return;
+        }
+
+        await checkWriteAccess();
+      }
+    );
+
+    /* Circumferences */
+
+    circumferenceForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const measuredOn =
+          document.querySelector<HTMLInputElement>(
+            "#circumference-date"
+          )?.value;
+
+        const shoulders =
+          document.querySelector<HTMLInputElement>(
+            "#shoulders"
+          )?.value;
+
+        const chest =
+          document.querySelector<HTMLInputElement>(
+            "#chest"
+          )?.value;
+
+        const waist =
+          document.querySelector<HTMLInputElement>(
+            "#waist"
+          )?.value;
+
+        const hips =
+          document.querySelector<HTMLInputElement>(
+            "#hips"
+          )?.value;
+
+        const leftUpperArm =
+          document.querySelector<HTMLInputElement>(
+            "#left-upper-arm"
+          )?.value;
+
+        const leftThigh =
+          document.querySelector<HTMLInputElement>(
+            "#left-thigh"
+          )?.value;
+
+        if (
+          !measuredOn ||
+          !shoulders ||
+          !chest ||
+          !waist ||
+          !hips ||
+          !leftUpperArm ||
+          !leftThigh
+        ) {
+          circumferenceStatus.textContent =
+            "Please complete all fields.";
+
+          return;
+        }
+
+        circumferenceStatus.textContent =
+          "Saving...";
+
+        const { data, error } =
+          await supabase
+            .from("circumferences")
+            .insert({
+              measured_on: measuredOn,
+              shoulders_cm: Number(shoulders),
+              chest_cm: Number(chest),
+              waist_cm: Number(waist),
+              hips_cm: Number(hips),
+              left_upper_arm_cm:
+                Number(leftUpperArm),
+              left_thigh_cm:
+                Number(leftThigh),
+            })
+            .select()
+            .single();
+
+        if (error) {
+          circumferenceStatus.textContent =
+            `Save failed: ${error.message}`;
+
+          return;
+        }
+
+        circumferenceStatus.textContent =
+          `Saved ${data.measured_on}: ` +
+          `shoulders ${data.shoulders_cm} cm, ` +
+          `chest ${data.chest_cm} cm, ` +
+          `waist ${data.waist_cm} cm, ` +
+          `hips ${data.hips_cm} cm, ` +
+          `upper arm ${data.left_upper_arm_cm} cm, ` +
+          `thigh ${data.left_thigh_cm} cm.`;
+        circumferenceForm.reset();
+
+        if (dateInput) {
+          dateInput.value = getLocalDate();
+        }
+      }
+    );
+
+    /* Blood pressure */
+
+    const bloodPressureForm =
+      document.querySelector<HTMLFormElement>(
+        "#blood-pressure-form"
+      );
+
+    const bloodPressureStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#blood-pressure-status"
+      );
+
+    const bloodPressureDate =
+      document.querySelector<HTMLInputElement>(
+        "#blood-pressure-date"
+      );
+
+    if (bloodPressureDate) {
+      bloodPressureDate.value = getLocalDate();
+    }
+
+    bloodPressureForm?.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        if (!bloodPressureStatus) return;
+
+        const measuredOn =
+          bloodPressureDate?.value;
+
+        const readings = [1, 2, 3].map(
+          (readingNumber) => ({
+            measured_on: measuredOn,
+            reading_number: readingNumber,
+            systolic: Number(
+              document.querySelector<HTMLInputElement>(
+                `#bp${readingNumber}-systolic`
+              )?.value
+            ),
+            diastolic: Number(
+              document.querySelector<HTMLInputElement>(
+                `#bp${readingNumber}-diastolic`
+              )?.value
+            ),
+            pulse: Number(
+              document.querySelector<HTMLInputElement>(
+                `#bp${readingNumber}-pulse`
+              )?.value
+            ),
+          })
+        );
+
+        const incomplete =
+          !measuredOn ||
+          readings.some(
+            (reading) =>
+              !reading.systolic ||
+              !reading.diastolic ||
+              !reading.pulse
+          );
+
+        if (incomplete) {
+          bloodPressureStatus.textContent =
+            "Please complete all fields.";
+          return;
+        }
+
+        bloodPressureStatus.textContent =
+          "Saving...";
+
+        const { data, error } =
+          await supabase
+            .from("blood_pressure")
+            .insert(readings)
+            .select();
+
+        if (error) {
+          bloodPressureStatus.textContent =
+            `Save failed: ${error.message}`;
+          return;
+        }
+
+        const ordered =
+          [...data].sort(
+            (a, b) =>
+              a.reading_number -
+              b.reading_number
+          );
+
+        bloodPressureStatus.textContent =
+          `Saved ${measuredOn}: ` +
+          ordered
+            .map(
+              (reading) =>
+                `#${reading.reading_number} ` +
+                `${reading.systolic}/` +
+                `${reading.diastolic}, ` +
+                `pulse ${reading.pulse}`
+            )
+            .join(" · ");
+
+        bloodPressureForm.reset();
+
+        if (bloodPressureDate) {
+          bloodPressureDate.value = getLocalDate();
+        }
+      }
+    );
+
+    /* Karada measurement */
+
+    const karadaForm =
+      document.querySelector<HTMLFormElement>(
+        "#karada-form"
+      );
+
+    const karadaStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#karada-status"
+      );
+
+    const karadaDate =
+      document.querySelector<HTMLInputElement>(
+        "#karada-date"
+      );
+
+    if (karadaDate) {
+      karadaDate.value = getLocalDate();
+    }
+
+    karadaForm?.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        if (!karadaStatus) return;
+
+        const measuredOn =
+          karadaDate?.value;
+
+        const weight =
+          document.querySelector<HTMLInputElement>(
+            "#karada-weight"
+          )?.value;
+
+        const bodyFat =
+          document.querySelector<HTMLInputElement>(
+            "#karada-body-fat"
+          )?.value;
+
+        const muscle =
+          document.querySelector<HTMLInputElement>(
+            "#karada-muscle"
+          )?.value;
+
+        if (
+          !measuredOn ||
+          !weight ||
+          !bodyFat ||
+          !muscle
+        ) {
+          karadaStatus.textContent =
+            "Please complete all fields.";
+          return;
+        }
+
+        karadaStatus.textContent =
+          "Saving...";
+
+        const { data, error } =
+          await supabase
+            .from("body_measurements")
+            .insert({
+              measured_on: measuredOn,
+              source: "karada",
+              weight_kg: Number(weight),
+              body_fat_pct: Number(bodyFat),
+              muscle_pct: Number(muscle),
+            })
+            .select()
+            .single();
+
+        if (error) {
+          karadaStatus.textContent =
+            `Save failed: ${error.message}`;
+          return;
+        }
+
+        karadaStatus.textContent =
+          `Saved ${data.measured_on}: ` +
+          `${data.weight_kg} kg, ` +
+          `${data.body_fat_pct}% body fat, ` +
+          `${data.muscle_pct}% muscle.`;
+
+        karadaForm.reset();
+
+        if (karadaDate) {
+          karadaDate.value = getLocalDate();
+        }
+      }
+    );
+
+    /* InBody Scan */
+
+    function numberOrNull(
+      selector: string
+    ): number | null {
+      const value =
+        document.querySelector<HTMLInputElement>(
+          selector
+        )?.value;
+
+      if (!value) {
+        return null;
+      }
+
+      return Number(value);
+    }
+
+    const inbodyForm =
+      document.querySelector<HTMLFormElement>(
+        "#inbody-form"
+      );
+
+    const inbodyStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#inbody-status"
+      );
+
+    const inbodyDate =
+      document.querySelector<HTMLInputElement>(
+        "#inbody-date"
+      );
+
+    if (inbodyDate) {
+      inbodyDate.value = getLocalDate();
+    }
+
+    inbodyForm?.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        if (!inbodyStatus) return;
+
+        const measuredOn =
+          inbodyDate?.value;
+
+        const weight =
+          numberOrNull("#inbody-weight");
+
+        const bodyFatMass =
+          numberOrNull("#inbody-fat-mass");
+
+        const skeletalMuscleMass =
+          numberOrNull("#inbody-muscle-mass");
+
+        const bodyFatPct =
+          numberOrNull("#inbody-body-fat");
+
+        if (
+          !measuredOn ||
+          weight === null ||
+          bodyFatMass === null ||
+          skeletalMuscleMass === null ||
+          bodyFatPct === null
+        ) {
+          inbodyStatus.textContent =
+            "Please complete all required assessment fields.";
+          return;
+        }
+
+        const values = {
+          p_measured_on: measuredOn,
+
+          p_weight_kg: weight,
+          p_total_body_water_l:
+            numberOrNull("#inbody-water"),
+          p_protein_kg:
+            numberOrNull("#inbody-protein"),
+          p_minerals_kg:
+            numberOrNull("#inbody-minerals"),
+          p_body_fat_mass_kg:
+            bodyFatMass,
+          p_skeletal_muscle_mass_kg:
+            skeletalMuscleMass,
+          p_body_fat_pct:
+            bodyFatPct,
+
+          p_inbody_score:
+            numberOrNull("#inbody-score"),
+          p_visceral_fat_level:
+            numberOrNull(
+              "#inbody-visceral-fat"
+            ),
+
+          p_ra_20khz:
+            numberOrNull("#inbody-ra-20"),
+          p_la_20khz:
+            numberOrNull("#inbody-la-20"),
+          p_trunk_20khz:
+            numberOrNull("#inbody-trunk-20"),
+          p_rl_20khz:
+            numberOrNull("#inbody-rl-20"),
+          p_ll_20khz:
+            numberOrNull("#inbody-ll-20"),
+
+          p_ra_100khz:
+            numberOrNull("#inbody-ra-100"),
+          p_la_100khz:
+            numberOrNull("#inbody-la-100"),
+          p_trunk_100khz:
+            numberOrNull("#inbody-trunk-100"),
+          p_rl_100khz:
+            numberOrNull("#inbody-rl-100"),
+          p_ll_100khz:
+            numberOrNull("#inbody-ll-100"),
+        };
+
+        inbodyStatus.textContent =
+          "Saving...";
+
+        const { error } =
+          await supabase.rpc(
+            "save_inbody_scan",
+            values
+          );
+
+        if (error) {
+          inbodyStatus.textContent =
+            `Save failed: ${error.message}`;
+          return;
+        }
+
+        inbodyStatus.textContent =
+          `Saved ${measuredOn}: ` +
+          `${weight} kg, ` +
+          `${bodyFatMass} kg body fat, ` +
+          `${skeletalMuscleMass} kg skeletal muscle, ` +
+          `${bodyFatPct}% body fat` +
+          (
+            values.p_inbody_score !== null
+              ? `, score ${values.p_inbody_score}`
+              : ""
+          ) +
+          (
+            values.p_visceral_fat_level !== null
+              ? `, visceral fat ${values.p_visceral_fat_level}`
+              : ""
+          ) +
+          ".";
+
+        inbodyForm.reset();
+
+        if (inbodyDate) {
+          inbodyDate.value = getLocalDate();
+        }
+      }
+    );
+
+    await checkWriteAccess();
+  </script>
+</BaseLayout>
+
+<style>
+  .sick-bay-input {
+      width: min(100% - 2rem, 52rem);
+      margin: 0 auto;
+      padding: 1.5rem 0 4rem;
+  }
+
+  .sick-bay-input__header {
+      margin-bottom: 2.5rem;
+  }
+
+  .sick-bay-input__status {
+      margin: 0.75rem 0 0;
+
+      color: var(--text-muted);
+      font-size: 0.9rem;
+  }
+
+  .sick-bay-entry {
+      margin-top: 2rem;
+  }
+
+  .sick-bay-entry > h2 {
+      margin: 0 0 1.5rem;
+      padding: 0;
+
+      background: none;
+      border-radius: 0;
+
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      font-weight: 500;
+      line-height: 1.2;
+  }
+
+  .sick-bay-form {
+      display: grid;
+      gap: 1rem;
+  }
+
+  .sick-bay-form label {
+      display: grid;
+      gap: 0.35rem;
+
+      font-size: 0.9rem;
+      font-weight: 500;
+  }
+
+  .sick-bay-form input[type="date"] {
+      width: 11rem;
+      max-width: 100%;
+  }
+
+  .sick-bay-form input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.8rem 0.9rem;
+
+      font: inherit;
+      font-size: 16px;
+
+      color: var(--text-primary);
+      background: var(--surface-neutral);
+      border: 1px solid var(--line-default);
+      border-radius: 0.35rem;
+  }
+
+  .sick-bay-form input:focus {
+      outline: 2px solid var(--line-green);
+      outline-offset: 2px;
+  }
+
+  .sick-bay-form button {
+      justify-self: end;
+
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+
+      font: inherit;
+      font-weight: 500;
+
+      color: var(--text-primary);
+      background: var(--green-surface);
+      border: 1px solid var(--line-green);
+      border-radius: 0.35rem;
+
+      cursor: pointer;
+  }
+
+  .sick-bay-form fieldset {
+      display: grid;
+      gap: 1rem;
+
+      margin: 0;
+      padding: 1rem;
+
+      border: 1px solid var(--line-default);
+      border-radius: 0.35rem;
+  }
+
+  .sick-bay-form legend {
+      padding: 0 0.35rem;
+
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+  }
+
+  .sick-bay-entry__status {
+      margin: 1rem 0 0;
+
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+  }
+
+  #auth-status {
+      margin: 0.5rem 0 1.75rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+  }
+
+  #karada-form {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+  }
+
+  #karada-form label:first-child {
+      grid-column: 1 / -1;
+  }
+
+  #karada-form button {
+      grid-column: 1 / -1;
+  }
+
+  #login-form input {
+      font-size: 16px;
+  }
+
+  #blood-pressure-form fieldset {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+  }
+
+  #blood-pressure-form legend {
+      padding: 0;
+      margin-bottom: 0.75rem;
+
+      font-weight: 500;
+  }
+
+  #inbody-form fieldset {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+  }
+
+  #inbody-form legend {
+      padding: 0;
+      margin-bottom: 1rem;
+
+      font-weight: 500;
+  }
+
+  .impedance-fieldset {
+      display: block;
+  }
+
+  .impedance-frequency {
+      font-weight: 600;
+  }
+
+  .impedance-table {
+      display: grid;
+      grid-template-columns: 6rem repeat(5, minmax(0, 1fr));
+      gap: 0.75rem 1rem;
+      align-items: end;
+  }
+
+  @media (min-width: 700px) {
+      .sick-bay-form {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .sick-bay-form > button,
+      .sick-bay-form > fieldset {
+          grid-column: 1 / -1;
+      }
+
+      .sick-bay-form fieldset {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .sick-bay-form fieldset > legend,
+      .sick-bay-form fieldset > h3 {
+          grid-column: 1 / -1;
+      }
+  }
+
+  @media (min-width: 900px) {
+      #circumferences-form {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1.25rem;
+      }
+
+      #circumferences-form label:first-child {
+          grid-column: 1 / -1;
+      }
+
+      #circumferences-form button {
+          grid-column: 1 / -1;
+      }
+
+      #blood-pressure-form fieldset {
+          grid-template-columns: repeat(3, minmax(0, 10rem));
+          column-gap: 1.25rem;
+      }
+
+      .sick-bay-form .impedance-fieldset {
+          display: block;
+      }
+
+      .impedance-grid {
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 1rem;
+      }
+
+      .impedance-group h3 {
+          margin: 0 0 1rem;
+      }
+
+      .impedance-group + .impedance-group {
+          margin-top: 1.5rem;
+      }
+    }
+  }
+</style>

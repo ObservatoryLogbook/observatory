@@ -49,22 +49,62 @@
         </dl>
       </section>
 
-      <hr />
+    <hr />
 
-      <h2>Write test</h2>
+    <section id="body-entry" hidden>
+      <h2>Add body measurement</h2>
 
-      <button id="insert-test">
-        Insert ridiculous test measurement
-      </button>
+      <form id="body-form">
+        <label>
+          Date
+          <input
+            id="body-date"
+            type="date"
+            required
+          />
+        </label>
 
-      <p id="write-status"></p>
+        <label>
+          Weight (kg)
+          <input
+            id="body-weight"
+            type="number"
+            step="0.1"
+            inputmode="decimal"
+            required
+          />
+        </label>
 
+        <label>
+          Body fat (%)
+          <input
+            id="body-fat-input"
+            type="number"
+            step="0.1"
+            inputmode="decimal"
+            required
+          />
+        </label>
 
-      <button id="delete-test">
-        Delete ridiculous test measurement
-      </button>
+        <label>
+          Muscle (%)
+          <input
+            id="body-muscle-input"
+            type="number"
+            step="0.1"
+            inputmode="decimal"
+            required
+          />
+        </label>
 
-      <p id="delete-status"></p>
+        <button type="submit">
+          Save measurement
+        </button>
+      </form>
+
+      <p id="body-entry-status"></p>
+    </section>
+
 
     </main>
 
@@ -111,6 +151,13 @@
 
         status.textContent = "Authenticated ✓";
 
+        const bodyEntry =
+          document.querySelector<HTMLElement>("#body-entry");
+
+        if (bodyEntry) {
+          bodyEntry.hidden = false;
+        }
+
         const { data, error: dataError } = await supabase
           .from("body_measurements")
           .select("*")
@@ -139,59 +186,58 @@
       });
 
 
-      const insertTestButton = document.querySelector<HTMLButtonElement>("#insert-test");
-      const writeStatus = document.querySelector<HTMLParagraphElement>("#write-status");
+      const bodyForm =
+        document.querySelector<HTMLFormElement>("#body-form");
 
-      insertTestButton?.addEventListener("click", async () => {
-        if (!writeStatus) return;
+      const bodyEntryStatus =
+        document.querySelector<HTMLParagraphElement>("#body-entry-status");
 
-        writeStatus.textContent = "Attempting insert...";
+      bodyForm?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!bodyEntryStatus) return;
+
+        const measuredOn =
+          document.querySelector<HTMLInputElement>("#body-date")?.value;
+
+        const weight =
+          document.querySelector<HTMLInputElement>("#body-weight")?.value;
+
+        const bodyFat =
+          document.querySelector<HTMLInputElement>("#body-fat-input")?.value;
+
+        const muscle =
+          document.querySelector<HTMLInputElement>("#body-muscle-input")?.value;
+
+        if (!measuredOn || !weight || !bodyFat || !muscle) {
+          bodyEntryStatus.textContent = "Please complete all fields.";
+          return;
+        }
+
+        bodyEntryStatus.textContent = "Saving...";
 
         const { data, error } = await supabase
           .from("body_measurements")
           .insert({
-            measured_on: "2026-09-09",
-            source: "write-test",
-            weight_kg: 999,
-            body_fat_pct: 99,
-            muscle_pct: 1,
+            measured_on: measuredOn,
+            source: "karada",
+            weight_kg: Number(weight),
+            body_fat_pct: Number(bodyFat),
+            muscle_pct: Number(muscle),
           })
           .select()
           .single();
 
         if (error) {
-          writeStatus.textContent = `Insert failed: ${error.message}`;
+          bodyEntryStatus.textContent =
+            `Save failed: ${error.message}`;
           return;
         }
 
-        writeStatus.textContent =
-          `Insert succeeded: ${data.weight_kg} kg, ` +
-          `${data.body_fat_pct}% fat, ${data.muscle_pct}% muscle`;
-      });
+        bodyEntryStatus.textContent =
+          `Saved measurement for ${data.measured_on}.`;
 
-      const deleteTestButton =
-        document.querySelector<HTMLButtonElement>("#delete-test");
-
-      const deleteStatus =
-        document.querySelector<HTMLParagraphElement>("#delete-status");
-
-      deleteTestButton?.addEventListener("click", async () => {
-        if (!deleteStatus) return;
-
-        deleteStatus.textContent = "Attempting delete...";
-
-        const { error } = await supabase
-          .from("body_measurements")
-          .delete()
-          .eq("source", "write-test")
-          .eq("weight_kg", 999);
-
-        if (error) {
-          deleteStatus.textContent = `Delete failed: ${error.message}`;
-          return;
-        }
-
-        deleteStatus.textContent = "Delete succeeded.";
+        bodyForm.reset();
       });
     </script>
   </body>
