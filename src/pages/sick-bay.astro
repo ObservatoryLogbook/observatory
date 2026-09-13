@@ -1,0 +1,1515 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Sick Bay">
+  <main class="sick-bay">
+    <header class="sick-bay-header">
+      <h1>Sick Bay</h1>
+
+      <p class="sick-bay-header__intro">
+        Body composition and health trends.
+      </p>
+    </header>
+
+    <p
+      id="auth-status"
+      aria-live="polite"
+    >
+      Checking authentication...
+    </p>
+
+    <form
+      id="login-form"
+      hidden
+    >
+      <label>
+        Email
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          required
+        />
+      </label>
+
+      <label>
+        Password
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+      </label>
+
+      <button type="submit">
+        Log in
+      </button>
+    </form>
+
+    <section
+      id="sick-bay-content"
+      hidden
+    >
+      <div class="sick-bay-tools">
+        <a
+          id="input-link"
+          href="/sick-bay/input"
+          hidden
+        >
+          Add measurements
+        </a>
+      </div>
+
+      <section class="sick-bay-section">
+        <h2>Current status</h2>
+
+        <div class="current-metrics">
+          <div class="current-metric">
+            <p class="current-metric__label">
+              Weight
+            </p>
+
+            <p
+              id="current-weight"
+              class="current-metric__value"
+            >
+              —
+            </p>
+
+            <p
+              id="current-weight-meta"
+              class="current-metric__meta"
+            >
+              7-day average
+            </p>
+
+            <div class="current-metric__trend">
+              <p
+                id="current-weight-trend"
+                class="current-metric__trend-value"
+              >
+                —
+              </p>
+
+              <p class="current-metric__trend-label">
+                12-week trend
+              </p>
+            </div>
+          </div>
+
+          <div class="current-metric">
+            <p class="current-metric__label">
+              Fat mass
+            </p>
+
+            <p
+              id="current-fat-mass"
+              class="current-metric__value"
+            >
+              —
+            </p>
+
+            <p
+              id="current-fat-mass-meta"
+              class="current-metric__meta"
+            >
+              7-day average
+            </p>
+
+            <div class="current-metric__trend">
+              <p
+                id="current-fat-mass-trend"
+                class="current-metric__trend-value"
+              >
+                —
+              </p>
+
+              <p class="current-metric__trend-label">
+                12-week trend
+              </p>
+            </div>
+          </div>
+
+          <div class="current-metric">
+            <p class="current-metric__label">
+              Muscle mass
+            </p>
+
+            <p
+              id="current-muscle-mass"
+              class="current-metric__value"
+            >
+              —
+            </p>
+
+            <p
+              id="current-muscle-mass-meta"
+              class="current-metric__meta"
+            >
+              7-day average
+            </p>
+
+            <div class="current-metric__trend">
+              <p
+                id="current-muscle-mass-trend"
+                class="current-metric__trend-value"
+              >
+                —
+              </p>
+
+              <p class="current-metric__trend-label">
+                12-week trend
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sick-bay-section">
+        <h2>History</h2>
+
+        <div class="weight-history">
+          <h3>Weight</h3>
+
+          <p class="weight-history__meta">
+            Last 365 days
+          </p>
+
+          <div class="weight-history-chart">
+            <svg
+              id="weight-history-chart"
+              viewBox="0 0 568 400"
+              role="img"
+              aria-label="Weight over the last 365 days"
+            ></svg>
+          </div>
+        </div>
+      </section>
+
+    </section>
+  </main>
+
+  <script>
+    import { createClient } from "@supabase/supabase-js";
+
+    const supabaseUrl =
+      import.meta.env.PUBLIC_SUPABASE_URL;
+
+    const supabaseKey =
+      import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+    const supabase =
+      createClient(supabaseUrl, supabaseKey);
+
+    const loginForm =
+      document.querySelector<HTMLFormElement>(
+        "#login-form"
+      );
+
+    const authStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#auth-status"
+      );
+
+    const sickBayContent =
+      document.querySelector<HTMLElement>(
+        "#sick-bay-content"
+      );
+
+    const inputLink =
+      document.querySelector<HTMLAnchorElement>(
+        "#input-link"
+      );
+
+    if (
+      !loginForm ||
+      !authStatus ||
+      !sickBayContent ||
+      !inputLink
+    ) {
+      throw new Error(
+        "Sick Bay UI could not be initialized."
+      );
+    }
+
+    type WeightObservation = {
+      measured_on: string;
+      weight_kg: number;
+      body_fat_pct: number;
+      muscle_pct: number;
+    };
+
+    type RollingAveragePoint = {
+      date: string;
+      mean: number | null;
+      n: number;
+    };
+
+    function getRolling7DayAverage(
+      observations: WeightObservation[]
+    ): RollingAveragePoint[] {
+      if (observations.length === 0) {
+        return [];
+      }
+
+      const byDate = new Map<string, number>();
+
+      for (const observation of observations) {
+        byDate.set(
+          observation.measured_on,
+          observation.weight_kg
+        );
+      }
+
+      const startDate = new Date(
+        `${observations[0].measured_on}T00:00:00`
+      );
+
+      const endDate = new Date();
+
+      const result: RollingAveragePoint[] = [];
+
+      for (
+        let current = new Date(startDate);
+        current <= endDate;
+        current.setDate(current.getDate() + 1)
+      ) {
+        const windowStart = new Date(current);
+        windowStart.setDate(windowStart.getDate() - 6);
+
+        let sum = 0;
+        let n = 0;
+
+        for (
+          let d = new Date(windowStart);
+          d <= current;
+          d.setDate(d.getDate() + 1)
+        ) {
+          const key = [
+            d.getFullYear(),
+            String(d.getMonth() + 1).padStart(2, "0"),
+            String(d.getDate()).padStart(2, "0"),
+          ].join("-");
+
+          const value = byDate.get(key);
+
+          if (value !== undefined) {
+            sum += value;
+            n += 1;
+          }
+        }
+
+        const currentKey = [
+          current.getFullYear(),
+          String(current.getMonth() + 1).padStart(2, "0"),
+          String(current.getDate()).padStart(2, "0"),
+        ].join("-");
+
+        result.push({
+          date: currentKey,
+          mean: n > 0 ? sum / n : null,
+          n,
+        });
+      }
+
+      return result;
+    }
+
+    function getHistoryStartDate(
+      days: number
+    ): string {
+      const today = new Date();
+
+      const start = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+
+      start.setDate(
+        start.getDate() - (days - 1)
+      );
+
+      return [
+        start.getFullYear(),
+        String(start.getMonth() + 1).padStart(2, "0"),
+        String(start.getDate()).padStart(2, "0"),
+      ].join("-");
+    }
+
+    type WeightTrend = {
+      slopeKgPerWeek: number;
+      n: number;
+      startDate: string;
+      endDate: string;
+    };
+
+    function dateToDayNumber(date: string): number {
+      const [year, month, day] =
+        date.split("-").map(Number);
+
+      return (
+        Date.UTC(year, month - 1, day) /
+        86_400_000
+      );
+    }
+
+    function getWeightTrend(
+      observations: WeightObservation[]
+    ): WeightTrend | null {
+      const today = new Date();
+
+      const todayKey = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, "0"),
+        String(today.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      const endDay =
+        dateToDayNumber(todayKey);
+
+      const startDay =
+        endDay - 83;
+
+      const recent =
+        observations.filter((observation) => {
+          const day =
+            dateToDayNumber(
+              observation.measured_on
+            );
+
+          return (
+            day >= startDay &&
+            day <= endDay
+          );
+        });
+
+      if (recent.length < 2) {
+        return null;
+      }
+
+      const points = recent.map(
+        (observation) => ({
+          x:
+            dateToDayNumber(
+              observation.measured_on
+            ) - startDay,
+          y: observation.weight_kg,
+        })
+      );
+
+      const meanX =
+        points.reduce(
+          (sum, point) => sum + point.x,
+          0
+        ) / points.length;
+
+      const meanY =
+        points.reduce(
+          (sum, point) => sum + point.y,
+          0
+        ) / points.length;
+
+      let numerator = 0;
+      let denominator = 0;
+
+      for (const point of points) {
+        numerator +=
+          (point.x - meanX) *
+          (point.y - meanY);
+
+        denominator +=
+          (point.x - meanX) ** 2;
+      }
+
+      if (denominator === 0) {
+        return null;
+      }
+
+      const slopeKgPerDay =
+        numerator / denominator;
+
+      return {
+        slopeKgPerWeek:
+          slopeKgPerDay * 7,
+        n: recent.length,
+        startDate:
+          recent[0].measured_on,
+        endDate:
+          recent[recent.length - 1]
+            .measured_on,
+      };
+    }
+
+    function renderWeightHistoryChart(
+      rawData: WeightObservation[],
+      rollingData: RollingAveragePoint[],
+      historyStartDate: string
+    ) {
+      const svg =
+        document.querySelector<SVGSVGElement>(
+          "#weight-history-chart"
+        );
+
+      if (!svg || rollingData.length === 0) {
+        return;
+      }
+
+      const width = 568;
+      const height = 400;
+
+      const padding = {
+        top: 40,
+        right: 24,
+        bottom: 48,
+        left: 58,
+      };
+
+      const plotWidth =
+        width - padding.left - padding.right;
+
+      const plotHeight =
+        height - padding.top - padding.bottom;
+
+      const startDay =
+        dateToDayNumber(historyStartDate);
+
+      const endDay =
+        dateToDayNumber(
+          rollingData.at(-1)!.date
+        );
+
+      const x = (date: string) => {
+        const day = dateToDayNumber(date);
+
+        return (
+          padding.left +
+          ((day - startDay) /
+            (endDay - startDay || 1)) *
+            plotWidth
+        );
+      };
+
+      const allValues = [
+        ...rawData.map(
+          (point) => point.weight_kg
+        ),
+        ...rollingData
+          .filter(
+            (
+              point
+            ): point is RollingAveragePoint & {
+              mean: number;
+            } => point.mean !== null
+          )
+          .map((point) => point.mean),
+      ];
+
+      if (allValues.length === 0) {
+        return;
+      }
+
+      const rawMin =
+        Math.min(...allValues);
+
+      const rawMax =
+        Math.max(...allValues);
+
+      /*
+       * Give the data a little breathing room and
+       * use 2 kg tick intervals.
+       */
+
+      const yMin =
+        Math.floor(rawMin) - 1;
+
+      const yMax =
+        Math.ceil(rawMax) + 1;
+
+      const y = (value: number) =>
+        padding.top +
+        (
+          1 -
+          (value - yMin) /
+            (yMax - yMin || 1)
+        ) *
+          plotHeight;
+
+      /*
+       * Y-axis ticks
+       */
+
+      const yTicks: number[] = [];
+
+      for (
+        let value = yMin;
+        value <= yMax;
+        value += 2
+      ) {
+        yTicks.push(value);
+      }
+
+      /*
+       * X-axis ticks:
+       * first day of every second month.
+       */
+
+      const xTicks: string[] = [];
+
+      const startParts =
+        historyStartDate
+          .split("-")
+          .map(Number);
+
+      let tickDate = new Date(
+        Date.UTC(
+          startParts[0],
+          startParts[1],
+          1
+        )
+      );
+
+      while (
+        tickDate.getTime() <=
+        endDay * 86_400_000
+      ) {
+        const key = [
+          tickDate.getUTCFullYear(),
+          String(
+            tickDate.getUTCMonth() + 1
+          ).padStart(2, "0"),
+          "01",
+        ].join("-");
+
+        if (
+          dateToDayNumber(key) >= startDay
+        ) {
+          xTicks.push(key);
+        }
+
+        tickDate = new Date(
+          Date.UTC(
+            tickDate.getUTCFullYear(),
+            tickDate.getUTCMonth() + 2,
+            1
+          )
+        );
+      }
+
+      const formatTick = (
+        date: string
+      ) => {
+        const [year, month, day] =
+          date.split("-").map(Number);
+
+        const value = new Date(
+          Date.UTC(
+            year,
+            month - 1,
+            day
+          )
+        );
+
+        const monthName =
+          value.toLocaleDateString(
+            "en-GB",
+            {
+              month: "short",
+              timeZone: "UTC",
+            }
+          );
+
+        if (
+          value.getUTCMonth() === 0
+        ) {
+          return `${monthName} ${year}`;
+        }
+
+        return monthName;
+      };
+
+      /*
+       * Rolling-average line.
+       *
+       * Null values create genuine breaks
+       * rather than connecting across gaps.
+       */
+
+      const rollingSegments: string[][] = [];
+
+      let currentSegment: string[] = [];
+
+      for (const point of rollingData) {
+        if (point.mean === null) {
+          if (currentSegment.length > 0) {
+            rollingSegments.push(
+              currentSegment
+            );
+
+            currentSegment = [];
+          }
+
+          continue;
+        }
+
+        currentSegment.push(
+          `${x(point.date)},${y(point.mean)}`
+        );
+      }
+
+      if (currentSegment.length > 0) {
+        rollingSegments.push(
+          currentSegment
+        );
+      }
+
+      /*
+       * Latest 84-day trend window.
+       */
+
+      const trendStartDay =
+        Math.max(
+          startDay,
+          endDay - 83
+        );
+
+      const trendStartX =
+        padding.left +
+        ((trendStartDay - startDay) /
+          (endDay - startDay || 1)) *
+          plotWidth;
+
+      const trendWidth =
+        padding.left +
+        plotWidth -
+        trendStartX;
+
+      const yGrid =
+        yTicks
+          .map(
+            (value) => `
+              <line
+                x1="${padding.left}"
+                y1="${y(value)}"
+                x2="${padding.left + plotWidth}"
+                y2="${y(value)}"
+                class="weight-grid-line"
+              />
+
+              <text
+                x="${padding.left - 10}"
+                y="${y(value)}"
+                class="weight-axis-label weight-y-tick"
+              >
+                ${value}
+              </text>
+            `
+          )
+          .join("");
+
+      const xGrid =
+        xTicks
+          .map(
+            (date) => `
+              <line
+                x1="${x(date)}"
+                y1="${padding.top}"
+                x2="${x(date)}"
+                y2="${padding.top + plotHeight}"
+                class="weight-month-line"
+              />
+
+              <text
+                x="${x(date)}"
+                y="${padding.top + plotHeight + 22}"
+                class="weight-axis-label weight-x-tick"
+              >
+                ${formatTick(date)}
+              </text>
+            `
+          )
+          .join("");
+
+      const rawPoints =
+        rawData
+          .map(
+            (point) => `
+              <circle
+                cx="${x(point.measured_on)}"
+                cy="${y(point.weight_kg)}"
+                r="2.2"
+                class="weight-raw-point"
+              />
+            `
+          )
+          .join("");
+
+      const rollingLines =
+        rollingSegments
+          .map(
+            (segment) => `
+              <polyline
+                points="${segment.join(" ")}"
+                class="weight-rolling-line"
+              />
+            `
+          )
+          .join("");
+
+      svg.innerHTML = `
+        <g class="weight-chart-legend">
+          <circle
+            cx="${padding.left + 3}"
+            cy="17"
+            r="2.2"
+            class="weight-raw-point"
+          />
+
+          <text
+            x="${padding.left + 12}"
+            y="17"
+            class="weight-chart-meta"
+          >
+            Daily measurements
+          </text>
+
+          <line
+            x1="${padding.left + 110}"
+            y1="17"
+            x2="${padding.left + 130}"
+            y2="17"
+            class="weight-legend-line"
+          />
+
+          <text
+            x="${padding.left + 138}"
+            y="17"
+            class="weight-chart-meta"
+          >
+            7-day average
+          </text>
+        </g>
+
+        <text
+          x="${trendStartX + 6}"
+          y="17"
+          class="weight-chart-meta weight-trend-label"
+        >
+          Latest 12 weeks
+        </text>
+
+        <rect
+          x="${trendStartX}"
+          y="${padding.top}"
+          width="${trendWidth}"
+          height="${plotHeight}"
+          class="weight-trend-window"
+        />
+
+        ${yGrid}
+        ${xGrid}
+
+        <line
+          x1="${padding.left}"
+          y1="${padding.top}"
+          x2="${padding.left + plotWidth}"
+          y2="${padding.top}"
+          class="weight-axis"
+        />
+
+        <line
+          x1="${padding.left}"
+          y1="${padding.top + plotHeight}"
+          x2="${padding.left + plotWidth}"
+          y2="${padding.top + plotHeight}"
+          class="weight-axis"
+        />
+
+        <line
+          x1="${padding.left}"
+          y1="${padding.top}"
+          x2="${padding.left}"
+          y2="${padding.top + plotHeight}"
+          class="weight-axis"
+        />
+
+        ${rawPoints}
+        ${rollingLines}
+
+        <text
+          x="15"
+          y="${padding.top + plotHeight / 2}"
+          class="weight-axis-title"
+          transform="rotate(
+            -90
+            15
+            ${padding.top + plotHeight / 2}
+          )"
+        >
+          Weight (kg)
+        </text>
+      `;
+    }
+
+    async function checkReadAccess() {
+      sickBayContent.hidden = true;
+      inputLink.hidden = true;
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        authStatus.textContent =
+          `Could not check authentication: ${sessionError.message}`;
+
+        loginForm.hidden = false;
+        return;
+      }
+
+      if (!session) {
+        authStatus.textContent =
+          "Not authenticated.";
+
+        loginForm.hidden = false;
+        return;
+      }
+
+      loginForm.hidden = true;
+
+      const {
+        data: canRead,
+        error: readError,
+      } = await supabase.rpc(
+        "can_read_domain",
+        {
+          requested_domain: "body",
+        }
+      );
+
+      if (readError) {
+        authStatus.textContent =
+          `Could not check read access: ${readError.message}`;
+
+        return;
+      }
+
+      if (!canRead) {
+        authStatus.textContent =
+          "Authenticated, but you do not have access to Sick Bay.";
+
+        return;
+      }
+
+      authStatus.textContent =
+        "Authenticated · read access ✓";
+
+      sickBayContent.hidden = false;
+
+      const {
+        data: weightData,
+        error: weightError,
+      } = await supabase
+        .from("body_measurements")
+        .select("measured_on, weight_kg, body_fat_pct, muscle_pct")
+        .eq("source", "karada")
+        .not("weight_kg", "is", null)
+        .order("measured_on", { ascending: true });
+
+      if (weightError) {
+        authStatus.textContent =
+          `Could not load weight data: ${weightError.message}`;
+
+        return;
+      }
+
+      const fatMassData: WeightObservation[] =
+        weightData.map((observation) => ({
+          ...observation,
+          weight_kg:
+            observation.weight_kg *
+            observation.body_fat_pct /
+            100,
+        }));
+
+      const muscleMassData: WeightObservation[] =
+        weightData.map((observation) => ({
+          ...observation,
+          weight_kg:
+            observation.weight_kg *
+            observation.muscle_pct /
+            100,
+        }));
+
+      const rollingWeight =
+        getRolling7DayAverage(weightData);
+
+      const rollingFatMass =
+        getRolling7DayAverage(fatMassData);
+
+      const fatMassTrend =
+        getWeightTrend(fatMassData);
+
+      const rollingMuscleMass =
+        getRolling7DayAverage(muscleMassData);
+
+      const muscleMassTrend =
+        getWeightTrend(muscleMassData);
+
+      const historyStartDate =
+        getHistoryStartDate(365);
+
+      const weightHistory =
+        weightData.filter(
+          (observation) =>
+            observation.measured_on >=
+            historyStartDate
+        );
+
+      const rollingWeightHistory =
+        rollingWeight.filter(
+          (point) =>
+            point.date >= historyStartDate
+        );
+
+      function renderCurrentMetric(
+        point: RollingAveragePoint | undefined,
+        trend: WeightTrend | null,
+        valueElement: HTMLElement,
+        metaElement: HTMLElement,
+        trendElement: HTMLElement
+      ) {
+        if (
+          !point ||
+          point.mean === null
+        ) {
+          valueElement.textContent = "—";
+          metaElement.textContent = "No recent data";
+        } else {
+          valueElement.textContent =
+            `${point.mean.toFixed(1)} kg`;
+
+          if (point.n >= 3) {
+            metaElement.textContent =
+              "7-day average";
+          } else {
+            metaElement.textContent =
+              `7-day average · based on ${point.n} ` +
+              `${point.n === 1 ? "measurement" : "measurements"}`;
+          }
+        }
+
+        if (!trend) {
+          trendElement.textContent = "—";
+          return;
+        }
+
+        const slope =
+          trend.slopeKgPerWeek;
+
+        const direction =
+          slope > 0
+            ? "up"
+            : slope < 0
+              ? "down"
+              : "flat";
+
+        const sign =
+          slope > 0
+            ? "+"
+            : "";
+
+        const icon =
+          direction === "up"
+            ? `
+              <svg
+                class="trend-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+            `
+            : direction === "down"
+              ? `
+                <svg
+                  class="trend-icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              `
+              : `
+                <svg
+                  class="trend-icon"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14" />
+                </svg>
+              `;
+
+        trendElement.innerHTML =
+          `${icon}<span>${sign}${slope.toFixed(2)} kg/week</span>`;
+      }
+
+      renderWeightHistoryChart(
+        weightHistory,
+        rollingWeightHistory,
+        historyStartDate
+      );
+
+      const weightTrend =
+        getWeightTrend(weightData);
+
+      const currentWeight =
+        rollingWeight.at(-1);
+      const currentFatMass =
+        rollingFatMass.at(-1);
+      const currentMuscleMass =
+        rollingMuscleMass.at(-1);
+
+      const currentWeightElement =
+        document.querySelector<HTMLElement>(
+          "#current-weight"
+        );
+      const currentWeightMeta =
+        document.querySelector<HTMLElement>(
+          "#current-weight-meta"
+        );
+      const currentWeightTrend =
+        document.querySelector<HTMLElement>(
+          "#current-weight-trend"
+        );
+
+      const currentFatMassElement =
+        document.querySelector<HTMLElement>(
+          "#current-fat-mass"
+        );
+      const currentFatMassMeta =
+        document.querySelector<HTMLElement>(
+          "#current-fat-mass-meta"
+        );
+      const currentFatMassTrend =
+        document.querySelector<HTMLElement>(
+          "#current-fat-mass-trend"
+        );
+
+      const currentMuscleMassElement =
+        document.querySelector<HTMLElement>(
+          "#current-muscle-mass"
+        );
+      const currentMuscleMassMeta =
+        document.querySelector<HTMLElement>(
+          "#current-muscle-mass-meta"
+        );
+      const currentMuscleMassTrend =
+        document.querySelector<HTMLElement>(
+          "#current-muscle-mass-trend"
+        );
+
+
+
+      if (
+        !currentWeightElement ||
+        !currentWeightMeta ||
+        !currentWeightTrend ||
+        !currentFatMassElement ||
+        !currentFatMassMeta ||
+        !currentFatMassTrend ||
+        !currentMuscleMassElement ||
+        !currentMuscleMassMeta ||
+        !currentMuscleMassTrend
+      ) {
+        throw new Error(
+          "Current weight UI could not be initialized."
+        );
+      }
+
+      renderCurrentMetric(
+        currentWeight,
+        weightTrend,
+        currentWeightElement,
+        currentWeightMeta,
+        currentWeightTrend
+      );
+
+      renderCurrentMetric(
+        currentFatMass,
+        fatMassTrend,
+        currentFatMassElement,
+        currentFatMassMeta,
+        currentFatMassTrend
+      );
+
+      renderCurrentMetric(
+        currentMuscleMass,
+        muscleMassTrend,
+        currentMuscleMassElement,
+        currentMuscleMassMeta,
+        currentMuscleMassTrend
+      );
+
+      /*
+       * Check write access only to decide whether the
+       * "Add measurements" link should be visible.
+       *
+       * Failure here must not block read access.
+       */
+
+      const {
+        data: canWrite,
+        error: writeError,
+      } = await supabase.rpc(
+        "can_write_domain",
+        {
+          requested_domain: "body",
+        }
+      );
+
+      if (!writeError && canWrite) {
+        inputLink.hidden = false;
+      }
+
+      /*
+       * IMPORTANT:
+       *
+       * Sick Bay data must only be loaded below this point,
+       * after read access has been confirmed.
+       *
+       * No health-data queries yet.
+       */
+    }
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const email =
+          document.querySelector<HTMLInputElement>(
+            "#email"
+          )?.value;
+
+        const password =
+          document.querySelector<HTMLInputElement>(
+            "#password"
+          )?.value;
+
+        if (!email || !password) {
+          return;
+        }
+
+        authStatus.textContent =
+          "Authenticating...";
+
+        const { error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+        if (error) {
+          authStatus.textContent =
+            `Authentication failed: ${error.message}`;
+
+          return;
+        }
+
+        await checkReadAccess();
+      }
+    );
+
+    await checkReadAccess();
+  </script>
+</BaseLayout>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  .sick-bay {
+    width: min(100% - 2rem, 52rem);
+    margin: 0 auto;
+    padding: 1.5rem 0 4rem;
+  }
+
+  .sick-bay-header {
+    margin-bottom: 2rem;
+  }
+
+  .sick-bay-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .sick-bay-header__intro {
+    margin: 0;
+
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .sick-bay-section {
+    margin-top: 3rem;
+  }
+
+  .sick-bay-section > h2 {
+    margin: 0 0 1.5rem;
+
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .current-metrics {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .current-metric {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .current-metric__label {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .current-metric__value {
+    margin: 0;
+
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .current-metric__meta {
+    margin: 0.2rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .current-metric__trend {
+    margin-top: 0.9rem;
+  }
+
+  .current-metric__trend-value {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    margin: 0;
+
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .current-metric__trend-value :global(.trend-icon) {
+    width: 0.9rem;
+    height: 0.9rem;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    opacity: 0.7;
+  }
+
+  .current-metric__trend-label {
+    margin: 0.15rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .weight-history {
+    margin-top: 1rem;
+  }
+
+  .weight-history h3 {
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .weight-history__meta {
+    margin: 0.25rem 0 0;
+
+    color: var(--text-meta);
+    font-size: 0.8rem;
+  }
+
+  .weight-history-chart {
+    width: min(100%, 46rem);
+    margin: 1.5rem auto 0;
+  }
+
+  .weight-history-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .weight-history-chart :global(.weight-trend-window) {
+    fill: var(--green-surface);
+    opacity: 0.5;
+  }
+
+  .weight-history-chart :global(.weight-axis) {
+    stroke: var(--line-default);
+    stroke-width: 1;
+  }
+
+  .weight-history-chart :global(.weight-grid-line) {
+    stroke: var(--line-subtle);
+    stroke-width: 1;
+  }
+
+  .weight-history-chart :global(.weight-month-line) {
+    stroke: var(--green-surface);
+    stroke-width: 1;
+  }
+
+  .weight-history-chart :global(.weight-axis-label) {
+    fill: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .weight-history-chart :global(.weight-y-tick) {
+    text-anchor: end;
+    dominant-baseline: middle;
+  }
+
+  .weight-history-chart :global(.weight-x-tick) {
+    text-anchor: middle;
+  }
+
+  .weight-history-chart :global(.weight-axis-title) {
+    fill: var(--text-muted);
+    font-size: 11px;
+    text-anchor: middle;
+  }
+
+  .weight-history-chart :global(.weight-raw-point) {
+    fill: var(--chart-data);
+    opacity: 0.22;
+  }
+
+  .weight-history-chart :global(.weight-rolling-line) {
+    fill: none;
+    stroke: var(--chart-data);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .weight-history-chart :global(.weight-chart-meta) {
+    fill: var(--text-muted);
+    font-size: 10px;
+    dominant-baseline: middle;
+  }
+
+  .weight-history-chart :global(.weight-legend-line) {
+    stroke: var(--chart-data);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .weight-history-chart :global(.weight-trend-label) {
+    fill: var(--text-meta);
+  }
+
+  #auth-status {
+    margin: 0.5rem 0 1.75rem;
+
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  #login-form {
+    display: grid;
+    gap: 1rem;
+
+    width: min(100%, 24rem);
+  }
+
+  #login-form label {
+    display: grid;
+    gap: 0.35rem;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  #login-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 0.9rem;
+
+    font: inherit;
+    font-size: 16px;
+
+    color: var(--text-primary);
+    background: var(--surface-neutral);
+    border: 1px solid var(--line-default);
+    border-radius: 0.35rem;
+  }
+
+  #login-form input:focus {
+    outline: 2px solid var(--line-green);
+    outline-offset: 2px;
+  }
+
+  #login-form button {
+    justify-self: end;
+
+    padding: 0.75rem 1rem;
+
+    font: inherit;
+    font-weight: 500;
+
+    color: var(--text-primary);
+    background: var(--green-surface);
+    border: 1px solid var(--line-green);
+    border-radius: 0.35rem;
+
+    cursor: pointer;
+  }
+
+  .sick-bay-tools {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 2rem;
+  }
+
+  .sick-bay-tools a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .sick-bay-placeholder {
+    margin: 3rem 0;
+
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+</style>
