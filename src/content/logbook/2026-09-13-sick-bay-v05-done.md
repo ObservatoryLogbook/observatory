@@ -1,28 +1,20 @@
 ---
-title: Sick Bay input done
-date: 2026-09-12
+title: Sick Bay v0.5 Done
+date: 2026-09-13
 projects:
   - observatory
 ---
 
-Unlike yesterday, today was ridiculously productive and relaxing at the same time. I love those days.
+This morning started off exactly where we left off last night, with the Sick Bay Input page. However, now I'm no longer the developer, now I'm the user. I measure the circumference of certain body parts every Sunday morning, and this morning was no different. And then I got to input it directly into the Sick Bay Supabase, using the input page we worked on yesterday. And it worked like a charm! So easy and straightforward, it actually made me happy to input a small record.
 
-First, I managed to do yesterday's training today, so that was out of the way. I continue to really like the new programme, so I am still very motivated to go to the gym.
+The next big step was to start displaying some of the data in Sick Bay. Until now, all the work has been about getting data safely into Supabase. Today, some of it finally came back out again.
 
-Back home, it is very quiet. My partner is working all day today from 9am to 9pm, even though it is Saturday. But that meant a full day of Observatory. And what a day!
+We started with the three measurements I want at the top of Sick Bay: weight, fat mass, and muscle mass. All three are based on my daily KaradaScan measurements and shown as rolling seven-day averages, which makes much more sense to me than whatever happened to be measured on a single morning. Below each number is a twelve-week trend, calculated from the underlying daily measurements.
 
-We started out by verifying and checking the actual data that need to go into Sick Bay. This turned into quite a bit more than I had expected. We went through the different sources one by one and ended up building the entire input side for body data.
+Then came the first proper history plot. Weight now has a full 365-day view, with the individual daily measurements kept as faint points and the seven-day average drawn on top. Missing measurements remain missing rather than being interpolated, and the latest twelve weeks are subtly highlighted to correspond to the period used for the current trend. We spent a perhaps slightly unreasonable amount of time on widths, axes, spacing, labels, legends, and a few pixels here and there. But by the end it looked exactly like it belonged in Observatory rather than like a generic health dashboard.
 
-KaradaScan came first. The form is deliberately optimised for my phone, because that is where I will actually enter the measurements every morning. We had discussed building an actual Shortcut on iOS to record the KaradaScan data daily, but having this as a dedicated website is just as easy. 
+The work was only interrupted by a training session, which started with an InBody scan and gave me yet another chance to test the input functions.
 
-Circumferences came next, followed by blood pressure with three separate readings. Those are designed primarily for the iPad. Along the way, we stripped away quite a lot of unnecessary interface: fewer boxes and borders, more whitespace, compact date fields, sensible numerical keyboards, and save buttons where my right thumb expects them to be.
+I broke for a nap early afternoon. After all, it is Sunday, and I love my naps. I thought I would do a little more Sick Bay before my partner came home, but then Sunday cleaning happened, followed by meal prepping for the week, which included making frikadeller from 3 kg of ground meat, cooking dinner for us, and so on. I only went back to Sick Bay in the evening, when we finished polishing the layout. So satisfying!
 
-And then came the final boss: InBody. There is quite a lot of data on one of those printouts, including the ten impedance measurements at 20 and 100 kHz. After several iterations, we ended up with a surprisingly compact form where even the impedance data fit neatly into a small two-by-five matrix. The entire InBody input now fits on a single iPad screen.
-
-More importantly, all four forms actually work. They are authenticated through Supabase, write directly to the database, and the database itself controls whether I am allowed to write the data. We also decided to abandon the original idea of using an iPhone Shortcut as an ingestion layer, at least for V1. Entering the data directly into Observatory is simpler and, now that I have tried it, much nicer.
-
-Somewhere during all of this, I also managed to hit the maximum length of a ChatGPT conversation for the second time. Rather appropriately, it happened just after KaradaScan, Circumferences and Blood Pressure were finished, leaving InBody as the one remaining task when Kepler and I moved into a fresh chat. There are apparently limits to how much one can discuss HTML and CSS in a single conversation. I consider this useful empirical knowledge.
-
-The day was only interrupted by laundry (five full loads!) and by a visit to one of my favourite people: my "face lady", who every six weeks or so gets to take full care of my face. It is one of the ways I like to treat myself, both physically and mentally.
-
-Tomorrow we will start actually visualising data, but still, the fact that I now have a direct way to input data into Sick Bay on Observatory is absolutely fantastic!
+And that means finishing in yet another clean place. We are ready for a little more Observatory tomorrow.
