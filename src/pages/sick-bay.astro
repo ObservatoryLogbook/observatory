@@ -171,7 +171,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <h2>History</h2>
 
         <div class="weight-history">
-          <h3>Weight</h3>
+          <h3>Body composition</h3>
 
           <p class="weight-history__meta">
             Last 365 days
@@ -180,7 +180,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <div class="weight-history-chart">
             <svg
               id="weight-history-chart"
-              viewBox="0 0 568 400"
+              viewBox="0 0 568 600"
               role="img"
               aria-label="Weight over the last 365 days"
             ></svg>
@@ -443,27 +443,37 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       };
     }
 
-    function renderWeightHistoryChart(
-      rawData: WeightObservation[],
-      rollingData: RollingAveragePoint[],
+    function renderBodyCompositionChart(
+      weightRaw: WeightObservation[],
+      weightRolling: RollingAveragePoint[],
+      muscleRaw: WeightObservation[],
+      muscleRolling: RollingAveragePoint[],
+      fatRaw: WeightObservation[],
+      fatRolling: RollingAveragePoint[],
       historyStartDate: string
     ) {
+
       const svg =
         document.querySelector<SVGSVGElement>(
           "#weight-history-chart"
         );
 
-      if (!svg || rollingData.length === 0) {
+      if (
+        !svg ||
+        weightRolling.length === 0 ||
+        muscleRolling.length === 0 ||
+        fatRolling.length === 0
+      ) {
         return;
       }
 
       const width = 568;
-      const height = 400;
+      const height = 600;
 
       const padding = {
         top: 40,
         right: 24,
-        bottom: 48,
+        bottom: 46,
         left: 58,
       };
 
@@ -473,12 +483,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       const plotHeight =
         height - padding.top - padding.bottom;
 
+      const panelHeight = 
+      plotHeight / 3; 
+
       const startDay =
         dateToDayNumber(historyStartDate);
 
       const endDay =
         dateToDayNumber(
-          rollingData.at(-1)!.date
+          weightRolling.at(-1)!.date
         );
 
       const x = (date: string) => {
@@ -492,64 +505,105 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         );
       };
 
-      const allValues = [
-        ...rawData.map(
-          (point) => point.weight_kg
-        ),
-        ...rollingData
-          .filter(
-            (
-              point
-            ): point is RollingAveragePoint & {
-              mean: number;
-            } => point.mean !== null
-          )
-          .map((point) => point.mean),
-      ];
-
-      if (allValues.length === 0) {
-        return;
-      }
-
-      const rawMin =
-        Math.min(...allValues);
-
-      const rawMax =
-        Math.max(...allValues);
-
-      /*
-       * Give the data a little breathing room and
-       * use 2 kg tick intervals.
-       */
-
-      const yMin =
-        Math.floor(rawMin) - 1;
-
-      const yMax =
-        Math.ceil(rawMax) + 1;
-
-      const y = (value: number) =>
-        padding.top +
-        (
-          1 -
-          (value - yMin) /
-            (yMax - yMin || 1)
-        ) *
-          plotHeight;
-
-      /*
-       * Y-axis ticks
-       */
-
-      const yTicks: number[] = [];
-
-      for (
-        let value = yMin;
-        value <= yMax;
-        value += 2
+      function buildPanelScale(
+        rawData: WeightObservation[],
+        rollingData: RollingAveragePoint[],
+        panelIndex: number
       ) {
-        yTicks.push(value);
+        const values = [
+          ...rawData.map(
+            (point) => point.weight_kg
+          ),
+          ...rollingData
+            .filter(
+              (
+                point
+              ): point is RollingAveragePoint & {
+                mean: number;
+              } => point.mean !== null
+            )
+            .map((point) => point.mean),
+        ];
+
+        const rawMin =
+          Math.min(...values);
+
+        const rawMax =
+          Math.max(...values);
+
+        let yMin =
+          Math.floor(rawMin);
+
+        let yMax =
+          Math.ceil(rawMax);
+
+        if (yMin === yMax) {
+          yMin -= 1;
+          yMax += 1;
+        }
+
+        const panelTop =
+          padding.top +
+          panelIndex * panelHeight;
+
+        const y = (value: number) =>
+          panelTop +
+          (
+            1 -
+            (value - yMin) /
+              (yMax - yMin)
+          ) *
+            panelHeight;
+
+        const range =
+          yMax - yMin;
+
+        const tickStep =
+          range <= 5 ? 1 : 2;
+
+        const ticks: number[] = [];
+
+        const firstTick =
+          Math.ceil(yMin / tickStep) *
+          tickStep;
+
+        for (
+          let value = firstTick;
+          value <= yMax;
+          value += tickStep
+        ) {
+          ticks.push(value);
+        }
+
+        return {
+          y,
+          yMin,
+          yMax,
+          ticks,
+          panelTop,
+        };
       }
+
+      const weightScale =
+        buildPanelScale(
+          weightRaw,
+          weightRolling,
+          0
+        );
+
+      const muscleScale =
+        buildPanelScale(
+          muscleRaw,
+          muscleRolling,
+          1
+        );
+
+      const fatScale =
+        buildPanelScale(
+          fatRaw,
+          fatRolling,
+          2
+        );
 
       /*
        * X-axis ticks:
@@ -631,41 +685,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       };
 
       /*
-       * Rolling-average line.
-       *
-       * Null values create genuine breaks
-       * rather than connecting across gaps.
-       */
-
-      const rollingSegments: string[][] = [];
-
-      let currentSegment: string[] = [];
-
-      for (const point of rollingData) {
-        if (point.mean === null) {
-          if (currentSegment.length > 0) {
-            rollingSegments.push(
-              currentSegment
-            );
-
-            currentSegment = [];
-          }
-
-          continue;
-        }
-
-        currentSegment.push(
-          `${x(point.date)},${y(point.mean)}`
-        );
-      }
-
-      if (currentSegment.length > 0) {
-        rollingSegments.push(
-          currentSegment
-        );
-      }
-
-      /*
        * Latest 84-day trend window.
        */
 
@@ -686,21 +705,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         plotWidth -
         trendStartX;
 
-      const yGrid =
-        yTicks
+      function renderPanelGrid(
+        scale: ReturnType<
+          typeof buildPanelScale
+        >,
+        omitTopTick = false
+      ) {
+        const ticks =
+          omitTopTick
+            ? scale.ticks.slice(0, -1)
+            : scale.ticks;
+
+        return ticks
           .map(
             (value) => `
               <line
                 x1="${padding.left}"
-                y1="${y(value)}"
+                y1="${scale.y(value)}"
                 x2="${padding.left + plotWidth}"
-                y2="${y(value)}"
+                y2="${scale.y(value)}"
                 class="weight-grid-line"
               />
 
               <text
                 x="${padding.left - 10}"
-                y="${y(value)}"
+                y="${scale.y(value)}"
                 class="weight-axis-label weight-y-tick"
               >
                 ${value}
@@ -708,6 +737,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             `
           )
           .join("");
+      }
+
+      const yGrid = [
+        renderPanelGrid(weightScale),
+        renderPanelGrid(muscleScale, true),
+        renderPanelGrid(fatScale, true),
+      ].join("");
 
       const xGrid =
         xTicks
@@ -732,22 +768,61 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           )
           .join("");
 
-      const rawPoints =
-        rawData
+      function renderRawPoints(
+        rawData: WeightObservation[],
+        scale: ReturnType<
+          typeof buildPanelScale
+        >
+      ) {
+        return rawData
           .map(
             (point) => `
               <circle
                 cx="${x(point.measured_on)}"
-                cy="${y(point.weight_kg)}"
+                cy="${scale.y(point.weight_kg)}"
                 r="2.2"
                 class="weight-raw-point"
               />
             `
           )
           .join("");
+      }
 
-      const rollingLines =
-        rollingSegments
+      function renderRollingLines(
+        rollingData: RollingAveragePoint[],
+        scale: ReturnType<
+          typeof buildPanelScale
+        >
+      ) {
+        const segments: string[][] = [];
+
+        let currentSegment: string[] = [];
+
+        for (const point of rollingData) {
+          if (point.mean === null) {
+            if (currentSegment.length > 0) {
+              segments.push(
+                currentSegment
+              );
+
+              currentSegment = [];
+            }
+
+            continue;
+          }
+
+          currentSegment.push(
+            `${x(point.date)},${scale.y(point.mean)}`
+          );
+        }
+
+        if (currentSegment.length > 0) {
+          segments.push(
+            currentSegment
+          );
+        }
+
+        return segments
           .map(
             (segment) => `
               <polyline
@@ -757,6 +832,37 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             `
           )
           .join("");
+      }
+
+      const rawPoints = [
+        renderRawPoints(
+          weightRaw,
+          weightScale
+        ),
+        renderRawPoints(
+          muscleRaw,
+          muscleScale
+        ),
+        renderRawPoints(
+          fatRaw,
+          fatScale
+        ),
+      ].join("");
+
+      const rollingLines = [
+        renderRollingLines(
+          weightRolling,
+          weightScale
+        ),
+        renderRollingLines(
+          muscleRolling,
+          muscleScale
+        ),
+        renderRollingLines(
+          fatRolling,
+          fatScale
+        ),
+      ].join("");
 
       svg.innerHTML = `
         <g class="weight-chart-legend">
@@ -821,6 +927,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
         <line
           x1="${padding.left}"
+          y1="${padding.top + panelHeight}"
+          x2="${padding.left + plotWidth}"
+          y2="${padding.top + panelHeight}"
+          class="weight-axis"
+        />
+
+        <line
+          x1="${padding.left}"
+          y1="${padding.top + panelHeight * 2}"
+          x2="${padding.left + plotWidth}"
+          y2="${padding.top + panelHeight * 2}"
+          class="weight-axis"
+        />
+
+        <line
+          x1="${padding.left}"
           y1="${padding.top + plotHeight}"
           x2="${padding.left + plotWidth}"
           y2="${padding.top + plotHeight}"
@@ -838,18 +960,60 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         ${rawPoints}
         ${rollingLines}
 
-        <text
-          x="15"
-          y="${padding.top + plotHeight / 2}"
-          class="weight-axis-title"
-          transform="rotate(
-            -90
-            15
-            ${padding.top + plotHeight / 2}
-          )"
-        >
-          Weight (kg)
-        </text>
+        <g class="composition-panel-label">
+          <rect
+            x="${padding.left + 3}"
+            y="${padding.top + 3}"
+            width="50"
+            height="20"
+            class="composition-panel-label-bg"
+          />
+
+          <text
+            x="${padding.left + 8}"
+            y="${padding.top + 16}"
+            class="composition-panel-title"
+          >
+            Weight
+          </text>
+        </g>
+
+        <g class="composition-panel-label">
+          <rect
+            x="${padding.left + 3}"
+            y="${padding.top + panelHeight + 3}"
+            width="78"
+            height="20"
+            class="composition-panel-label-bg"
+          />
+
+          <text
+            x="${padding.left + 8}"
+            y="${padding.top + panelHeight + 16}"
+            class="composition-panel-title"
+          >
+            Muscle mass
+          </text>
+        </g>
+
+        <g class="composition-panel-label">
+          <rect
+            x="${padding.left + 3}"
+            y="${padding.top + panelHeight * 2 + 3}"
+            width="62"
+            height="20"
+            class="composition-panel-label-bg"
+          />
+
+          <text
+            x="${padding.left + 8}"
+            y="${padding.top + panelHeight * 2 + 16}"
+            class="composition-panel-title"
+          >
+            Fat mass
+          </text>
+        </g>
+
       `;
     }
 
@@ -975,6 +1139,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             point.date >= historyStartDate
         );
 
+      const muscleMassHistory =
+        muscleMassData.filter(
+          (observation) =>
+            observation.measured_on >=
+            historyStartDate
+        );
+
+      const rollingMuscleMassHistory =
+        rollingMuscleMass.filter(
+          (point) =>
+            point.date >= historyStartDate
+        );
+
+      const fatMassHistory =
+        fatMassData.filter(
+          (observation) =>
+            observation.measured_on >=
+            historyStartDate
+        );
+
+      const rollingFatMassHistory =
+        rollingFatMass.filter(
+          (point) =>
+            point.date >= historyStartDate
+        );
+
       function renderCurrentMetric(
         point: RollingAveragePoint | undefined,
         trend: WeightTrend | null,
@@ -1057,9 +1247,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           `${icon}<span>${sign}${slope.toFixed(2)} kg/week</span>`;
       }
 
-      renderWeightHistoryChart(
+      renderBodyCompositionChart(
         weightHistory,
         rollingWeightHistory,
+        muscleMassHistory,
+        rollingMuscleMassHistory,
+        fatMassHistory,
+        rollingFatMassHistory,
         historyStartDate
       );
 
@@ -1368,6 +1562,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     overflow: visible;
   }
 
+  .weight-history-chart :global(.composition-panel-title) {
+    fill: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
   .weight-history-chart :global(.weight-trend-window) {
     fill: var(--green-surface);
     opacity: 0.5;
@@ -1435,6 +1635,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   .weight-history-chart :global(.weight-trend-label) {
     fill: var(--text-meta);
+  }
+
+  .weight-history-chart :global(.composition-panel-label-bg) {
+    fill: var(--page-background);
+    opacity: 0.7;
   }
 
   #auth-status {
