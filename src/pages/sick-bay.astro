@@ -12,12 +12,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </p>
     </header>
 
-    <p
-      id="auth-status"
-      aria-live="polite"
-    >
-      Checking authentication...
-    </p>
+    <div class="auth-status-row">
+      <p
+        id="auth-status"
+        aria-live="polite"
+      >
+        Checking authentication...
+      </p>
+
+      <button
+        id="logout-button"
+        type="button"
+        hidden
+      >
+        Log out
+      </button>
+    </div>
 
     <form
       id="login-form"
@@ -192,16 +202,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </main>
 
   <script>
-    import { createClient } from "@supabase/supabase-js";
+    import { supabase } from "../lib/sick-bay/supabase";
 
-    const supabaseUrl =
-      import.meta.env.PUBLIC_SUPABASE_URL;
-
-    const supabaseKey =
-      import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-    const supabase =
-      createClient(supabaseUrl, supabaseKey);
+    import {
+      getSession,
+      signIn,
+      signOut,
+      canReadBody,
+      canWriteBody,
+    } from "../lib/sick-bay/auth";
 
     const loginForm =
       document.querySelector<HTMLFormElement>(
@@ -211,6 +220,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     const authStatus =
       document.querySelector<HTMLParagraphElement>(
         "#auth-status"
+      );
+
+    const logoutButton =
+      document.querySelector<HTMLButtonElement>(
+        "#logout-button"
       );
 
     const sickBayContent =
@@ -226,6 +240,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     if (
       !loginForm ||
       !authStatus ||
+      !logoutButton ||
       !sickBayContent ||
       !inputLink
     ) {
@@ -1020,11 +1035,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     async function checkReadAccess() {
       sickBayContent.hidden = true;
       inputLink.hidden = true;
+      logoutButton.hidden = true;
 
       const {
-        data: { session },
+        data: sessionData,
         error: sessionError,
-      } = await supabase.auth.getSession();
+      } = await getSession();
 
       if (sessionError) {
         authStatus.textContent =
@@ -1034,7 +1050,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         return;
       }
 
-      if (!session) {
+      if (!sessionData.session) {
         authStatus.textContent =
           "Not authenticated.";
 
@@ -1043,16 +1059,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       }
 
       loginForm.hidden = true;
+      logoutButton.hidden = false; 
 
       const {
         data: canRead,
         error: readError,
-      } = await supabase.rpc(
-        "can_read_domain",
-        {
-          requested_domain: "body",
-        }
-      );
+      } = await canReadBody();
 
       if (readError) {
         authStatus.textContent =
@@ -1358,12 +1370,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       const {
         data: canWrite,
         error: writeError,
-      } = await supabase.rpc(
-        "can_write_domain",
-        {
-          requested_domain: "body",
-        }
-      );
+      } = await canWriteBody();
 
       if (!writeError && canWrite) {
         inputLink.hidden = false;
@@ -1402,14 +1409,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "Authenticating...";
 
         const { error } =
-          await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
+          await signIn(email, password);
 
         if (error) {
           authStatus.textContent =
             `Authentication failed: ${error.message}`;
+
+          return;
+        }
+
+        await checkReadAccess();
+      }
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        authStatus.textContent =
+          "Signing out...";
+
+        const { error } =
+          await signOut();
+
+        if (error) {
+          authStatus.textContent =
+            `Sign out failed: ${error.message}`;
 
           return;
         }
@@ -1698,6 +1722,39 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     cursor: pointer;
   }
+
+.auth-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-bottom: 1.75rem;
+}
+
+.auth-status-row #auth-status {
+  margin: 0;
+
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+#logout-button {
+  padding: 0;
+
+  font: inherit;
+  font-size: 0.85rem;
+
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+
+  cursor: pointer;
+}
+
+#logout-button:hover {
+  color: var(--text-primary);
+}
 
   .sick-bay-tools {
     display: flex;
