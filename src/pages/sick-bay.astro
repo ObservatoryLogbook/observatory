@@ -174,6 +174,74 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               </p>
             </div>
           </div>
+
+
+            <div class="current-metric">
+              <p class="current-metric__label">
+                Waist
+              </p>
+
+              <p
+                id="current-waist"
+                class="current-metric__value"
+              >
+                —
+              </p>
+
+              <p
+                id="current-waist-meta"
+                class="current-metric__meta"
+              >
+                Latest measurement
+              </p>
+
+              <div class="current-metric__trend">
+                <p
+                  id="current-waist-trend"
+                  class="current-metric__trend-value"
+                >
+                  —
+                </p>
+
+                <p class="current-metric__trend-label">
+                  12-week trend
+                </p>
+              </div>
+            </div>
+
+            <div class="current-metric">
+              <p class="current-metric__label">
+                Form index
+              </p>
+
+              <p
+                id="current-form-index"
+                class="current-metric__value"
+              >
+                —
+              </p>
+
+              <p
+                id="current-form-index-meta"
+                class="current-metric__meta"
+              >
+                Latest measurement
+              </p>
+
+              <div class="current-metric__trend">
+                <p
+                  id="current-form-index-trend"
+                  class="current-metric__trend-value"
+                >
+                  —
+                </p>
+
+                <p class="current-metric__trend-label">
+                  12-week trend
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -196,8 +264,99 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             ></svg>
           </div>
         </div>
+
+        <div class="circumference-history">
+          <h3>Circumferences</h3>
+
+          <p class="circumference-history__meta">
+            Last 365 days
+          </p>
+
+          <div class="circumference-history-chart">
+            <svg
+              id="circumference-history-chart"
+              viewBox="0 0 568 440"
+              role="img"
+              aria-label="Circumferences over the last 365 days"
+            ></svg>
+          </div>
+        </div>
       </section>
 
+    </section>
+
+    <section class="methodology">
+      <details>
+        <summary>Methodology</summary>
+
+        <div class="methodology__content">
+          <div>
+            <h3>Measurements</h3>
+
+            <p>
+              <strong>Body composition:</strong>
+              Omron KaradaScan BF511, measured daily in the morning
+            </p>
+
+            <p>
+              <strong>Circumferences:</strong>
+              measured weekly, usually Sunday morning
+            </p>
+
+            <p>
+              <strong>Blood pressure:</strong>
+              Microlife Gentle+, three consecutive measurements weekly,
+              usually Sunday morning
+            </p>
+
+            <p>
+              <strong>InBody:</strong>
+              InBody 270, measured approximately monthly
+            </p>
+          </div>
+
+          <div>
+            <h3>Derived metrics</h3>
+
+            <p>
+              <strong>Fat mass</strong> = weight × body fat percentage
+            </p>
+
+            <p>
+              <strong>Muscle mass</strong> = weight × skeletal muscle percentage
+            </p>
+
+            <p>
+              <strong>Form index</strong> = (shoulders + chest) / (waist + hips)
+            </p>
+          </div>
+
+          <div>
+            <h3>Trends and smoothing</h3>
+
+            <p>
+              <strong>Body composition:</strong>
+              7-day rolling average
+            </p>
+
+            <p>
+              <strong>Circumferences:</strong>
+              centered 3-measurement average
+            </p>
+
+            <p>
+              <strong>12-week trend:</strong>
+              linear regression over all observations in the latest
+              84 calendar days
+            </p>
+
+            <p>
+              Circumference lines break when consecutive observations
+              are more than 14 days apart
+            </p>
+          </div>
+        </div>
+      </details>
     </section>
   </main>
 
@@ -221,6 +380,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       type RollingAveragePoint,
       type WeightTrend,
     } from "../lib/sick-bay/body-composition";
+
+    import {
+      getFormIndex,
+      getCircumferenceTrend,
+      renderCircumferenceChart,
+      type CircumferenceTrend,
+      type CircumferenceObservation,
+      type FormIndexObservation,
+    } from "../lib/sick-bay/circumferences";
 
     const loginForm =
       document.querySelector<HTMLFormElement>(
@@ -329,6 +497,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         return;
       }
 
+      const {
+        data: circumferenceData,
+        error: circumferenceError,
+      } = await supabase
+        .from("circumferences")
+        .select(
+          "measured_on, shoulders_cm, chest_cm, waist_cm, hips_cm, left_upper_arm_cm, left_thigh_cm"
+        )
+        .order("measured_on", { ascending: true });
+
+      if (circumferenceError) {
+        authStatus.textContent =
+          `Could not load circumference data: ${circumferenceError.message}`;
+
+        return;
+      }
+
       const fatMassData: WeightObservation[] =
         weightData.map((observation) => ({
           ...observation,
@@ -346,6 +531,42 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             observation.muscle_pct /
             100,
         }));
+
+      const formIndexData =
+        circumferenceData.map(
+          (observation) => ({
+            measured_on:
+              observation.measured_on,
+            value:
+              getFormIndex(observation),
+          })
+        );
+
+        const waistData =
+          circumferenceData.map(
+            (observation) => ({
+              measured_on:
+                observation.measured_on,
+              value:
+                observation.waist_cm,
+            })
+          );
+
+        const waistTrend =
+          getCircumferenceTrend(
+            waistData
+          );
+
+        const formIndexTrend =
+          getCircumferenceTrend(
+            formIndexData
+          );
+
+      const latestCircumference =
+        circumferenceData.at(-1);
+
+      const latestFormIndex =
+        formIndexData.at(-1);
 
       const rollingWeight =
         getRolling7DayAverage(weightData);
@@ -404,41 +625,26 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             point.date >= historyStartDate
         );
 
-      function renderCurrentMetric(
-        point: RollingAveragePoint | undefined,
-        trend: WeightTrend | null,
-        valueElement: HTMLElement,
-        metaElement: HTMLElement,
-        trendElement: HTMLElement
+      const waistHistory =
+        waistData.filter(
+          (observation) =>
+            observation.measured_on >=
+            historyStartDate
+        );
+
+      const formIndexHistory =
+        formIndexData.filter(
+          (observation) =>
+            observation.measured_on >=
+            historyStartDate
+        );
+
+      function renderTrend(
+        slope: number,
+        element: HTMLElement,
+        decimals: number,
+        unit: string
       ) {
-        if (
-          !point ||
-          point.mean === null
-        ) {
-          valueElement.textContent = "—";
-          metaElement.textContent = "No recent data";
-        } else {
-          valueElement.textContent =
-            `${point.mean.toFixed(1)} kg`;
-
-          if (point.n >= 3) {
-            metaElement.textContent =
-              "7-day average";
-          } else {
-            metaElement.textContent =
-              `7-day average · based on ${point.n} ` +
-              `${point.n === 1 ? "measurement" : "measurements"}`;
-          }
-        }
-
-        if (!trend) {
-          trendElement.textContent = "—";
-          return;
-        }
-
-        const slope =
-          trend.slopeKgPerWeek;
-
         const direction =
           slope > 0
             ? "up"
@@ -482,8 +688,48 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 </svg>
               `;
 
-        trendElement.innerHTML =
-          `${icon}<span>${sign}${slope.toFixed(2)} kg/week</span>`;
+        element.innerHTML =
+          `${icon}<span>${sign}${slope.toFixed(decimals)}${unit}/week</span>`;
+      }
+
+      function renderCurrentMetric(
+        point: RollingAveragePoint | undefined,
+        trend: WeightTrend | null,
+        valueElement: HTMLElement,
+        metaElement: HTMLElement,
+        trendElement: HTMLElement
+      ) {
+        if (
+          !point ||
+          point.mean === null
+        ) {
+          valueElement.textContent = "—";
+          metaElement.textContent = "No recent data";
+        } else {
+          valueElement.textContent =
+            `${point.mean.toFixed(1)} kg`;
+
+          if (point.n >= 3) {
+            metaElement.textContent =
+              "7-day average";
+          } else {
+            metaElement.textContent =
+              `7-day average · based on ${point.n} ` +
+              `${point.n === 1 ? "measurement" : "measurements"}`;
+          }
+        }
+
+        if (!trend) {
+          trendElement.textContent = "—";
+          return;
+        }
+
+        renderTrend(
+          trend.slopeKgPerWeek,
+          trendElement,
+          2,
+          " kg"
+        );
       }
 
       renderBodyCompositionChart(
@@ -545,6 +791,64 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "#current-muscle-mass-trend"
         );
 
+      const currentWaist =
+        document.querySelector<HTMLElement>(
+          "#current-waist"
+        );
+
+      const currentWaistMeta =
+        document.querySelector<HTMLElement>(
+          "#current-waist-meta"
+        );
+
+      const currentFormIndex =
+        document.querySelector<HTMLElement>(
+          "#current-form-index"
+        );
+
+      const currentFormIndexMeta =
+        document.querySelector<HTMLElement>(
+          "#current-form-index-meta"
+        );
+      if (latestCircumference) {
+        currentWaist.textContent =
+          `${latestCircumference.waist_cm.toFixed(1)} cm`;
+
+        currentWaistMeta.textContent =
+          "Latest measurement";
+      } else {
+        currentWaist.textContent = "—";
+        currentWaistMeta.textContent =
+          "No data";
+      }
+
+      if (latestFormIndex) {
+        currentFormIndex.textContent =
+          latestFormIndex.value.toFixed(2);
+
+        currentFormIndexMeta.textContent =
+          "Latest measurement";
+      } else {
+        currentFormIndex.textContent = "—";
+        currentFormIndexMeta.textContent =
+          "No data";
+      }
+
+      const currentWaistTrend =
+        document.querySelector<HTMLElement>(
+          "#current-waist-trend"
+        );
+
+      const currentFormIndexTrend =
+        document.querySelector<HTMLElement>(
+          "#current-form-index-trend"
+        );
+
+      const circumferenceHistoryChart =
+        document.querySelector<SVGSVGElement>(
+          "#circumference-history-chart"
+        );
+
       if (
         !currentWeightElement ||
         !currentWeightMeta ||
@@ -554,7 +858,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         !currentFatMassTrend ||
         !currentMuscleMassElement ||
         !currentMuscleMassMeta ||
-        !currentMuscleMassTrend
+        !currentMuscleMassTrend ||
+        !currentWaist ||
+        !currentWaistMeta ||
+        !currentFormIndex ||
+        !currentFormIndexMeta ||
+        !currentWaistTrend ||
+        !currentFormIndexTrend ||
+        !circumferenceHistoryChart
       ) {
         throw new Error(
           "Current weight UI could not be initialized."
@@ -584,6 +895,35 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         currentMuscleMassMeta,
         currentMuscleMassTrend
       );
+
+      renderCircumferenceChart(
+        circumferenceHistoryChart,
+        waistHistory,
+        formIndexHistory,
+        historyStartDate
+      );
+
+      if (waistTrend) {
+        renderTrend(
+          waistTrend.slopePerWeek,
+          currentWaistTrend,
+          2,
+          " cm"
+        );
+      } else {
+        currentWaistTrend.textContent = "—";
+      }
+
+      if (formIndexTrend) {
+        renderTrend(
+          formIndexTrend.slopePerWeek,
+          currentFormIndexTrend,
+          3,
+          ""
+        );
+      } else {
+        currentFormIndexTrend.textContent = "—";
+      }
 
       /*
        * Check write access only to decide whether the
@@ -1022,6 +1362,185 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     color: var(--text-muted);
     font-size: 0.9rem;
+  }
+
+  .circumference-history {
+    margin-top: 3rem;
+  }
+
+  .circumference-history h3 {
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .circumference-history__meta {
+    margin: 0.25rem 0 0;
+
+    color: var(--text-meta);
+    font-size: 0.8rem;
+  }
+
+  .circumference-history-chart {
+    width: min(100%, 46rem);
+    margin: 1.5rem auto 0;
+  }
+
+  .circumference-history-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .circumference-history-chart :global(.circumference-line) {
+    fill: none;
+    stroke: var(--chart-data);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .circumference-history-chart :global(.circumference-point) {
+    fill: var(--chart-data);
+    opacity: 0.22;
+  }
+
+  .circumference-history-chart :global(.circumference-panel-title) {
+    fill: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .circumference-history-chart :global(.circumference-panel-label-bg) {
+    fill: var(--page-background);
+    opacity: 0.7;
+  }
+
+  .circumference-history-chart :global(.circumference-trend-window) {
+    fill: var(--green-surface);
+    opacity: 0.5;
+  }
+
+  .circumference-history-chart :global(.circumference-axis) {
+    stroke: var(--line-default);
+    stroke-width: 1;
+  }
+
+  .circumference-history-chart :global(.circumference-grid-line) {
+    stroke: var(--line-subtle);
+    stroke-width: 1;
+  }
+
+  .circumference-history-chart :global(.circumference-month-line) {
+    stroke: var(--green-surface);
+    stroke-width: 1;
+  }
+
+  .circumference-history-chart :global(.circumference-axis-label) {
+    fill: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .circumference-history-chart :global(.circumference-y-tick) {
+    text-anchor: end;
+    dominant-baseline: middle;
+  }
+
+  .circumference-history-chart :global(.circumference-x-tick) {
+    text-anchor: middle;
+  }
+
+  .circumference-history-chart :global(.circumference-chart-meta) {
+    fill: var(--text-muted);
+    font-size: 10px;
+    dominant-baseline: middle;
+  }
+
+  .circumference-history-chart :global(.circumference-trend-label) {
+    fill: var(--text-meta);
+  }
+
+  .circumference-history-chart :global(.circumference-hover-line) {
+    stroke: var(--text-muted);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+
+    pointer-events: none;
+  }
+
+  .circumference-history-chart :global(.circumference-hover-tooltip) {
+    pointer-events: none;
+
+    font-size: 9px;
+    fill: var(--text-primary);
+  }
+
+  .circumference-history-chart :global(.circumference-hover-tooltip-bg) {
+    fill: var(--page-background);
+    stroke: var(--line-default);
+    stroke-width: 1;
+  }
+
+  .circumference-history-chart :global(.circumference-hover-tooltip-date) {
+    font-weight: 600;
+  }
+
+  .circumference-history-chart :global(.circumference-legend-point) {
+    fill: var(--chart-data);
+    opacity: 0.22;
+  }
+
+  .circumference-history-chart :global(.circumference-legend-line) {
+    stroke: var(--chart-data);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .methodology {
+    margin-top: 3.5rem;
+  }
+
+  .methodology details {
+    border-top: 1px solid var(--line-default);
+    padding-top: 1rem;
+  }
+
+  .methodology summary {
+    width: fit-content;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .methodology__content {
+    margin-top: 1.5rem;
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .methodology__content > div + div {
+    margin-top: 1.5rem;
+  }
+
+  .methodology__content h3 {
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .methodology__content p {
+    margin: 0.25rem 0;
+  }
+
+  .methodology__content strong {
+    color: var(--text-primary);
+    font-weight: 500;
   }
 
   @media (max-width: 640px) {
