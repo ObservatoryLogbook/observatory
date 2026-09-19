@@ -450,6 +450,47 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
             </label>
           </fieldset>
 
+            <fieldset class="segmental-fieldset">
+              <legend>Segmental analysis</legend>
+
+              <div class="segmental-table">
+                <div></div>
+              <div>Right arm</div>
+              <div>Left arm</div>
+              <div>Trunk</div>
+              <div>Right leg</div>
+              <div>Left leg</div>
+
+              <div class="segmental-row-label">Lean mass (kg)</div>
+              <input id="inbody-right-arm-lean-kg" type="number" step="0.01" inputmode="decimal" aria-label="Right arm lean mass" />
+              <input id="inbody-left-arm-lean-kg" type="number" step="0.01" inputmode="decimal" aria-label="Left arm lean mass" />
+              <input id="inbody-trunk-lean-kg" type="number" step="0.1" inputmode="decimal" aria-label="Trunk lean mass" />
+              <input id="inbody-right-leg-lean-kg" type="number" step="0.01" inputmode="decimal" aria-label="Right leg lean mass" />
+              <input id="inbody-left-leg-lean-kg" type="number" step="0.01" inputmode="decimal" aria-label="Left leg lean mass" />
+
+              <div class="segmental-row-label">Lean %</div>
+              <input id="inbody-right-arm-lean-pct" type="number" step="0.1" inputmode="decimal" aria-label="Right arm lean percentage" />
+              <input id="inbody-left-arm-lean-pct" type="number" step="0.1" inputmode="decimal" aria-label="Left arm lean percentage" />
+              <input id="inbody-trunk-lean-pct" type="number" step="0.1" inputmode="decimal" aria-label="Trunk lean percentage" />
+              <input id="inbody-right-leg-lean-pct" type="number" step="0.1" inputmode="decimal" aria-label="Right leg lean percentage" />
+              <input id="inbody-left-leg-lean-pct" type="number" step="0.1" inputmode="decimal" aria-label="Left leg lean percentage" />
+
+              <div class="segmental-row-label">Fat mass (kg)</div>
+              <input id="inbody-right-arm-fat-kg" type="number" step="0.1" inputmode="decimal" aria-label="Right arm fat mass" />
+              <input id="inbody-left-arm-fat-kg" type="number" step="0.1" inputmode="decimal" aria-label="Left arm fat mass" />
+              <input id="inbody-trunk-fat-kg" type="number" step="0.1" inputmode="decimal" aria-label="Trunk fat mass" />
+              <input id="inbody-right-leg-fat-kg" type="number" step="0.1" inputmode="decimal" aria-label="Right leg fat mass" />
+              <input id="inbody-left-leg-fat-kg" type="number" step="0.1" inputmode="decimal" aria-label="Left leg fat mass" />
+
+              <div class="segmental-row-label">Fat %</div>
+              <input id="inbody-right-arm-fat-pct" type="number" step="0.1" inputmode="decimal" aria-label="Right arm fat percentage" />
+              <input id="inbody-left-arm-fat-pct" type="number" step="0.1" inputmode="decimal" aria-label="Left arm fat percentage" />
+              <input id="inbody-trunk-fat-pct" type="number" step="0.1" inputmode="decimal" aria-label="Trunk fat percentage" />
+              <input id="inbody-right-leg-fat-pct" type="number" step="0.1" inputmode="decimal" aria-label="Right leg fat percentage" />
+              <input id="inbody-left-leg-fat-pct" type="number" step="0.1" inputmode="decimal" aria-label="Left leg fat percentage" />
+            </div>
+          </fieldset>
+
           <fieldset class="impedance-fieldset">
             <legend>Impedance</legend>
 
@@ -1053,47 +1094,49 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
           p_measured_on: measuredOn,
 
           p_weight_kg: weight,
-          p_total_body_water_l:
-            numberOrNull("#inbody-water"),
-          p_protein_kg:
-            numberOrNull("#inbody-protein"),
-          p_minerals_kg:
-            numberOrNull("#inbody-minerals"),
-          p_body_fat_mass_kg:
-            bodyFatMass,
-          p_skeletal_muscle_mass_kg:
-            skeletalMuscleMass,
-          p_body_fat_pct:
-            bodyFatPct,
+          p_total_body_water_l: numberOrNull("#inbody-water"),
+          p_protein_kg: numberOrNull("#inbody-protein"),
+          p_minerals_kg: numberOrNull("#inbody-minerals"),
+          p_body_fat_mass_kg: bodyFatMass,
+          p_skeletal_muscle_mass_kg: skeletalMuscleMass,
+          p_body_fat_pct: bodyFatPct,
 
-          p_inbody_score:
-            numberOrNull("#inbody-score"),
-          p_visceral_fat_level:
-            numberOrNull(
-              "#inbody-visceral-fat"
-            ),
+          p_inbody_score: numberOrNull("#inbody-score"),
+          p_visceral_fat_level: numberOrNull("#inbody-visceral-fat"),
 
-          p_ra_20khz:
-            numberOrNull("#inbody-ra-20"),
-          p_la_20khz:
-            numberOrNull("#inbody-la-20"),
-          p_trunk_20khz:
-            numberOrNull("#inbody-trunk-20"),
-          p_rl_20khz:
-            numberOrNull("#inbody-rl-20"),
-          p_ll_20khz:
-            numberOrNull("#inbody-ll-20"),
+          p_ra_20khz: numberOrNull("#inbody-ra-20"),
+          p_la_20khz: numberOrNull("#inbody-la-20"),
+          p_trunk_20khz: numberOrNull("#inbody-trunk-20"),
+          p_rl_20khz: numberOrNull("#inbody-rl-20"),
+          p_ll_20khz: numberOrNull("#inbody-ll-20"),
 
-          p_ra_100khz:
-            numberOrNull("#inbody-ra-100"),
-          p_la_100khz:
-            numberOrNull("#inbody-la-100"),
-          p_trunk_100khz:
-            numberOrNull("#inbody-trunk-100"),
-          p_rl_100khz:
-            numberOrNull("#inbody-rl-100"),
-          p_ll_100khz:
-            numberOrNull("#inbody-ll-100"),
+          p_ra_100khz: numberOrNull("#inbody-ra-100"),
+          p_la_100khz: numberOrNull("#inbody-la-100"),
+          p_trunk_100khz: numberOrNull("#inbody-trunk-100"),
+          p_rl_100khz: numberOrNull("#inbody-rl-100"),
+          p_ll_100khz: numberOrNull("#inbody-ll-100"),
+
+          p_right_arm_lean_kg: numberOrNull("#inbody-right-arm-lean-kg"),
+          p_right_arm_lean_pct: numberOrNull("#inbody-right-arm-lean-pct"),
+          p_left_arm_lean_kg: numberOrNull("#inbody-left-arm-lean-kg"),
+          p_left_arm_lean_pct: numberOrNull("#inbody-left-arm-lean-pct"),
+          p_trunk_lean_kg: numberOrNull("#inbody-trunk-lean-kg"),
+          p_trunk_lean_pct: numberOrNull("#inbody-trunk-lean-pct"),
+          p_right_leg_lean_kg: numberOrNull("#inbody-right-leg-lean-kg"),
+          p_right_leg_lean_pct: numberOrNull("#inbody-right-leg-lean-pct"),
+          p_left_leg_lean_kg: numberOrNull("#inbody-left-leg-lean-kg"),
+          p_left_leg_lean_pct: numberOrNull("#inbody-left-leg-lean-pct"),
+
+          p_right_arm_fat_kg: numberOrNull("#inbody-right-arm-fat-kg"),
+          p_right_arm_fat_pct: numberOrNull("#inbody-right-arm-fat-pct"),
+          p_left_arm_fat_kg: numberOrNull("#inbody-left-arm-fat-kg"),
+          p_left_arm_fat_pct: numberOrNull("#inbody-left-arm-fat-pct"),
+          p_trunk_fat_kg: numberOrNull("#inbody-trunk-fat-kg"),
+          p_trunk_fat_pct: numberOrNull("#inbody-trunk-fat-pct"),
+          p_right_leg_fat_kg: numberOrNull("#inbody-right-leg-fat-kg"),
+          p_right_leg_fat_pct: numberOrNull("#inbody-right-leg-fat-pct"),
+          p_left_leg_fat_kg: numberOrNull("#inbody-left-leg-fat-kg"),
+          p_left_leg_fat_pct: numberOrNull("#inbody-left-leg-fat-pct"),
         };
 
         inbodyStatus.textContent =
@@ -1354,6 +1397,21 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       align-items: end;
   }
 
+  .segmental-fieldset {
+    display: block;
+  }
+
+  .segmental-row-label {
+    font-weight: 600;
+  }
+
+  .segmental-table {
+    display: grid;
+    grid-template-columns: 7.5rem repeat(5, minmax(0, 1fr));
+    gap: 0.75rem 1rem;
+    align-items: end;
+  }
+
   @media (min-width: 700px) {
       .sick-bay-form {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1409,6 +1467,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
       .impedance-group + .impedance-group {
           margin-top: 1.5rem;
+      }
+
+      .sick-bay-form .segmental-fieldset {
+        display: block;
       }
     }
   }

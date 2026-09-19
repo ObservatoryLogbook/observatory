@@ -703,7 +703,7 @@ export function renderCircumferenceChart(
         y="${padding.top + 16}"
         class="circumference-panel-title"
       >
-        Waist
+        Waist (cm)
       </text>
     </g>
 

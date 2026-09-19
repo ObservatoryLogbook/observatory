@@ -752,7 +752,7 @@ export function renderBodyCompositionChart(
         y="${padding.top + 16}"
         class="composition-panel-title"
       >
-        Weight
+        Weight (kg)
       </text>
     </g>
 
@@ -770,7 +770,7 @@ export function renderBodyCompositionChart(
         y="${padding.top + panelHeight + 16}"
         class="composition-panel-title"
       >
-        Muscle mass
+        Muscle mass (kg)
       </text>
     </g>
 
@@ -788,7 +788,7 @@ export function renderBodyCompositionChart(
         y="${padding.top + panelHeight * 2 + 16}"
         class="composition-panel-title"
       >
-        Fat mass
+        Fat mass (kg)
       </text>
     </g>
 
