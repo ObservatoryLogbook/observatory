@@ -546,7 +546,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       getSession,
       signIn,
       signOut,
-      canWriteBody,
+      canWriteDomain,
     } from "../../lib/sick-bay/auth";
 
     const loginForm =
@@ -634,7 +634,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       const {
         data: canWrite,
         error,
-      } = await canWriteBody();
+      } = await canWriteDomain("body");
 
       if (error) {
         authStatus.textContent =

@@ -1,0 +1,686 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Observatory">
+  <main class="training-input">
+    <h1>Training Input</h1>
+
+    <form id="login-form">
+      <label>
+        Email
+        <input id="email" type="email" required />
+      </label>
+
+      <label>
+        Password
+        <input id="password" type="password" required />
+      </label>
+
+      <button type="submit">Log in</button>
+    </form>
+
+    <div class="auth-status-row">
+      <p id="auth-status">Checking authentication...</p>
+
+      <button
+        id="logout-button"
+        type="button"
+        hidden
+      >
+        Log out
+      </button>
+    </div>
+
+    <!--- ------- Training input ------- --->
+
+      <section
+        id="input-area"
+        class="training-entry"
+        hidden
+      >
+      <h2>Training input</h2>
+
+      <p class="training-date" id="training-date"></p>
+
+      <form id="training-form">
+        <div class="training-input-grid">
+          <div class="exercise-label">
+            Bench press
+          </div>
+          <div class="column-label">Weight (kg)</div>
+          <div class="column-label">Reps</div>
+          <div class="column-label">RPE</div>
+
+          <input
+            id="bench-weight"
+            type="number"
+            min="0"
+            step="0.5"
+            inputmode="decimal"
+            aria-label="Bench press weight"
+          />
+
+          <input
+            id="bench-reps"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            aria-label="Bench press reps"
+          />
+
+          <input
+            id="bench-rpe"
+            type="number"
+            min="1"
+            max="10"
+            step="0.5"
+            inputmode="decimal"
+            aria-label="Bench press RPE"
+          />
+
+          <div class="exercise-label">
+            Squat
+          </div>
+          <div class="column-label">Weight (kg)</div>
+          <div class="column-label">Reps</div>
+          <div class="column-label">RPE</div>
+
+          <input
+            id="squat-weight"
+            type="number"
+            min="0"
+            step="0.5"
+            inputmode="decimal"
+            aria-label="Squat weight"
+          />
+
+          <input
+            id="squat-reps"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            aria-label="Squat reps"
+          />
+
+          <input
+            id="squat-rpe"
+            type="number"
+            min="1"
+            max="10"
+            step="0.5"
+            inputmode="decimal"
+            aria-label="Squat RPE"
+          />
+
+          <div class="exercise-label">
+            Deadlift
+          </div>
+          <div class="column-label">Weight (kg)</div>
+          <div class="column-label">Reps</div>
+          <div class="column-label">RPE</div>
+
+          <input
+            id="deadlift-weight"
+            type="number"
+            min="0"
+            step="0.5"
+            inputmode="decimal"
+            aria-label="Deadlift weight"
+          />
+
+          <input
+            id="deadlift-reps"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            aria-label="Deadlift reps"
+          />
+
+          <input
+            id="deadlift-rpe"
+            type="number"
+            min="1"
+            max="10"
+            step="0.5"
+            inputmode="decimal"
+            aria-label="Deadlift RPE"
+          />
+        </div>
+
+        <button type="submit">
+          Save training
+        </button>
+
+        <p id="training-status"></p>
+      </form>
+      </section>
+
+    </section>
+  </main>
+
+<!--- 
+---------------------------------------------------- 
+---------------------------------------------------- 
+--->
+
+  <script>
+    import { supabase } from "../../../lib/sick-bay/supabase";
+
+    import {
+      getSession,
+      signIn,
+      signOut,
+      canWriteDomain,
+    } from "../../../lib/sick-bay/auth";
+
+    const loginForm =
+      document.querySelector<HTMLFormElement>(
+        "#login-form"
+      );
+
+    const authStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#auth-status"
+      );
+
+    const logoutButton =
+      document.querySelector<HTMLButtonElement>(
+        "#logout-button"
+      );
+
+    const inputArea =
+      document.querySelector<HTMLElement>(
+        "#input-area"
+      );
+
+    const trainingForm =
+      document.querySelector<HTMLFormElement>(
+        "#training-form"
+      );
+
+    const trainingStatus =
+      document.querySelector<HTMLParagraphElement>(
+        "#training-status"
+      );
+
+    const trainingDate =
+      document.querySelector<HTMLParagraphElement>(
+        "#training-date"
+      );
+
+    if (
+      !loginForm ||
+      !authStatus ||
+      !logoutButton ||
+      !inputArea ||
+      !trainingForm ||
+      !trainingStatus ||
+      !trainingDate
+    ) {
+      throw new Error(
+        "Training input UI could not be initialized."
+      );
+    }
+
+    function getLocalDate() {
+      const today = new Date();
+
+      const year = today.getFullYear();
+
+      const month = String(
+        today.getMonth() + 1
+      ).padStart(2, "0");
+
+      const day = String(
+        today.getDate()
+      ).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    }
+
+    trainingDate.textContent =
+      new Date().toLocaleDateString(
+        "en-GB",
+        {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }
+      );
+
+
+    type ExerciseInput = {
+      exercise: "bench_press" | "squat" | "deadlift";
+      label: string;
+      weightId: string;
+      repsId: string;
+      rpeId: string;
+    };
+
+    const exercises: ExerciseInput[] = [
+      {
+        exercise: "bench_press",
+        label: "Bench press",
+        weightId: "bench-weight",
+        repsId: "bench-reps",
+        rpeId: "bench-rpe",
+      },
+      {
+        exercise: "squat",
+        label: "Squat",
+        weightId: "squat-weight",
+        repsId: "squat-reps",
+        rpeId: "squat-rpe",
+      },
+      {
+        exercise: "deadlift",
+        label: "Deadlift",
+        weightId: "deadlift-weight",
+        repsId: "deadlift-reps",
+        rpeId: "deadlift-rpe",
+      },
+    ];
+
+    trainingForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        trainingStatus.textContent = "";
+
+        const rows = [];
+
+        for (const exercise of exercises) {
+          const weightInput =
+            document.querySelector<HTMLInputElement>(
+              `#${exercise.weightId}`
+            );
+
+          const repsInput =
+            document.querySelector<HTMLInputElement>(
+              `#${exercise.repsId}`
+            );
+
+          const rpeInput =
+            document.querySelector<HTMLInputElement>(
+              `#${exercise.rpeId}`
+            );
+
+          if (
+            !weightInput ||
+            !repsInput ||
+            !rpeInput
+          ) {
+            throw new Error(
+              `Could not find inputs for ${exercise.label}.`
+            );
+          }
+
+          const weight = weightInput.value.trim();
+          const reps = repsInput.value.trim();
+          const rpe = rpeInput.value.trim();
+
+          const values = [weight, reps, rpe];
+          const filledCount =
+            values.filter(Boolean).length;
+
+          if (filledCount === 0) {
+            continue;
+          }
+
+          if (filledCount !== 3) {
+            trainingStatus.textContent =
+              `${exercise.label}: weight, reps and RPE are all required.`;
+
+            return;
+          }
+
+          rows.push({
+            performed_on: getLocalDate(),
+            exercise: exercise.exercise,
+            weight_kg: Number(weight),
+            reps: Number(reps),
+            rpe: Number(rpe),
+          });
+        }
+
+        if (rows.length === 0) {
+          trainingStatus.textContent =
+            "Enter at least one exercise.";
+
+          return;
+        }
+
+        trainingStatus.textContent =
+          "Saving...";
+
+        const { data, error } =
+          await supabase
+            .from("training_top_sets")
+            .upsert(
+              rows,
+              {
+                onConflict:
+                  "performed_on,exercise",
+              }
+            )
+            .select();
+
+        if (error) {
+          trainingStatus.textContent =
+            `Could not save training: ${error.message}`;
+
+          return;
+        }
+
+        const exerciseLabels: Record<string, string> = {
+          bench_press: "Bench press",
+          squat: "Squat",
+          deadlift: "Deadlift",
+        };
+
+        trainingStatus.textContent =
+          data
+            .map(
+              (row) =>
+                `${exerciseLabels[row.exercise]}: ` +
+                `${row.weight_kg} kg × ${row.reps}, ` +
+                `RPE ${row.rpe}`
+            )
+            .join(" · ");
+
+        trainingForm.reset();
+      }
+    ); 
+
+    async function checkWriteAccess() {
+      const {
+        data: sessionData,
+        error: sessionError,
+      } = await getSession();
+
+      if (sessionError) {
+        authStatus.textContent =
+          `Could not check authentication: ${sessionError.message}`;
+
+        loginForm.hidden = false;
+        logoutButton.hidden = true;
+        inputArea.hidden = true;
+        return;
+      }
+
+      if (!sessionData.session) {
+        authStatus.textContent =
+          "Not authenticated.";
+
+        loginForm.hidden = false;
+        logoutButton.hidden = true;
+        inputArea.hidden = true;
+        return;
+      }
+
+      const {
+        data: canWrite,
+        error,
+      } = await canWriteDomain("training");
+
+      if (error) {
+        authStatus.textContent =
+          `Could not check write access: ${error.message}`;
+
+        loginForm.hidden = true;
+        logoutButton.hidden = false;
+        inputArea.hidden = true;
+        return;
+      }
+
+      loginForm.hidden = true;
+      logoutButton.hidden = false;
+
+      if (!canWrite) {
+        authStatus.textContent =
+          "Authenticated, but you do not have write access.";
+
+        inputArea.hidden = true;
+        return;
+      }
+
+      authStatus.textContent =
+        "Authenticated · write access ✓";
+
+      inputArea.hidden = false;
+    }
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const email =
+          document.querySelector<HTMLInputElement>(
+            "#email"
+          )?.value;
+
+        const password =
+          document.querySelector<HTMLInputElement>(
+            "#password"
+          )?.value;
+
+        if (!email || !password) return;
+
+        authStatus.textContent =
+          "Authenticating...";
+
+        const { error } =
+          await signIn(email, password);
+
+        if (error) {
+          authStatus.textContent =
+            `Authentication failed: ${error.message}`;
+
+          return;
+        }
+
+        await checkWriteAccess();
+      }
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        authStatus.textContent =
+          "Signing out...";
+
+        const { error } =
+          await signOut();
+
+        if (error) {
+          authStatus.textContent =
+            `Sign out failed: ${error.message}`;
+
+          return;
+        }
+
+        await checkWriteAccess();
+      }
+    );
+
+    checkWriteAccess();
+  </script>
+</BaseLayout>
+
+<style>
+  .training-input {
+      width: min(100% - 2rem, 52rem);
+      margin: 0 auto;
+      padding: 1.5rem 0 4rem;
+  }
+
+  .training-input__header {
+      margin-bottom: 2.5rem;
+  }
+
+  .training-input__status {
+      margin: 0.75rem 0 0;
+
+      color: var(--text-muted);
+      font-size: 0.9rem;
+  }
+
+  .training-entry {
+      margin-top: 2rem;
+  }
+
+  .training-entry > h2 {
+      margin: 0 0 1.5rem;
+      padding: 0;
+
+      background: none;
+      border-radius: 0;
+
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      font-weight: 500;
+      line-height: 1.2;
+  }
+
+  .training-input-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .exercise-label {
+    grid-column: 1 / -1;
+
+    margin-top: 1rem;
+    margin-bottom: -0.5rem;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .exercise-label:first-of-type {
+    margin-top: 0;
+  }
+
+  .column-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .training-input-grid label {
+      display: grid;
+      gap: 0.35rem;
+
+      font-size: 0.9rem;
+      font-weight: 500;
+  }
+
+  .training-input-grid input[type="date"] {
+      width: 11rem;
+      max-width: 100%;
+  }
+
+  .training-input-grid input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 0.9rem;
+
+    font: inherit;
+    font-size: 16px;
+
+    color: var(--text-primary);
+    background: var(--surface-neutral);
+    border: 1px solid var(--line-default);
+    border-radius: 0.35rem;
+  }
+
+  .training-input-grid input:focus {
+    outline: 2px solid var(--line-green);
+    outline-offset: 2px;
+  }
+
+
+  #auth-status {
+      margin: 0.5rem 0 1.75rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+  }
+
+  .auth-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin-bottom: 1.75rem;
+  }
+
+  .auth-status-row #auth-status {
+    margin: 0;
+
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  #training-form button {
+    justify-self: end;
+
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+
+    font: inherit;
+    font-weight: 500;
+
+    color: var(--text-primary);
+    background: var(--green-surface);
+    border: 1px solid var(--line-green);
+    border-radius: 0.35rem;
+
+    cursor: pointer;
+  }
+
+  #training-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  #logout-button {
+    padding: 0;
+
+    font: inherit;
+    font-size: 0.85rem;
+
+    color: var(--text-muted);
+    background: none;
+    border: 0;
+
+    cursor: pointer;
+  }
+
+  #logout-button:hover {
+    color: var(--text-primary);
+  }
+
+  #training-status {
+    margin: 1rem 0 0;
+
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .training-date {
+    margin: -0.75rem 0 1.5rem;
+
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+</style>

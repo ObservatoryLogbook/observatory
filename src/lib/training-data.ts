@@ -1,31 +1,4 @@
-import trainingCsv from "../data/training.csv?raw";
-
-export async function loadTrainingCsv() {
-    return trainingCsv;
-}
-
-export async function parseTrainingCsv() {
-    const csv = await loadTrainingCsv();
-
-    const lines = csv
-        .split(/\r?\n/)
-        .filter((line) => line.trim() !== "");
-
-    const [headerLine, ...dataLines] = lines;
-
-    const headers = headerLine.split(",");
-
-    return dataLines.map((line) => {
-        const values = line.split(",");
-
-        return Object.fromEntries(
-            headers.map((header, index) => [
-                header,
-                values[index] ?? "",
-            ])
-        );
-    });
-}
+import { supabase } from "./sick-bay/supabase";
 
 export type PerformancePoint = {
     date: Date;
@@ -35,53 +8,64 @@ export type PerformancePoint = {
     rpe: number;
 };
 
-function normaliseExercise(
-    exercise: string
-): PerformancePoint["exercise"] {
-    switch (exercise) {
-        case "Squat":
-            return "squat";
-
-        case "Bænkpres":
-            return "bench";
-
-        case "Dødløft":
-            return "deadlift";
-
-        default:
-            throw new Error(
-                `Unknown exercise: ${exercise}`
-            );
-    }
-}
-
-function parseDate(value: string) {
-    const [day, month, year] = value
-        .split("/")
-        .map(Number);
-
-    return new Date(
-        Date.UTC(year, month - 1, day)
-    );
-}
-
 export async function getPerformanceData():
-    Promise<PerformancePoint[]> {
+  Promise<PerformancePoint[]> {
 
-    const rows = await parseTrainingCsv();
+  const { data, error } =
+    await supabase
+      .from("training_top_sets")
+      .select(
+        `
+          performed_on,
+          exercise,
+          weight_kg,
+          reps,
+          rpe
+        `
+      )
+      .order("performed_on", {
+        ascending: true,
+      });
 
-    return rows
-        .map((row) => ({
-            date: parseDate(row["Dato"]),
-            exercise: normaliseExercise(
-                row["Øvelse"]
-            ),
-            weight: Number(row["Vægt"]),
-            reps: Number(row["Reps"]),
-            rpe: Number(row["RPE"]),
-        }));
+  if (error) {
+    throw new Error(
+      `Could not load training data: ${error.message}`
+    );
+  }
+
+  return data.map((row) => {
+    let exercise: PerformancePoint["exercise"];
+
+    switch (row.exercise) {
+      case "bench_press":
+        exercise = "bench";
+        break;
+
+      case "squat":
+        exercise = "squat";
+        break;
+
+      case "deadlift":
+        exercise = "deadlift";
+        break;
+
+      default:
+        throw new Error(
+          `Unknown exercise: ${row.exercise}`
+        );
+    }
+
+    return {
+      date: new Date(
+        `${row.performed_on}T00:00:00Z`
+      ),
+      exercise,
+      weight: row.weight_kg,
+      reps: row.reps,
+      rpe: row.rpe,
+    };
+  });
 }
-
 export function calculateE1RM(
     weight: number,
     reps: number,

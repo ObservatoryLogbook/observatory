@@ -306,7 +306,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           aria-label="Segmental lean mass over time"
         ></svg>
       </div>
+
+      <p class="inbody-history__meta">
+        Segmental fat analysis
+      </p>
+
+      <div class="inbody-history-chart">
+        <svg
+          id="inbody-fat-chart"
+          viewBox="0 0 568 520"
+          role="img"
+          aria-label="Segmental fat mass over time"
+        ></svg>
+      </div>
     </div>
+
 
 <!--- ----- Methodology ----- --->  
 
@@ -392,8 +406,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       getSession,
       signIn,
       signOut,
-      canReadBody,
-      canWriteBody,
+      canReadDomain,
+      canWriteDomain,
     } from "../lib/sick-bay/auth";
 
     import {
@@ -417,6 +431,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     import {
       renderSegmentalLeanChart,
+      renderSegmentalFatChart,
       type SegmentalObservation,
     } from "../lib/sick-bay/inbody";
 
@@ -489,7 +504,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       const {
         data: canRead,
         error: readError,
-      } = await canReadBody();
+      } = await canReadDomain("body");
 
       if (readError) {
         authStatus.textContent =
@@ -551,11 +566,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         .from("inbody_segmental_analysis")
         .select(`
           measured_on,
+
           right_arm_lean_kg,
           left_arm_lean_kg,
           trunk_lean_kg,
           right_leg_lean_kg,
-          left_leg_lean_kg
+          left_leg_lean_kg,
+
+          right_arm_fat_kg,
+          left_arm_fat_kg,
+          trunk_fat_kg,
+          right_leg_fat_kg,
+          left_leg_fat_kg
         `)
         .order("measured_on", { ascending: true });
 
@@ -899,6 +921,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           "#inbody-lean-chart"
         );
 
+      const inbodyFatChart =
+        document.querySelector<SVGSVGElement>(
+          "#inbody-fat-chart"
+        );
+
       if (
         !currentWeightElement ||
         !currentWeightMeta ||
@@ -916,7 +943,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         !currentWaistTrend ||
         !currentFormIndexTrend ||
         !circumferenceHistoryChart ||
-        !inbodyLeanChart
+        !inbodyLeanChart ||
+        !inbodyFatChart
       ) {
         throw new Error(
           "Current weight UI could not be initialized."
@@ -959,6 +987,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         segmentalData as SegmentalObservation[]
       );
 
+      renderSegmentalFatChart(
+        inbodyFatChart,
+        segmentalData as SegmentalObservation[]
+      );
+
       if (waistTrend) {
         renderTrend(
           waistTrend.slopePerWeek,
@@ -991,7 +1024,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       const {
         data: canWrite,
         error: writeError,
-      } = await canWriteBody();
+      } = await canWriteDomain("body");
 
       if (!writeError && canWrite) {
         inputLink.hidden = false;
@@ -1522,6 +1555,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
  .inbody-history-chart :global(.segmental-time-arrow) {
     fill: var(--line-default);
     stroke: none;
+  }
+
+  @media (max-width: 640px) {
+    .inbody-history-chart {
+      width: 180%;
+      margin-left: -40%;
+    }
   }
 
 /* ------ Methodology section ------ */

@@ -21,7 +21,7 @@ const {
 } = Astro.props;
 
 const padding = {
-    top: 20,
+    top: 5,
     right: 20,
     bottom: 48,
     left: 58,
@@ -144,7 +144,7 @@ const trendEndY = trend
     : null;
 ---
 
-<h4>{title}</h4>
+<h4 class="performance-chart-title">{title}</h4>
 {trend && (
     <p class="performance-chart__trend">
         56-day trend ·{" "}
@@ -269,11 +269,11 @@ const trendEndY = trend
 <style>
     .performance-chart {
         width: min(100%, 36rem);
-        margin: 2rem auto 0;
+        margin: 0.5rem auto 0;
     }
 
-    .performance-chart h3 {
-        margin: 0 0 1rem;
+    .performance-chart-title {
+        margin: 1.5rem 0 0.35rem;
 
         font-size: 1rem;
         font-weight: 500;
@@ -328,7 +328,7 @@ const trendEndY = trend
     }
 
     .performance-chart__trend {
-        margin: 0.25rem 0 0;
+        margin: 0;
 
         color: var(--text-meta);
         font-size: 0.8rem;
