@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import RelatedObservations from "../components/RelatedObservations.astro";
 ---
 
 <BaseLayout title="Sick Bay">
@@ -246,6 +247,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
         </div>
+
+        <!-- ===============================================================
+             Related observations
+             =============================================================== -->
+
+        <RelatedObservations keyword="sick-bay" />
+
       </section>
 
 <!--- ----- History ----- --->  

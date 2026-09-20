@@ -69,7 +69,7 @@ export async function getObservationsForProject(slug: string) {
  * Return all logbook observations that are related to Engineering pages
  */
 export async function getObservationsForEngineering(
-    engineering: "training" | "reading" | "food"
+    engineering: "training" | "reading" | "food" | "sick-bay"
 ) {
     const observations = await getObservations();
 
