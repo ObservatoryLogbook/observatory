@@ -156,7 +156,11 @@ const trainingContext = await getTrainingContext();
             </p>
         </header>
 
-
+        <div class="training-tools">
+            <a href="input">
+                Add training
+            </a>
+        </div>
 
         <!-- ===============================================================
              Goals
@@ -457,6 +461,18 @@ const trainingContext = await getTrainingContext();
         font-style: italic;
         line-height: 1.5;
     }
+
+  .training-tools {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 2rem;
+  }
+
+  .training-tools a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
 
     /* ---------------------------------------------------------------------
        Typography hierarchy

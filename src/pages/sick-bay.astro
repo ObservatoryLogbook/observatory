@@ -245,6 +245,41 @@ import RelatedObservations from "../components/RelatedObservations.astro";
                 </p>
               </div>
             </div>
+
+          <div class="current-metric">
+            <p class="current-metric__label">
+              FFMI
+            </p>
+
+            <p
+              id="current-ffmi"
+              class="current-metric__value"
+            >
+              —
+            </p>
+
+            <p
+              id="current-ffmi-meta"
+              class="current-metric__meta"
+            >
+              7-day average
+            </p>
+
+            <div class="current-metric__trend">
+              <p
+                id="current-ffmi-trend"
+                class="current-metric__trend-value"
+              >
+                —
+              </p>
+
+              <p class="current-metric__trend-label">
+                12-week trend
+              </p>
+            </div>
+          </div>
+
+
           </div>
         </div>
 
@@ -375,6 +410,10 @@ import RelatedObservations from "../components/RelatedObservations.astro";
 
             <p>
               <strong>Form index</strong> = (shoulders + chest) / (waist + hips)
+            </p>
+
+            <p>
+              <strong>Fat-free Mass Index (FFMI)</strong> = (weight - fat mass) / height² (no additional height adjustment applied)
             </p>
           </div>
 
@@ -598,6 +637,19 @@ import RelatedObservations from "../components/RelatedObservations.astro";
             100,
         }));
 
+      const HEIGHT_M = 1.96;
+
+      const ffmiData: WeightObservation[] =
+        weightData.map((observation) => ({
+          ...observation,
+          weight_kg:
+            (
+              observation.weight_kg *
+              (1 - observation.body_fat_pct / 100)
+            ) /
+            (HEIGHT_M * HEIGHT_M),
+        }));
+
       const muscleMassData: WeightObservation[] =
         weightData.map((observation) => ({
           ...observation,
@@ -646,11 +698,20 @@ import RelatedObservations from "../components/RelatedObservations.astro";
       const rollingWeight =
         getRolling7DayAverage(weightData);
 
+      const weightTrend =
+        getWeightTrend(weightData);
+
       const rollingFatMass =
         getRolling7DayAverage(fatMassData);
 
       const fatMassTrend =
         getWeightTrend(fatMassData);
+
+      const rollingFfmi =
+        getRolling7DayAverage(ffmiData);
+
+      const ffmiTrend =
+        getWeightTrend(ffmiData);
 
       const rollingMuscleMass =
         getRolling7DayAverage(muscleMassData);
@@ -817,15 +878,14 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         historyStartDate
       );
 
-      const weightTrend =
-        getWeightTrend(weightData);
-
       const currentWeight =
         rollingWeight.at(-1);
       const currentFatMass =
         rollingFatMass.at(-1);
       const currentMuscleMass =
         rollingMuscleMass.at(-1);
+      const currentFfmi =
+        rollingFfmi.at(-1);
 
       const currentWeightElement =
         document.querySelector<HTMLElement>(
@@ -919,6 +979,21 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           "#current-form-index-trend"
         );
 
+      const currentFfmiElement =
+        document.querySelector<HTMLElement>(
+          "#current-ffmi"
+        );
+
+      const currentFfmiMeta =
+        document.querySelector<HTMLElement>(
+          "#current-ffmi-meta"
+        );
+
+      const currentFfmiTrend =
+        document.querySelector<HTMLElement>(
+          "#current-ffmi-trend"
+        );
+
       const circumferenceHistoryChart =
         document.querySelector<SVGSVGElement>(
           "#circumference-history-chart"
@@ -951,6 +1026,9 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         !currentWaistTrend ||
         !currentFormIndexTrend ||
         !circumferenceHistoryChart ||
+        !currentFfmiElement ||
+        !currentFfmiMeta ||
+        !currentFfmiTrend ||
         !inbodyLeanChart ||
         !inbodyFatChart
       ) {
@@ -1020,6 +1098,23 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         );
       } else {
         currentFormIndexTrend.textContent = "—";
+      }
+
+      if (
+        currentFfmi &&
+        currentFfmi.mean !== null
+      ) {
+        currentFfmiElement.textContent =
+          `${currentFfmi.mean.toFixed(1)} kg/m²`;
+
+        currentFfmiMeta.textContent =
+          "7-day average";
+      }
+
+      if (ffmiTrend) {
+        currentFfmiTrend.textContent =
+          `${ffmiTrend.slopeKgPerWeek >= 0 ? "+" : ""}` +
+          `${ffmiTrend.slopeKgPerWeek.toFixed(2)} kg/m²/week`;
       }
 
       /*
