@@ -12,14 +12,6 @@ import {
     getTrainingProgrammes,
 } from "../../lib/training";
 
-import {
-    getPerformanceData,
-    getCurrentE1RM,
-    getOneRepPR,
-    getE1RMSeries,
-    getTrend,
-} from "../../lib/training-data";
-
 import RelatedObservations from "../../components/RelatedObservations.astro";
 
 // -----------------------------------------------------------------------------
@@ -61,16 +53,6 @@ const renderedProgrammes = await Promise.all(
 // Performance data
 // -----------------------------------------------------------------------------
 
-const performanceData = await getPerformanceData();
-
-const latestTrainingDate = new Date(
-    Math.max(
-        ...performanceData.map(
-            (point) => point.date.getTime()
-        )
-    )
-);
-
 const exercises = [
     {
         key: "squat",
@@ -100,37 +82,9 @@ const performanceCards = exercises.map((exercise) => {
         exercise: exercise.key,
         name: exercise.name,
 
-        currentE1RM: getCurrentE1RM(
-            performanceData,
-            exercise.key
-        ),
-
-        pr: getOneRepPR(
-            performanceData,
-            exercise.key
-        ),
-
         goal,
     };
 });
-
-const performanceCharts = exercises.map((exercise) => {
-    const data = getE1RMSeries(
-        performanceData,
-        exercise.key
-    );
-
-    return {
-        exercise: exercise.key,
-        title: exercise.name,
-        data,
-        trend: getTrend(
-            data,
-            latestTrainingDate
-        ),
-    };
-});
-
 
 // -----------------------------------------------------------------------------
 // Training context
@@ -302,12 +256,16 @@ const trainingContext = await getTrainingContext();
              Performance
              =============================================================== -->
 
-        <section class="training-section">
+        <section class="training-section" id="training-performance" aria-busy="true">
             <h2 class="section-heading">Performance</h2>
+            <p class="performance-status" data-performance-status role="status">
+                Loading training data...
+            </p>
+            <noscript><p>Enable JavaScript to load training data.</p></noscript>
 
             <div class="performance-cards">
                 {performanceCards.map((card) => (
-                    <article class="performance-card">
+                    <article class="performance-card" data-performance-card={card.exercise}>
                         <h3>{card.name}</h3>
 
                         <dl class="performance-card__metrics">
@@ -315,39 +273,19 @@ const trainingContext = await getTrainingContext();
                                 <dt>Current e1RM</dt>
 
                                 <dd>
-                                    <strong>
-                                        {card.currentE1RM !== null
-                                            ? `${card.currentE1RM.toFixed(1)} kg`
-                                            : "No recent data"}
-                                    </strong>
+                                    <strong data-current-e1rm>—</strong>
 
                                     <span>28-day best</span>
                                 </dd>
                             </div>
 
-                            {card.pr && (
-                                <div class="performance-metric">
-                                    <dt>1RM PR</dt>
-
-                                    <dd>
-                                        <strong>
-                                            {card.pr.weight} kg
-                                        </strong>
-
-                                        <span>
-                                            RPE {card.pr.rpe} ·{" "}
-                                            {card.pr.date.toLocaleDateString(
-                                                "en-GB",
-                                                {
-                                                    day: "numeric",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                }
-                                            )}
-                                        </span>
-                                    </dd>
-                                </div>
-                            )}
+                            <div class="performance-metric" data-pr-metric hidden>
+                                <dt>1RM PR</dt>
+                                <dd>
+                                    <strong data-pr-weight>—</strong>
+                                    <span data-pr-detail></span>
+                                </dd>
+                            </div>
 
                             {card.goal && (
                                 <div class="performance-metric">
@@ -379,11 +317,10 @@ const trainingContext = await getTrainingContext();
             </div>
 
             <div class="performance-charts">
-                {performanceCharts.map((chart) => (
+                {exercises.map((exercise) => (
                     <PerformanceChart
-                        title={chart.title}
-                        data={chart.data}
-                        trend={chart.trend}
+                        title={exercise.name}
+                        exercise={exercise.key}
                     />
                 ))}
             </div>
@@ -438,12 +375,123 @@ const trainingContext = await getTrainingContext();
 
         <RelatedObservations keyword="training" />
     </main>
+
+<script>
+    import {
+        getPerformanceData,
+        getCurrentE1RM,
+        getOneRepPR,
+        getE1RMSeries,
+        getTrend,
+    } from "../../lib/training-data";
+    import { renderPerformanceChart } from "../../lib/performance-chart";
+
+    const initialized = new WeakSet<HTMLElement>();
+    const requests = new WeakMap<HTMLElement, number>();
+
+    async function loadPerformance(root: HTMLElement) {
+        const status = root.querySelector<HTMLElement>("[data-performance-status]");
+        if (!status) return;
+        const request = (requests.get(root) ?? 0) + 1;
+        requests.set(root, request);
+        root.setAttribute("aria-busy", "true");
+        status.hidden = false;
+        status.textContent = "Loading training data...";
+
+        try {
+            const data = await getPerformanceData();
+            if (!root.isConnected || requests.get(root) !== request) return;
+            const latestDate = data.length > 0
+                ? new Date(Math.max(...data.map((point) => point.date.getTime())))
+                : null;
+
+            for (const exercise of ["squat", "bench", "deadlift"] as const) {
+                const card = root.querySelector<HTMLElement>(
+                    `[data-performance-card="${exercise}"]`
+                );
+                const chart = root.querySelector<HTMLElement>(
+                    `[data-performance-chart="${exercise}"]`
+                );
+                const current = card?.querySelector<HTMLElement>("[data-current-e1rm]");
+                const prMetric = card?.querySelector<HTMLElement>("[data-pr-metric]");
+                const prWeight = card?.querySelector<HTMLElement>("[data-pr-weight]");
+                const prDetail = card?.querySelector<HTMLElement>("[data-pr-detail]");
+                const svg = chart?.querySelector<SVGSVGElement>("svg");
+                const trendLabel = chart?.querySelector<HTMLElement>("[data-chart-trend]");
+                const emptyLabel = chart?.querySelector<HTMLElement>("[data-chart-empty]");
+                if (!current || !prMetric || !prWeight || !prDetail ||
+                    !svg || !trendLabel || !emptyLabel) {
+                    throw new Error(`Performance UI is incomplete for ${exercise}.`);
+                }
+
+                const e1RM = getCurrentE1RM(data, exercise);
+                current.textContent = e1RM === null
+                    ? "No recent data" : `${e1RM.toFixed(1)} kg`;
+                const pr = getOneRepPR(data, exercise);
+                prMetric.hidden = !pr;
+                if (pr) {
+                    prWeight.textContent = `${pr.weight} kg`;
+                    prDetail.textContent = `RPE ${pr.rpe} · ` +
+                        pr.date.toLocaleDateString("en-GB", {
+                            day: "numeric", month: "short", year: "numeric",
+                            timeZone: "UTC",
+                        });
+                }
+
+                const series = getE1RMSeries(data, exercise);
+                const trend = latestDate ? getTrend(series, latestDate) : null;
+                renderPerformanceChart(svg, series, trend);
+                // SVG elements do not have HTMLElement.hidden.
+                svg.style.display = series.length ? "" : "none";
+                emptyLabel.hidden = series.length > 0;
+                trendLabel.hidden = !trend;
+                trendLabel.textContent = trend
+                    ? `56-day trend · ${trend.change >= 0 ? "+" : ""}${trend.change.toFixed(1)} kg`
+                    : "";
+            }
+            status.textContent = data.length ? "" : "No training data yet.";
+            status.hidden = data.length > 0;
+        } catch (error) {
+            if (!root.isConnected || requests.get(root) !== request) return;
+            console.error("Could not load training performance:", error);
+            status.hidden = false;
+            status.textContent = "Could not refresh training data. Reload the page to try again.";
+        } finally {
+            if (requests.get(root) === request) root.setAttribute("aria-busy", "false");
+        }
+    }
+
+    function initializePerformance() {
+        const root = document.querySelector<HTMLElement>("#training-performance");
+        if (!root || initialized.has(root)) return;
+        initialized.add(root);
+        void loadPerformance(root);
+    }
+
+    initializePerformance();
+    document.addEventListener("astro:page-load", initializePerformance);
+    window.addEventListener("pageshow", (event) => {
+        if (!event.persisted) return;
+        const root = document.querySelector<HTMLElement>("#training-performance");
+        if (root) void loadPerformance(root);
+    });
+</script>
+
 </BaseLayout>
 
 
 
 
 <style>
+    #training-performance [hidden] {
+        display: none !important;
+    }
+
+    .performance-status {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
     /* ---------------------------------------------------------------------
        Page
        --------------------------------------------------------------------- */
