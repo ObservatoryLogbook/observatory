@@ -1,10 +1,63 @@
-## Custom domain
-## Søgning
-## Besøgsstatistik
-## Under logbog, tilføj entry titel til top menuen
-## Visual for træningsstatistik
-## Tekst knyttet til hver bog entry
-## Flere Engineering og Projektsider
-## iPhone workflow fra start til slut
+## Navigation og design
+
+- [ ] Tilføj observationens titel til topmenuen på den enkelte Logbook-entry.
+- [ ] Gør skrifttypen for Status, Started og Observations på Science-kort konsistent med Engineering-kort.
+- [ ] Afklar og tilføj søgning i Observatory.
+
+## Training
+
+- [ ] Registrér alle træningsdage, også dage med auxiliary-øvelser uden topsæt.
+- [ ] Vis træningsdage i en kalender med én række pr. måned og én kasse pr. dato.
+- [ ] Overfør historiske træningsdatoer fra Apple Notes, og skeln mellem fridage og manglende registreringer.
+
+## Reading og indhold
+
+- [ ] Afklar og tilføj plads til egen tekst på den enkelte bogside.
+- [ ] Udbyg Observatory med flere Engineering-systemer og Science-projekter.
+
+## Domæne og besøgsstatistik
+
+- [ ] Undersøg og opsæt et eget domæne til Observatory.
+- [ ] Afklar, hvad besøgsstatistik skal fortælle, og vælg en passende løsning.
+
+## iPhone-workflow
+
+- [x] Registrér topsæt og kropsmålinger direkte i Observatory fra telefonen.
+- [ ] Etablér et workflow til at skrive og udgive Logbook-observationer fra iPhone uden at skulle forbi computeren.
+- [ ] Gør det muligt at gemme en kladde og færdiggøre den senere.
+
 ## P-i-c trail E Egg
-## Science cards: Status/Started/Observations values should have font consistent with Engineering cards
+
+- [ ] Afklar første etape.
+- [ ] Byg og afprøv den.
+
+## Sick Bay
+
+- [ ] Opret en Sick Bay-landingsside, og flyt det nuværende dashboard til Body Composition.
+- [ ] Afklar indhold og formål for Health med blodtryk, puls og søvn.
+- [ ] Tilføj et forsidelink til Sick Bay, når strukturen er på plads.
+- [ ] Kontrollér, at Related observations finder de relevante Sick Bay-observationer.
+
+## Fejl og tekniske kontroller
+
+- [ ] Test, at nye træningsdata vises på den udgivne Training-side uden nyt build.
+- [x] Kontrollér og ret InBody-sparklines, så x-positioner følger måledatoer frem for rækkefølge.
+- [x] Kontrollér InBody-grafernes håndtering af manglende/ugyldige værdier og tomme datasæt.
+- [x] Kontrollér FFMI ved manglende data, og tydeliggør, når gennemsnittet bygger på få målinger.
+- [ ] Gennemgå Supabase-rettigheder for Training.
+- [ ] Kontrollér gamle signaturer og EXECUTE-rettigheder for save_inbody_scan.
+- [x] Kontrollér InBody-figurernes mobilvisning for vandret overflow ved forskellige skærmbredder.
+- [x] Forbedr topnavigationen på mobil.
+
+## Mulig senere oprydning
+
+- [ ] Saml fælles kode i InBody Lean/Fat-rendererne.
+- [ ] Erstat misvisende vægtspecifikke feltnavne i beregninger, der også bruges til FFMI.
+- [ ] Opdel den store Sick Bay-side i mindre moduler.
+
+## Idéer til senere
+
+- Overvej en selvstændig FFMI-historikgraf.
+- Undersøg relevante data fra Apple Health og øvrige søvnkilder.
+- Overvej en Metabolism-side til energiindtag og -forbrug.
+

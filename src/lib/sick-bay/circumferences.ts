@@ -131,11 +131,6 @@ export function getCircumferenceTrend(
   };
 }
 
-export type NumericObservation = {
-  measured_on: string;
-  value: number;
-};
-
 export function renderCircumferenceChart(
   svg: SVGSVGElement,
   waistData: NumericObservation[],

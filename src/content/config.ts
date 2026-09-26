@@ -18,6 +18,7 @@ const logbook = defineCollection({
                 "training", 
                 "reading", 
                 "food",
+                "sick-bay",
             ])
         ).optional(), 
     }),

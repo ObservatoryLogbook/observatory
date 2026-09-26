@@ -1433,45 +1433,44 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   }
 
   @media (min-width: 900px) {
-      #circumferences-form {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 1.25rem;
-      }
+    #circumferences-form {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+    }
 
-      #circumferences-form label:first-child {
-          grid-column: 1 / -1;
-      }
+    #circumferences-form label:first-child {
+        grid-column: 1 / -1;
+    }
 
-      #circumferences-form button {
-          grid-column: 1 / -1;
-      }
+    #circumferences-form button {
+        grid-column: 1 / -1;
+    }
 
-      #blood-pressure-form fieldset {
-          grid-template-columns: repeat(3, minmax(0, 10rem));
-          column-gap: 1.25rem;
-      }
+    #blood-pressure-form fieldset {
+        grid-template-columns: repeat(3, minmax(0, 10rem));
+        column-gap: 1.25rem;
+    }
 
-      .sick-bay-form .impedance-fieldset {
-          display: block;
-      }
-
-      .impedance-grid {
-          display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
-          gap: 1rem;
-      }
-
-      .impedance-group h3 {
-          margin: 0 0 1rem;
-      }
-
-      .impedance-group + .impedance-group {
-          margin-top: 1.5rem;
-      }
-
-      .sick-bay-form .segmental-fieldset {
+    .sick-bay-form .impedance-fieldset {
         display: block;
-      }
+    }
+
+    .impedance-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .impedance-group h3 {
+        margin: 0 0 1rem;
+    }
+
+    .impedance-group + .impedance-group {
+        margin-top: 1.5rem;
+    }
+
+    .sick-bay-form .segmental-fieldset {
+      display: block;
     }
   }
 </style>

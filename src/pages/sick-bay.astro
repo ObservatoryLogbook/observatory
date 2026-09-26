@@ -281,7 +281,6 @@ import RelatedObservations from "../components/RelatedObservations.astro";
 
 
           </div>
-        </div>
 
         <!-- ===============================================================
              Related observations
@@ -330,7 +329,6 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           </div>
         </div>
       </section>
-    </section>
 
 <!--- ----- Segmental analysis ----- --->  
 
@@ -444,6 +442,7 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         </div>
       </details>
     </section>
+    </section>
   </main>
 
   <script>
@@ -479,7 +478,6 @@ import RelatedObservations from "../components/RelatedObservations.astro";
     import {
       renderSegmentalLeanChart,
       renderSegmentalFatChart,
-      type SegmentalObservation,
     } from "../lib/sick-bay/inbody";
 
     const loginForm =
@@ -507,22 +505,87 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         "#input-link"
       );
 
+    const passwordInput =
+      document.querySelector<HTMLInputElement>(
+        "#password"
+      );
+
     if (
       !loginForm ||
       !authStatus ||
       !logoutButton ||
       !sickBayContent ||
-      !inputLink
+      !inputLink ||
+      !passwordInput
     ) {
       throw new Error(
         "Sick Bay UI could not be initialized."
       );
     }
 
+    function clearPrivateUi() {
+      const metricValues = [
+        "#current-weight",
+        "#current-fat-mass",
+        "#current-muscle-mass",
+        "#current-waist",
+        "#current-form-index",
+        "#current-ffmi",
+        "#current-weight-trend",
+        "#current-fat-mass-trend",
+        "#current-muscle-mass-trend",
+        "#current-waist-trend",
+        "#current-form-index-trend",
+        "#current-ffmi-trend",
+      ];
+
+      for (const selector of metricValues) {
+        const element =
+          document.querySelector<HTMLElement>(selector);
+
+        if (element) {
+          element.textContent = "—";
+        }
+      }
+
+      const metricMeta = [
+        ["#current-weight-meta", "7-day average"],
+        ["#current-fat-mass-meta", "7-day average"],
+        ["#current-muscle-mass-meta", "7-day average"],
+        ["#current-waist-meta", "Latest measurement"],
+        ["#current-form-index-meta", "Latest measurement"],
+        ["#current-ffmi-meta", "7-day average"],
+      ] as const;
+
+      for (const [selector, text] of metricMeta) {
+        const element =
+          document.querySelector<HTMLElement>(selector);
+
+        if (element) {
+          element.textContent = text;
+        }
+      }
+
+      for (const selector of [
+        "#weight-history-chart",
+        "#circumference-history-chart",
+        "#inbody-lean-chart",
+        "#inbody-fat-chart",
+      ]) {
+        const chart =
+          document.querySelector<SVGSVGElement>(selector);
+
+        if (chart) {
+          chart.innerHTML = "";
+        }
+      }
+    }
+
     async function checkReadAccess() {
       sickBayContent.hidden = true;
       inputLink.hidden = true;
       logoutButton.hidden = true;
+      clearPrivateUi();
 
       const {
         data: sessionData,
@@ -568,9 +631,7 @@ import RelatedObservations from "../components/RelatedObservations.astro";
       }
 
       authStatus.textContent =
-        "Authenticated · read access ✓";
-
-      sickBayContent.hidden = false;
+        "Authenticated · loading Sick Bay…";
 
       const {
         data: weightData,
@@ -627,6 +688,13 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           left_leg_fat_kg
         `)
         .order("measured_on", { ascending: true });
+
+      if (segmentalError) {
+        authStatus.textContent =
+          `Could not load InBody data: ${segmentalError.message}`;
+
+        return;
+      }
 
       const fatMassData: WeightObservation[] =
         weightData.map((observation) => ({
@@ -833,7 +901,8 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         trend: WeightTrend | null,
         valueElement: HTMLElement,
         metaElement: HTMLElement,
-        trendElement: HTMLElement
+        trendElement: HTMLElement,
+        unit: string
       ) {
         if (
           !point ||
@@ -843,7 +912,7 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           metaElement.textContent = "No recent data";
         } else {
           valueElement.textContent =
-            `${point.mean.toFixed(1)} kg`;
+            `${point.mean.toFixed(1)} ${unit}`;
 
           if (point.n >= 3) {
             metaElement.textContent =
@@ -864,7 +933,41 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           trend.slopeKgPerWeek,
           trendElement,
           2,
-          " kg"
+          ` ${unit}`
+        );
+      }
+
+      function renderLatestMetric(
+        value: number | null | undefined,
+        trend: CircumferenceTrend | null,
+        valueElement: HTMLElement,
+        metaElement: HTMLElement,
+        trendElement: HTMLElement,
+        unit: string,
+        valueDecimals = 1,
+        trendDecimals = 2
+      ) {
+        if (value === null || value === undefined) {
+          valueElement.textContent = "—";
+          metaElement.textContent = "No data";
+        } else {
+          valueElement.textContent =
+            `${value.toFixed(valueDecimals)}${unit ? ` ${unit}` : ""}`;
+
+          metaElement.textContent =
+            "Latest measurement";
+        }
+
+        if (!trend) {
+          trendElement.textContent = "—";
+          return;
+        }
+
+        renderTrend(
+          trend.slopePerWeek,
+          trendElement,
+          trendDecimals,
+          unit ? ` ${unit}` : ""
         );
       }
 
@@ -945,29 +1048,6 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         document.querySelector<HTMLElement>(
           "#current-form-index-meta"
         );
-      if (latestCircumference) {
-        currentWaist.textContent =
-          `${latestCircumference.waist_cm.toFixed(1)} cm`;
-
-        currentWaistMeta.textContent =
-          "Latest measurement";
-      } else {
-        currentWaist.textContent = "—";
-        currentWaistMeta.textContent =
-          "No data";
-      }
-
-      if (latestFormIndex) {
-        currentFormIndex.textContent =
-          latestFormIndex.value.toFixed(2);
-
-        currentFormIndexMeta.textContent =
-          "Latest measurement";
-      } else {
-        currentFormIndex.textContent = "—";
-        currentFormIndexMeta.textContent =
-          "No data";
-      }
 
       const currentWaistTrend =
         document.querySelector<HTMLElement>(
@@ -1042,7 +1122,8 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         weightTrend,
         currentWeightElement,
         currentWeightMeta,
-        currentWeightTrend
+        currentWeightTrend, 
+        "kg"
       );
 
       renderCurrentMetric(
@@ -1050,7 +1131,8 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         fatMassTrend,
         currentFatMassElement,
         currentFatMassMeta,
-        currentFatMassTrend
+        currentFatMassTrend, 
+        "kg"
       );
 
       renderCurrentMetric(
@@ -1058,8 +1140,41 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         muscleMassTrend,
         currentMuscleMassElement,
         currentMuscleMassMeta,
-        currentMuscleMassTrend
+        currentMuscleMassTrend, 
+        "kg"
       );
+
+      renderLatestMetric(
+        latestCircumference?.waist_cm,
+        waistTrend,
+        currentWaist,
+        currentWaistMeta,
+        currentWaistTrend,
+        "cm", 
+        1, 
+        2
+      );
+
+      renderLatestMetric(
+        latestFormIndex?.value,
+        formIndexTrend,
+        currentFormIndex,
+        currentFormIndexMeta,
+        currentFormIndexTrend,
+        "",
+        2, 
+        3
+      );
+
+      renderCurrentMetric(
+        currentFfmi,
+        ffmiTrend,
+        currentFfmiElement,
+        currentFfmiMeta,
+        currentFfmiTrend,
+        "kg/m²"
+      );
+
 
       renderCircumferenceChart(
         circumferenceHistoryChart,
@@ -1070,52 +1185,17 @@ import RelatedObservations from "../components/RelatedObservations.astro";
 
       renderSegmentalLeanChart(
         inbodyLeanChart,
-        segmentalData as SegmentalObservation[]
+        segmentalData
       );
 
       renderSegmentalFatChart(
         inbodyFatChart,
-        segmentalData as SegmentalObservation[]
+        segmentalData
       );
 
-      if (waistTrend) {
-        renderTrend(
-          waistTrend.slopePerWeek,
-          currentWaistTrend,
-          2,
-          " cm"
-        );
-      } else {
-        currentWaistTrend.textContent = "—";
-      }
-
-      if (formIndexTrend) {
-        renderTrend(
-          formIndexTrend.slopePerWeek,
-          currentFormIndexTrend,
-          3,
-          ""
-        );
-      } else {
-        currentFormIndexTrend.textContent = "—";
-      }
-
-      if (
-        currentFfmi &&
-        currentFfmi.mean !== null
-      ) {
-        currentFfmiElement.textContent =
-          `${currentFfmi.mean.toFixed(1)} kg/m²`;
-
-        currentFfmiMeta.textContent =
-          "7-day average";
-      }
-
-      if (ffmiTrend) {
-        currentFfmiTrend.textContent =
-          `${ffmiTrend.slopeKgPerWeek >= 0 ? "+" : ""}` +
-          `${ffmiTrend.slopeKgPerWeek.toFixed(2)} kg/m²/week`;
-      }
+      sickBayContent.hidden = false;
+      authStatus.textContent =
+        "Authenticated · read access ✓";
 
       /*
        * Check write access only to decide whether the
@@ -1133,14 +1213,6 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         inputLink.hidden = false;
       }
 
-      /*
-       * IMPORTANT:
-       *
-       * Sick Bay data must only be loaded below this point,
-       * after read access has been confirmed.
-       *
-       * No health-data queries yet.
-       */
     }
 
     loginForm.addEventListener(
@@ -1168,6 +1240,8 @@ import RelatedObservations from "../components/RelatedObservations.astro";
         const { error } =
           await signIn(email, password);
 
+        passwordInput.value = "";
+
         if (error) {
           authStatus.textContent =
             `Authentication failed: ${error.message}`;
@@ -1175,7 +1249,7 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           return;
         }
 
-        await checkReadAccess();
+        await refreshSickBay();
       }
     );
 
@@ -1195,11 +1269,32 @@ import RelatedObservations from "../components/RelatedObservations.astro";
           return;
         }
 
-        await checkReadAccess();
+        passwordInput.value = "";
+        clearPrivateUi();
+        await refreshSickBay();
       }
     );
 
-    await checkReadAccess();
+    await refreshSickBay();
+
+
+    async function refreshSickBay() {
+      try {
+        await checkReadAccess();
+      } catch (error) {
+        sickBayContent.hidden = true;
+        inputLink.hidden = true;
+        clearPrivateUi();
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        authStatus.textContent =
+          `Could not load Sick Bay: ${message}`;
+      }
+    }
   </script>
 </BaseLayout>
 
@@ -1662,7 +1757,13 @@ import RelatedObservations from "../components/RelatedObservations.astro";
 
   @media (max-width: 640px) {
     .inbody-history-chart {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .inbody-history-chart svg {
       width: 180%;
+      max-width: none;
       margin-left: -40%;
     }
   }

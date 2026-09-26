@@ -39,6 +39,10 @@ function getDomain(
         value !== null
     );
 
+  if (values.length === 0) {
+    return null;
+  }
+
   const min = Math.min(...values);
   const max = Math.max(...values);
 
@@ -61,35 +65,55 @@ function getSparklinePath(
   domain: {
     min: number;
     max: number;
-  }
+  } | null
 ) {
+  if (!domain) {
+    return "";
+  }
+
   const validPoints = data
-    .map((observation, index) => ({
+    .map((observation) => ({
       value: observation[key],
-      index,
+      time: new Date(
+        observation.measured_on
+      ).getTime(),
     }))
     .filter(
       (
         point
       ): point is {
         value: number;
-        index: number;
+        time: number;
       } =>
-        point.value !== null
+        point.value !== null &&
+        Number.isFinite(point.time)
     );
 
   if (validPoints.length < 2) {
     return "";
   }
 
-  const denominator =
-    Math.max(data.length - 1, 1);
+  const minTime = Math.min(
+    ...validPoints.map((point) => point.time)
+  );
+
+  const maxTime = Math.max(
+    ...validPoints.map((point) => point.time)
+  );
+
+  const timeSpan = Math.max(
+    maxTime - minTime,
+    1
+  );
 
   return validPoints
     .map((point, pointIndex) => {
       const px =
         x +
-        (point.index / denominator) *
+        (
+          (point.time - minTime) /
+          timeSpan
+        ) *
           width;
 
       const py =
@@ -119,7 +143,7 @@ function addSparkline(
   domain: {
     min: number;
     max: number;
-  }
+  } | null
 ) {
   const pathData =
     getSparklinePath(
@@ -213,11 +237,11 @@ export function renderSegmentalLeanChart(
   svg: SVGSVGElement,
   data: SegmentalObservation[]
 ) {
+  svg.innerHTML = "";
+
   if (data.length === 0) {
     return;
   }
-
-  svg.innerHTML = "";
 
   const ns = "http://www.w3.org/2000/svg";
 
@@ -370,9 +394,18 @@ export function renderSegmentalLeanChart(
       ]
     );
 
-  const armSpan = armDomain.max - armDomain.min;
-  const trunkSpan = trunkDomain.max - trunkDomain.min;
-  const legSpan = legDomain.max - legDomain.min;
+  const armSpan =
+    armDomain
+      ? armDomain.max - armDomain.min
+      : null;
+  const trunkSpan =
+    trunkDomain
+      ? trunkDomain.max - trunkDomain.min
+      : null;
+  const legSpan =
+    legDomain
+      ? legDomain.max - legDomain.min
+      : null;
 
   const addScaleSpan = (
     value: number,
@@ -503,9 +536,17 @@ export function renderSegmentalLeanChart(
     "segmental-value"
   );
 
-  addScaleSpan(armSpan, 121, 150);
-  addScaleSpan(trunkSpan, 235, 250);
-  addScaleSpan(legSpan, 121, 370);
+  if (armSpan !== null) {
+    addScaleSpan(armSpan, 121, 150);
+  }
+
+  if (trunkSpan !== null) {
+    addScaleSpan(trunkSpan, 235, 250);
+  }
+
+  if (legSpan !== null) {
+    addScaleSpan(legSpan, 121, 370);
+  }
 
   const firstDate =
     new Date(
@@ -611,11 +652,11 @@ export function renderSegmentalFatChart(
   svg: SVGSVGElement,
   data: SegmentalObservation[]
 ) {
+  svg.innerHTML = "";
+
   if (data.length === 0) {
     return;
   }
-
-  svg.innerHTML = "";
 
   const ns = "http://www.w3.org/2000/svg";
 
@@ -768,9 +809,18 @@ export function renderSegmentalFatChart(
       ]
     );
 
-  const armSpan = armDomain.max - armDomain.min;
-  const trunkSpan = trunkDomain.max - trunkDomain.min;
-  const legSpan = legDomain.max - legDomain.min;
+  const armSpan =
+    armDomain
+      ? armDomain.max - armDomain.min
+      : null;
+  const trunkSpan =
+    trunkDomain
+      ? trunkDomain.max - trunkDomain.min
+      : null;
+  const legSpan =
+    legDomain
+      ? legDomain.max - legDomain.min
+      : null;
 
   const addScaleSpan = (
     value: number,
@@ -901,9 +951,17 @@ export function renderSegmentalFatChart(
     "segmental-value"
   );
 
-  addScaleSpan(armSpan, 121, 150);
-  addScaleSpan(trunkSpan, 235, 250);
-  addScaleSpan(legSpan, 121, 370);
+  if (armSpan !== null) {
+    addScaleSpan(armSpan, 121, 150);
+  }
+
+  if (trunkSpan !== null) {
+    addScaleSpan(trunkSpan, 235, 250);
+  }
+
+  if (legSpan !== null) {
+    addScaleSpan(legSpan, 121, 370);
+  }
 
   const firstDate =
     new Date(
