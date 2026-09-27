@@ -548,26 +548,6 @@ export function renderSegmentalLeanChart(
     addScaleSpan(legSpan, 121, 370);
   }
 
-  const firstDate =
-    new Date(
-      `${data[0].measured_on}T00:00:00`
-    );
-
-  const lastDate =
-    new Date(
-      `${data[data.length - 1].measured_on}T00:00:00`
-    );
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString(
-      "en-GB",
-      {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }
-    );
-
   const monthSpan =
     getMonthSpan(
       data[0].measured_on,
@@ -962,26 +942,6 @@ export function renderSegmentalFatChart(
   if (legSpan !== null) {
     addScaleSpan(legSpan, 121, 370);
   }
-
-  const firstDate =
-    new Date(
-      `${data[0].measured_on}T00:00:00`
-    );
-
-  const lastDate =
-    new Date(
-      `${data[data.length - 1].measured_on}T00:00:00`
-    );
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString(
-      "en-GB",
-      {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }
-    );
 
   const monthSpan =
     getMonthSpan(

@@ -12,45 +12,54 @@ const monthFormatter = new Intl.DateTimeFormat("en-GB", {
     month: "long",
 });
 
-const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-});
+type MonthGroup = {
+    monthNumber: number;
+    monthName: string;
+    entries: typeof observations;
+};
 
-const groupedObservations = observations.reduce((years, observation) => {
-    const year = observation.data.date.getFullYear();
-    const monthNumber = observation.data.date.getMonth();
-    const monthName = monthFormatter.format(observation.data.date);
+type YearGroup = {
+    year: number;
+    months: MonthGroup[];
+};
 
-    let yearGroup = years.find((group) => group.year === year);
+const groupedObservations = observations.reduce<YearGroup[]>(
+    (years, observation) => {
+        const year = observation.data.date.getFullYear();
+        const monthNumber = observation.data.date.getMonth();
+        const monthName = monthFormatter.format(observation.data.date);
 
-    if (!yearGroup) {
-        yearGroup = {
-            year,
-            months: [],
-        };
+        let yearGroup = years.find((group) => group.year === year);
 
-        years.push(yearGroup);
-    }
+        if (!yearGroup) {
+            yearGroup = {
+                year,
+                months: [],
+            };
 
-    let monthGroup = yearGroup.months.find(
-        (group) => group.monthNumber === monthNumber
-    );
+            years.push(yearGroup);
+        }
 
-    if (!monthGroup) {
-        monthGroup = {
-            monthNumber,
-            monthName,
-            entries: [],
-        };
+        let monthGroup = yearGroup.months.find(
+            (group) => group.monthNumber === monthNumber
+        );
 
-        yearGroup.months.push(monthGroup);
-    }
+        if (!monthGroup) {
+            monthGroup = {
+                monthNumber,
+                monthName,
+                entries: [],
+            };
 
-    monthGroup.entries.push(observation);
+            yearGroup.months.push(monthGroup);
+        }
 
-    return years;
-}, []);
+        monthGroup.entries.push(observation);
+
+        return years;
+    },
+    []
+);
 ---
 
 <BaseLayout title="Logbook">

@@ -471,8 +471,6 @@ import RelatedObservations from "../components/RelatedObservations.astro";
       getCircumferenceTrend,
       renderCircumferenceChart,
       type CircumferenceTrend,
-      type CircumferenceObservation,
-      type FormIndexObservation,
     } from "../lib/sick-bay/circumferences";
 
     import {
@@ -480,48 +478,50 @@ import RelatedObservations from "../components/RelatedObservations.astro";
       renderSegmentalFatChart,
     } from "../lib/sick-bay/inbody";
 
+    function getRequiredElement<T extends Element>(
+      selector: string
+    ): T {
+      const element =
+        document.querySelector<T>(selector);
+
+      if (!element) {
+        throw new Error(
+          `Required UI element not found: ${selector}`
+        );
+      }
+
+      return element;
+    }
+
     const loginForm =
-      document.querySelector<HTMLFormElement>(
+      getRequiredElement<HTMLFormElement>(
         "#login-form"
       );
 
     const authStatus =
-      document.querySelector<HTMLParagraphElement>(
+      getRequiredElement<HTMLParagraphElement>(
         "#auth-status"
       );
 
     const logoutButton =
-      document.querySelector<HTMLButtonElement>(
+      getRequiredElement<HTMLButtonElement>(
         "#logout-button"
       );
 
     const sickBayContent =
-      document.querySelector<HTMLElement>(
+      getRequiredElement<HTMLElement>(
         "#sick-bay-content"
       );
 
     const inputLink =
-      document.querySelector<HTMLAnchorElement>(
+      getRequiredElement<HTMLAnchorElement>(
         "#input-link"
       );
 
     const passwordInput =
-      document.querySelector<HTMLInputElement>(
+      getRequiredElement<HTMLInputElement>(
         "#password"
       );
-
-    if (
-      !loginForm ||
-      !authStatus ||
-      !logoutButton ||
-      !sickBayContent ||
-      !inputLink ||
-      !passwordInput
-    ) {
-      throw new Error(
-        "Sick Bay UI could not be initialized."
-      );
-    }
 
     function clearPrivateUi() {
       const metricValues = [

@@ -176,55 +176,56 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
       canWriteDomain,
     } from "../../../lib/sick-bay/auth";
 
+    function getRequiredElement<T extends Element>(
+      selector: string
+    ): T {
+      const element =
+        document.querySelector<T>(selector);
+
+      if (!element) {
+        throw new Error(
+          `Required UI element not found: ${selector}`
+        );
+      }
+
+      return element;
+    }
+
     const loginForm =
-      document.querySelector<HTMLFormElement>(
+      getRequiredElement<HTMLFormElement>(
         "#login-form"
       );
 
     const authStatus =
-      document.querySelector<HTMLParagraphElement>(
+      getRequiredElement<HTMLParagraphElement>(
         "#auth-status"
       );
 
     const logoutButton =
-      document.querySelector<HTMLButtonElement>(
+      getRequiredElement<HTMLButtonElement>(
         "#logout-button"
       );
 
     const inputArea =
-      document.querySelector<HTMLElement>(
+      getRequiredElement<HTMLElement>(
         "#input-area"
       );
 
     const trainingForm =
-      document.querySelector<HTMLFormElement>(
+      getRequiredElement<HTMLFormElement>(
         "#training-form"
       );
 
     const trainingStatus =
-      document.querySelector<HTMLParagraphElement>(
+      getRequiredElement<HTMLParagraphElement>(
         "#training-status"
       );
 
     const trainingDate =
-      document.querySelector<HTMLParagraphElement>(
+      getRequiredElement<HTMLParagraphElement>(
         "#training-date"
       );
-
-    if (
-      !loginForm ||
-      !authStatus ||
-      !logoutButton ||
-      !inputArea ||
-      !trainingForm ||
-      !trainingStatus ||
-      !trainingDate
-    ) {
-      throw new Error(
-        "Training input UI could not be initialized."
-      );
-    }
-
+  
     function getLocalDate() {
       const today = new Date();
 

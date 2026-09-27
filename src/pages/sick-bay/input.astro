@@ -549,40 +549,50 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       canWriteDomain,
     } from "../../lib/sick-bay/auth";
 
+    function getRequiredElement<T extends Element>(
+      selector: string
+    ): T {
+      const element =
+        document.querySelector<T>(selector);
+
+      if (!element) {
+        throw new Error(
+          `Required UI element not found: ${selector}`
+        );
+      }
+
+      return element;
+    }
+
     const loginForm =
-      document.querySelector<HTMLFormElement>("#login-form");
+      getRequiredElement<HTMLFormElement>(
+        "#login-form"
+      );
 
     const authStatus =
-      document.querySelector<HTMLParagraphElement>("#auth-status");
+      getRequiredElement<HTMLParagraphElement>(
+        "#auth-status"
+      );
 
     const logoutButton =
-      document.querySelector<HTMLButtonElement>("#logout-button");
+      getRequiredElement<HTMLButtonElement>(
+        "#logout-button"
+      );
 
     const inputArea =
-      document.querySelector<HTMLElement>("#input-area");
+      getRequiredElement<HTMLElement>(
+        "#input-area"
+      );
 
     const circumferenceForm =
-      document.querySelector<HTMLFormElement>(
+      getRequiredElement<HTMLFormElement>(
         "#circumferences-form"
       );
 
     const circumferenceStatus =
-      document.querySelector<HTMLParagraphElement>(
+      getRequiredElement<HTMLParagraphElement>(
         "#circumferences-status"
       );
-
-    if (
-      !loginForm ||
-      !authStatus ||
-      !logoutButton ||
-      !inputArea ||
-      !circumferenceForm ||
-      !circumferenceStatus
-    ) {
-      throw new Error(
-        "Sick Bay input UI could not be initialized."
-      );
-    }
 
     function getLocalDate() {
       const today = new Date();

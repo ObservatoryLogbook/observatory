@@ -1,10 +1,10 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
-export type Observation = CollectionEntry<"logbook"> & {
-    slug: string;
-    number: number;
-    formattedNumber: string;
-};
+export type Observation =
+    CollectionEntry<"logbook"> & {
+        number: number;
+        formattedNumber: string;
+    };
 
 /**
  * Sort observations chronologically.
@@ -12,6 +12,7 @@ export type Observation = CollectionEntry<"logbook"> & {
  * The oldest observation comes first. If two observations have
  * the same date, their filenames determine the order.
  */
+
 function sortChronologically(
     observations: CollectionEntry<"logbook">[],
 ): CollectionEntry<"logbook">[] {
@@ -36,6 +37,7 @@ function sortChronologically(
  *
  * Observation #1 is always the earliest observation.
  */
+
 export async function getObservations(): Promise<Observation[]> {
     const entries = await getCollection("logbook");
     const chronologicalEntries = sortChronologically(entries);
@@ -45,7 +47,6 @@ export async function getObservations(): Promise<Observation[]> {
 
         return {
             ...entry,
-            slug: entry.id.replace(/\.md$/, ""),
             number,
             formattedNumber: String(number).padStart(3, "0"),
         };
@@ -55,6 +56,7 @@ export async function getObservations(): Promise<Observation[]> {
 /**
  * Return all logbook observations that are related to individual projects
  */
+
 export async function getObservationsForProject(slug: string) {
     const observations = await getObservations();
 
