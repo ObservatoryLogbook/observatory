@@ -1,46 +1,46 @@
-11:44:07 [types] Generated 852ms
-11:44:07 [check] Getting diagnostics for Astro files in /Users/kristensen/Documents/Logbook/observatory...
-[96msrc/lib/sick-bay/inbody.ts[0m:[93m976[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'formatDate' is declared but its value is never read.
+16:53:53 [types] Generated 1.39s
+16:53:53 [check] Getting diagnostics for Astro files in /Users/kristensen/Documents/Logbook/observatory...
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m544[0m:[93m33[0m - [91merror[0m[90m ts(2339): [0mProperty 'weight_kg' does not exist on type 'MetricObservation'.
 
-[7m976[0m   const formatDate = (date: Date) =>
-[7m   [0m [93m        ~~~~~~~~~~[0m
-[96msrc/lib/sick-bay/inbody.ts[0m:[93m971[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'lastDate' is declared but its value is never read.
+[7m544[0m             cy="${scale.y(point.weight_kg)}"
+[7m   [0m [91m                                ~~~~~~~~~[0m
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m277[0m:[93m26[0m - [91merror[0m[90m ts(2339): [0mProperty 'weight_kg' does not exist on type 'MetricObservation'.
 
-[7m971[0m   const lastDate =
-[7m   [0m [93m        ~~~~~~~~[0m
-[96msrc/lib/sick-bay/inbody.ts[0m:[93m966[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'firstDate' is declared but its value is never read.
+[7m277[0m         (point) => point.weight_kg
+[7m   [0m [91m                         ~~~~~~~~~[0m
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m29[0m:[93m8[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'observations'.
 
-[7m966[0m   const firstDate =
-[7m   [0m [93m        ~~~~~~~~~[0m
-[96msrc/lib/sick-bay/inbody.ts[0m:[93m561[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'formatDate' is declared but its value is never read.
+[7m29[0m     `${observations[0].measured_on}T00:00:00`
+[7m  [0m [91m       ~~~~~~~~~~~~[0m
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m21[0m:[93m29[0m - [91merror[0m[90m ts(2552): [0mCannot find name 'observations'. Did you mean 'observation'?
 
-[7m561[0m   const formatDate = (date: Date) =>
-[7m   [0m [93m        ~~~~~~~~~~[0m
-[96msrc/lib/sick-bay/inbody.ts[0m:[93m556[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'lastDate' is declared but its value is never read.
+[7m21[0m   for (const observation of observations) {
+[7m  [0m [91m                            ~~~~~~~~~~~~[0m
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m15[0m:[93m7[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'observations'.
 
-[7m556[0m   const lastDate =
-[7m   [0m [93m        ~~~~~~~~[0m
-[96msrc/lib/sick-bay/inbody.ts[0m:[93m551[0m:[93m9[0m - [93mwarning[0m[90m ts(6133): [0m'firstDate' is declared but its value is never read.
+[7m15[0m   if (observations.length === 0) {
+[7m  [0m [91m      ~~~~~~~~~~~~[0m
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m12[0m:[93m17[0m - [91merror[0m[90m ts(2391): [0mFunction implementation is missing or not immediately following the declaration.
 
-[7m551[0m   const firstDate =
-[7m   [0m [93m        ~~~~~~~~~[0m
+[7m12[0m export function getRolling7DayAverage(
+[7m  [0m [91m                ~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/lib/sick-bay/body-composition.ts[0m:[93m80[0m:[93m1[0m - [91merror[0m[90m ts(1128): [0mDeclaration or statement expected.
 
-[96msrc/pages/engineering/food.astro[0m:[93m7[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'recipes' is declared but its value is never read.
+[7m80[0m }
+[7m  [0m [91m~[0m
 
-[7m7[0m const recipes = await getCollection("food-recipes");
-[7m [0m [93m      ~~~~~~~[0m
+[96msrc/pages/sick-bay/body-composition.astro[0m:[93m981[0m:[93m9[0m - [91merror[0m[90m ts(2345): [0mArgument of type '{ measured_on: any; weight_kg: any; body_fat_pct: any; muscle_pct: any; }[]' is not assignable to parameter of type 'MetricObservation[]'.
+  Property 'value' is missing in type '{ measured_on: any; weight_kg: any; body_fat_pct: any; muscle_pct: any; }' but required in type 'MetricObservation'.
 
-[96msrc/pages/science/[slug].astro[0m:[93m53[0m:[93m26[0m - [91merror[0m[90m ts(2304): [0mCannot find name 'dateFormatter'.
+[7m981[0m         weightHistory,
+[7m   [0m [91m        ~~~~~~~~~~~~~[0m
+[96msrc/pages/sick-bay/body-composition.astro[0m:[93m940[0m:[93m11[0m - [91merror[0m[90m ts(1005): [0m',' expected.
 
-[7m53[0m                     <dd>{dateFormatter.format(project.data.started)}</dd>
-[7m  [0m [91m                         ~~~~~~~~~~~~~[0m
-[96msrc/pages/science/[slug].astro[0m:[93m28[0m:[93m7[0m - [93mwarning[0m[90m ts(6133): [0m'observationDateFormatter' is declared but its value is never read.
+[7m940[0m           trendElement,
+[7m   [0m [91m          ~~~~~~~~~~~~[0m
 
-[7m28[0m const observationDateFormatter = new Intl.DateTimeFormat("en-GB", {
-[7m  [0m [93m      ~~~~~~~~~~~~~~~~~~~~~~~~[0m
-
-Result (37 files): 
-- 1 error
+Result (38 files): 
+- 9 errors
 - 0 warnings
-- 8 hints
+- 0 hints
 

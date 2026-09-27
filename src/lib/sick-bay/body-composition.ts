@@ -1,8 +1,6 @@
-export type WeightObservation = {
+export type MetricObservation = {
   measured_on: string;
-  weight_kg: number;
-  body_fat_pct: number;
-  muscle_pct: number;
+  value: number;
 };
 
 export type RollingAveragePoint = {
@@ -12,7 +10,7 @@ export type RollingAveragePoint = {
 };
 
 export function getRolling7DayAverage(
-  observations: WeightObservation[]
+  observations: MetricObservation[]
 ): RollingAveragePoint[] {
   if (observations.length === 0) {
     return [];
@@ -23,7 +21,7 @@ export function getRolling7DayAverage(
   for (const observation of observations) {
     byDate.set(
       observation.measured_on,
-      observation.weight_kg
+      observation.value
     );
   }
 
@@ -103,8 +101,8 @@ export function getHistoryStartDate(
   ].join("-");
 }
 
-export type WeightTrend = {
-  slopeKgPerWeek: number;
+export type MetricTrend = {
+  slopePerWeek: number;
   n: number;
   startDate: string;
   endDate: string;
@@ -120,9 +118,9 @@ function dateToDayNumber(date: string): number {
   );
 }
 
-export function getWeightTrend(
-  observations: WeightObservation[]
-): WeightTrend | null {
+export function getMetricTrend(
+  observations: MetricObservation[]
+): MetricTrend | null {
   const today = new Date();
 
   const todayKey = [
@@ -160,7 +158,7 @@ export function getWeightTrend(
         dateToDayNumber(
           observation.measured_on
         ) - startDay,
-      y: observation.weight_kg,
+      y: observation.value,
     })
   );
 
@@ -192,12 +190,12 @@ export function getWeightTrend(
     return null;
   }
 
-  const slopeKgPerDay =
+  const slopePerDay =
     numerator / denominator;
 
   return {
-    slopeKgPerWeek:
-      slopeKgPerDay * 7,
+    slopePerWeek:
+      slopePerDay * 7,
     n: recent.length,
     startDate:
       recent[0].measured_on,
@@ -208,11 +206,11 @@ export function getWeightTrend(
 }
 
 export function renderBodyCompositionChart(
-  weightRaw: WeightObservation[],
+  weightRaw: MetricObservation[],
   weightRolling: RollingAveragePoint[],
-  muscleRaw: WeightObservation[],
+  muscleRaw: MetricObservation[],
   muscleRolling: RollingAveragePoint[],
-  fatRaw: WeightObservation[],
+  fatRaw: MetricObservation[],
   fatRolling: RollingAveragePoint[],
   historyStartDate: string
 ) {
@@ -270,13 +268,13 @@ export function renderBodyCompositionChart(
   };
 
   function buildPanelScale(
-    rawData: WeightObservation[],
+    rawData: MetricObservation[],
     rollingData: RollingAveragePoint[],
     panelIndex: number
   ) {
     const values = [
       ...rawData.map(
-        (point) => point.weight_kg
+        (point) => point.value
       ),
       ...rollingData
         .filter(
@@ -533,7 +531,7 @@ export function renderBodyCompositionChart(
       .join("");
 
   function renderRawPoints(
-    rawData: WeightObservation[],
+    rawData: MetricObservation[],
     scale: ReturnType<
       typeof buildPanelScale
     >
@@ -543,7 +541,7 @@ export function renderBodyCompositionChart(
         (point) => `
           <circle
             cx="${x(point.measured_on)}"
-            cy="${scale.y(point.weight_kg)}"
+            cy="${scale.y(point.value)}"
             r="2.2"
             class="weight-raw-point"
           />

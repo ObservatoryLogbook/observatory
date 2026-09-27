@@ -40,14 +40,17 @@
 
 ## Fejl og tekniske kontroller
 
-- [ ] Test, at nye træningsdata vises på den udgivne Training-side uden nyt build.
+- [x] Test, at nye træningsdata vises på den udgivne Training-side uden nyt build.
 - [x] Kontrollér og ret InBody-sparklines, så x-positioner følger måledatoer frem for rækkefølge.
 - [x] Kontrollér InBody-grafernes håndtering af manglende/ugyldige værdier og tomme datasæt.
 - [x] Kontrollér FFMI ved manglende data, og tydeliggør, når gennemsnittet bygger på få målinger.
-- [ ] Gennemgå Supabase-rettigheder for Training.
-- [ ] Kontrollér gamle signaturer og EXECUTE-rettigheder for save_inbody_scan.
+- [x] Gennemgå Supabase-rettigheder for Training.
+- [x] Kontrollér gamle signaturer og EXECUTE-rettigheder for save_inbody_scan.
 - [x] Kontrollér InBody-figurernes mobilvisning for vandret overflow ved forskellige skærmbredder.
 - [x] Forbedr topnavigationen på mobil.
+- [x] Etablér statisk Astro/TypeScript-kontrol og ryd alle diagnostics.
+- [x] Kontrollér, at produktionsbuildet gennemføres uden fejl eller advarsler.
+- [x] Gennemgå og robustgør Sick Bay-authentication, private UI-state og fejltilstande.
 
 ## Mulig senere oprydning
 
@@ -60,4 +63,6 @@
 - Overvej en selvstændig FFMI-historikgraf.
 - Undersøg relevante data fra Apple Health og øvrige søvnkilder.
 - Overvej en Metabolism-side til energiindtag og -forbrug.
+- Overvej en Medical Journal side under Sick Bay, der fortolker alle inputs til Sick Bay
+
 
