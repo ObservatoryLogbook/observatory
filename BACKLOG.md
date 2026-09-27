@@ -55,7 +55,7 @@
 ## Mulig senere oprydning
 
 - [ ] Saml fælles kode i InBody Lean/Fat-rendererne.
-- [ ] Erstat misvisende vægtspecifikke feltnavne i beregninger, der også bruges til FFMI.
+- [x] Erstat misvisende vægtspecifikke feltnavne i beregninger, der også bruges til FFMI.
 - [ ] Opdel den store Sick Bay-side i mindre moduler.
 
 ## Idéer til senere

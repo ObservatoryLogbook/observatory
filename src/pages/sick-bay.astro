@@ -1,0 +1,655 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Sick Bay">
+  <main class="sick-bay">
+    <header class="landing-header">
+      <h1>Sick Bay</h1>
+
+      <p
+        id="sick-bay-intro"
+        class="tagline"
+        hidden
+      >
+        Longitudinal health observations and personal health data.
+      </p>
+    </header>
+
+    <div class="auth-status-row">
+      <p
+        id="auth-status"
+        aria-live="polite"
+      >
+        Checking authentication...
+      </p>
+
+      <button
+        id="logout-button"
+        type="button"
+        hidden
+      >
+        Log out
+      </button>
+    </div>
+
+    <form
+      id="login-form"
+      hidden
+    >
+      <label>
+        Email
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          required
+        />
+      </label>
+
+      <label>
+        Password
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+      </label>
+
+      <button type="submit">
+        Log in
+      </button>
+    </form>
+
+    <section
+      id="sick-bay-content"
+      hidden
+    >
+      <div class="sick-bay-tools">
+        <a
+          id="input-link"
+          href="/sick-bay/input/"
+          hidden
+        >
+          Add measurements
+        </a>
+      </div>
+
+      <!-- Landing cards will go here -->
+
+      <div class="sick-bay-grid">
+        <a
+          class="landing-card"
+          href="/sick-bay/body-composition/"
+        >
+          <div class="landing-card__header">
+            <h2>Body Composition</h2>
+          </div>
+
+          <p class="landing-card__description">
+            Weight, muscle, fat, circumferences
+            and InBody measurements.
+          </p>
+
+          <div class="sick-bay-card__content">
+            <div class="sick-bay-card__metrics">
+              <div>
+                <span class="sick-bay-card__metric-name">
+                  Weight
+                </span>
+
+                <strong class="sick-bay-card__metric-value">
+                  <span id="landing-weight">—</span>
+                  <span
+                    id="landing-weight-trend"
+                    class="sick-bay-card__trend"
+                    aria-label="12-week trend"
+                  ></span>
+                </strong>
+              </div>
+
+              <div>
+                <span class="sick-bay-card__metric-name">
+                  Fat mass
+                </span>
+
+                <strong class="sick-bay-card__metric-value">
+                  <span id="landing-fat-mass">—</span>
+                  <span
+                    id="landing-fat-mass-trend"
+                    class="sick-bay-card__trend"
+                    aria-label="12-week trend"
+                  ></span>
+                </strong>
+              </div>
+
+              <div>
+                <span class="sick-bay-card__metric-name">
+                  Muscle mass
+                </span>
+
+                <strong class="sick-bay-card__metric-value">
+                  <span id="landing-muscle-mass">—</span>
+                  <span
+                    id="landing-muscle-mass-trend"
+                    class="sick-bay-card__trend"
+                    aria-label="12-week trend"
+                  ></span>
+                </strong>
+              </div>
+            </div>
+
+            <p class="sick-bay-card__meta">
+              7-day averages · 12-week trend
+            </p>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+
+  <script>
+    import { supabase } from "../lib/sick-bay/supabase";
+
+    import {
+      getSession,
+      signIn,
+      signOut,
+      canReadDomain,
+      canWriteDomain,
+    } from "../lib/sick-bay/auth";
+
+    import {
+      type MetricObservation,
+      getRolling7DayAverage,
+      getMetricTrend,
+      type RollingAveragePoint,
+      type MetricTrend,
+    } from "../lib/sick-bay/body-composition";
+
+    function getRequiredElement<T extends Element>(
+      selector: string
+    ): T {
+      const element =
+        document.querySelector<T>(selector);
+
+      if (!element) {
+        throw new Error(
+          `Required UI element not found: ${selector}`
+        );
+      }
+
+      return element;
+    }
+
+    const loginForm =
+      getRequiredElement<HTMLFormElement>(
+        "#login-form"
+      );
+
+    const authStatus =
+      getRequiredElement<HTMLParagraphElement>(
+        "#auth-status"
+      );
+
+    const logoutButton =
+      getRequiredElement<HTMLButtonElement>(
+        "#logout-button"
+      );
+
+    const sickBayIntro =
+      getRequiredElement<HTMLParagraphElement>(
+        "#sick-bay-intro"
+      );
+
+    const sickBayContent =
+      getRequiredElement<HTMLElement>(
+        "#sick-bay-content"
+      );
+
+    const inputLink =
+      getRequiredElement<HTMLAnchorElement>(
+        "#input-link"
+      );
+
+    const passwordInput =
+      getRequiredElement<HTMLInputElement>(
+        "#password"
+      );
+
+    const landingWeight =
+      getRequiredElement<HTMLElement>(
+        "#landing-weight"
+      );
+
+    const landingWeightTrend =
+      getRequiredElement<HTMLElement>(
+        "#landing-weight-trend"
+      );
+
+    const landingFatMass =
+      getRequiredElement<HTMLElement>(
+        "#landing-fat-mass"
+      );
+
+    const landingFatMassTrend =
+      getRequiredElement<HTMLElement>(
+        "#landing-fat-mass-trend"
+      );
+
+    const landingMuscleMass =
+      getRequiredElement<HTMLElement>(
+        "#landing-muscle-mass"
+      );
+
+    const landingMuscleMassTrend =
+      getRequiredElement<HTMLElement>(
+        "#landing-muscle-mass-trend"
+      );
+
+    function clearPrivateUi() {
+      landingWeight.textContent = "—";
+      landingFatMass.textContent = "—";
+      landingMuscleMass.textContent = "—";
+
+      landingWeightTrend.textContent = "";
+      landingFatMassTrend.textContent = "";
+      landingMuscleMassTrend.textContent = "";
+    }
+
+    async function checkReadAccess() {
+      sickBayContent.hidden = true;
+      inputLink.hidden = true;
+      logoutButton.hidden = true;
+      clearPrivateUi();
+
+      sickBayIntro.hidden = true;
+
+      const {
+        data: sessionData,
+        error: sessionError,
+      } = await getSession();
+
+      if (sessionError) {
+        authStatus.textContent =
+          `Could not check authentication: ${sessionError.message}`;
+
+        loginForm.hidden = false;
+        return;
+      }
+
+      if (!sessionData.session) {
+        authStatus.textContent =
+          "Not authenticated.";
+
+        loginForm.hidden = false;
+        return;
+      }
+
+      loginForm.hidden = true;
+      logoutButton.hidden = false;
+
+      const {
+        data: canRead,
+        error: readError,
+      } = await canReadDomain("body");
+
+      if (readError) {
+        authStatus.textContent =
+          `Could not check read access: ${readError.message}`;
+
+        return;
+      }
+
+      if (!canRead) {
+        authStatus.textContent =
+          "Authenticated, but you do not have access to Sick Bay.";
+
+        return;
+      }
+
+      sickBayIntro.hidden = false;
+      sickBayContent.hidden = false;
+      authStatus.textContent =
+        "Authenticated · read access ✓";
+
+      const {
+        data: weightData,
+        error: weightError,
+      } = await supabase
+        .from("body_measurements")
+        .select("measured_on, weight_kg, body_fat_pct, muscle_pct")
+        .eq("source", "karada")
+        .not("weight_kg", "is", null)
+        .order("measured_on", { ascending: true });
+
+      if (weightError) {
+        authStatus.textContent =
+          `Could not load weight data: ${weightError.message}`;
+
+        return;
+      }
+
+      const weightMetricData: MetricObservation[] =
+        weightData.map((observation) => ({
+          measured_on: observation.measured_on,
+          value: observation.weight_kg,
+        }));
+
+      const fatMassData: MetricObservation[] =
+        weightData.map((observation) => ({
+          measured_on: observation.measured_on,
+          value:
+            observation.weight_kg *
+            observation.body_fat_pct /
+            100,
+        }));
+
+      const muscleMassData: MetricObservation[] =
+        weightData.map((observation) => ({
+          measured_on: observation.measured_on,
+          value:
+            observation.weight_kg *
+            observation.muscle_pct /
+            100,
+        }));
+
+      const currentWeight =
+        getRolling7DayAverage(
+          weightMetricData
+        ).at(-1);
+
+      const currentFatMass =
+        getRolling7DayAverage(
+          fatMassData
+        ).at(-1);
+
+      const currentMuscleMass =
+        getRolling7DayAverage(
+          muscleMassData
+        ).at(-1);
+
+      const weightTrend =
+        getMetricTrend(weightMetricData);
+
+      const fatMassTrend =
+        getMetricTrend(fatMassData);
+
+      const muscleMassTrend =
+        getMetricTrend(muscleMassData);
+
+      function renderLandingValue(
+        point: RollingAveragePoint | undefined,
+        element: HTMLElement
+      ) {
+        element.textContent =
+          point?.mean !== null &&
+          point?.mean !== undefined
+            ? `${point.mean.toFixed(1)} kg`
+            : "—";
+      }
+
+      function renderLandingTrend(
+        trend: MetricTrend | null,
+        element: HTMLElement
+      ) {
+        if (!trend) {
+          element.textContent = "";
+          return;
+        }
+
+        element.textContent =
+          trend.slopePerWeek > 0
+            ? "↑"
+            : trend.slopePerWeek < 0
+              ? "↓"
+              : "→";
+      }
+
+      renderLandingValue(
+        currentWeight,
+        landingWeight
+      );
+
+      renderLandingValue(
+        currentFatMass,
+        landingFatMass
+      );
+
+      renderLandingValue(
+        currentMuscleMass,
+        landingMuscleMass
+      );
+
+      renderLandingTrend(
+        weightTrend,
+        landingWeightTrend
+      );
+
+      renderLandingTrend(
+        fatMassTrend,
+        landingFatMassTrend
+      );
+
+      renderLandingTrend(
+        muscleMassTrend,
+        landingMuscleMassTrend
+      );
+
+      /*
+       * Write access only controls whether the
+       * shared input link is visible.
+       *
+       * Failure here must not block read access.
+       */
+
+      const {
+        data: canWrite,
+        error: writeError,
+      } = await canWriteDomain("body");
+
+      if (!writeError && canWrite) {
+        inputLink.hidden = false;
+      }
+    }
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const email =
+          document.querySelector<HTMLInputElement>(
+            "#email"
+          )?.value;
+
+        const password =
+          document.querySelector<HTMLInputElement>(
+            "#password"
+          )?.value;
+
+        if (!email || !password) {
+          return;
+        }
+
+        authStatus.textContent =
+          "Authenticating...";
+
+        const { error } =
+          await signIn(email, password);
+
+        passwordInput.value = "";
+
+        if (error) {
+          authStatus.textContent =
+            `Authentication failed: ${error.message}`;
+
+          return;
+        }
+
+        await refreshSickBay();
+      }
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        authStatus.textContent =
+          "Signing out...";
+
+        const { error } =
+          await signOut();
+
+        if (error) {
+          authStatus.textContent =
+            `Sign out failed: ${error.message}`;
+
+          return;
+        }
+
+        passwordInput.value = "";
+        clearPrivateUi();
+        await refreshSickBay();
+      }
+    );
+
+    await refreshSickBay();
+
+
+    async function refreshSickBay() {
+      try {
+        await checkReadAccess();
+      } catch (error) {
+        sickBayIntro.hidden = true;
+        sickBayContent.hidden = true;
+        inputLink.hidden = true;
+        clearPrivateUi();
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        authStatus.textContent =
+          `Could not load Sick Bay: ${message}`;
+      }
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+
+  .sick-bay {
+    width: min(100%, 72rem);
+    margin: 0 auto;
+  }
+
+  .sick-bay-grid {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .sick-bay-card__content {
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+
+  .sick-bay-card__metrics {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .sick-bay-card__metrics > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .sick-bay-card__metric-name {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .sick-bay-card__metric-value {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sick-bay-card__trend {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .sick-bay-card__meta {
+    margin: 0.75rem 0 0;
+
+    color: var(--text-meta);
+    font-size: 0.75rem;
+  }
+
+  .auth-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin: 1rem 0 1.5rem;
+  }
+
+  #auth-status {
+    margin: 0;
+
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  #logout-button {
+    padding: 0;
+
+    border: 0;
+    background: none;
+
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.8rem;
+
+    cursor: pointer;
+  }
+
+  #logout-button:hover {
+    color: var(--text-primary);
+  }
+
+  .sick-bay-tools {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 1rem;
+  }
+
+  #input-link {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  #input-link:hover {
+    color: var(--text-primary);
+  }
+</style>
+
