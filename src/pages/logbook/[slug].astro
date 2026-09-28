@@ -37,7 +37,10 @@ const formattedDate = observation.data.date.toLocaleDateString("en-GB", {
 });
 ---
 
-<BaseLayout title={observation.data.title}>
+<BaseLayout
+    title={observation.data.title}
+    navTitle={observation.data.title}
+>
     <main class="logbook-entry">
         <header class="logbook-entry__header">
             <p class="logbook-entry__date">

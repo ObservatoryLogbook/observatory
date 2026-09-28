@@ -15,12 +15,19 @@ const logbook = defineCollection({
 
         engineering: z.array(
             z.enum([
-                "training", 
-                "reading", 
+                "training",
+                "reading",
                 "food",
-                "sick-bay",
             ])
-        ).optional(), 
+        ).optional(),
+
+        sickBay: z.array(
+            z.enum([
+                "body-composition",
+                "cardiovascular",
+                "sleep",
+            ])
+        ).optional(),
     }),
 });
 

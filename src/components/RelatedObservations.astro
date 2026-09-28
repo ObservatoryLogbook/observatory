@@ -1,14 +1,30 @@
 ---
 import ObservationList from "./ObservationList.astro";
-import { getObservationsForEngineering } from "../lib/logbook";
+
+import {
+    getObservationsForEngineering,
+    getObservationsForSickBay,
+} from "../lib/logbook";
 
 interface Props {
-    keyword: "training" | "reading" | "food" | "sick-bay";
+    engineering?: "training" | "reading" | "food";
+
+    sickBay?:
+        | "body-composition"
+        | "cardiovascular"
+        | "sleep";
 }
 
-const { keyword } = Astro.props;
+const {
+    engineering,
+    sickBay,
+} = Astro.props;
 
-const observations = await getObservationsForEngineering(keyword);
+const observations = engineering
+    ? await getObservationsForEngineering(engineering)
+    : sickBay
+        ? await getObservationsForSickBay(sickBay)
+        : [];
 ---
 
 <!-- ===============================================================

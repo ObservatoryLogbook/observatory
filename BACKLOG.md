@@ -1,8 +1,9 @@
 ## Navigation og design
 
-- [ ] Tilføj observationens titel til topmenuen på den enkelte Logbook-entry.
+- [x] Tilføj observationens titel til topmenuen på den enkelte Logbook-entry.
 - [ ] Gør skrifttypen for Status, Started og Observations på Science-kort konsistent med Engineering-kort.
 - [ ] Afklar og tilføj søgning i Observatory.
+- [ ] Tilføj Observatory-logo/favicon til browserfaner og øvrig site metadata.
 
 ## Training
 
@@ -33,10 +34,12 @@
 
 ## Sick Bay
 
-- [ ] Opret en Sick Bay-landingsside, og flyt det nuværende dashboard til Body Composition.
-- [ ] Afklar indhold og formål for Health med blodtryk, puls og søvn.
+- [x] Opret en Sick Bay-landingsside, og flyt det nuværende dashboard til Body Composition.
+- [ ] Afklar indhold og formål for Cardiovascular.
+- [ ] Afklar indhold og formål for Sleep.
 - [ ] Tilføj et forsidelink til Sick Bay, når strukturen er på plads.
-- [ ] Kontrollér, at Related observations finder de relevante Sick Bay-observationer.
+- [x] Kontrollér, at Related observations finder de relevante Sick Bay-observationer.
+- [ ] Tilføj read-only adgang til Sick Bay for Nicklas og Nikolaj.
 
 ## Fejl og tekniske kontroller
 

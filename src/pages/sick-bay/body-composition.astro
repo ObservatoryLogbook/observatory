@@ -6,12 +6,12 @@ import RelatedObservations from "../../components/RelatedObservations.astro";
 <BaseLayout title="Sick Bay">
   <main class="sick-bay">
     <header class="sick-bay-header">
-      <h1>Sick Bay</h1>
+      <h1>Body composition</h1>
 
 <!--- ----- Log-in, logout ----- --->  
 
       <p class="sick-bay-header__intro">
-        Body composition and health trends.
+        Body composition, measurements and long-term trends.
       </p>
     </header>
 
@@ -278,16 +278,7 @@ import RelatedObservations from "../../components/RelatedObservations.astro";
               </p>
             </div>
           </div>
-
-
-          </div>
-
-        <!-- ===============================================================
-             Related observations
-             =============================================================== -->
-
-        <RelatedObservations keyword="sick-bay" />
-
+        </div>
       </section>
 
 <!--- ----- History ----- --->  
@@ -442,6 +433,13 @@ import RelatedObservations from "../../components/RelatedObservations.astro";
         </div>
       </details>
     </section>
+
+    <!-- ===============================================================
+         Related observations
+         =============================================================== -->
+
+    <RelatedObservations sickBay="body-composition" />
+
     </section>
   </main>
 

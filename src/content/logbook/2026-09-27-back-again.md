@@ -3,6 +3,8 @@ title: Back again
 date: 2026-09-27
 projects: 
   - observatory
+sickBay:
+  - body-composition
 ---
 
 As tired and unproductive as yesterday was, as productive and fulfilling today was. I'm definitely back again today, with a much better night's sleep (not fully optimal yet, but getting there). 

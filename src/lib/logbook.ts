@@ -71,7 +71,7 @@ export async function getObservationsForProject(slug: string) {
  * Return all logbook observations that are related to Engineering pages
  */
 export async function getObservationsForEngineering(
-    engineering: "training" | "reading" | "food" | "sick-bay"
+    engineering: "training" | "reading" | "food"
 ) {
     const observations = await getObservations();
 
@@ -100,4 +100,22 @@ export async function getLatestEngineeringActivity() {
                 observation.data.engineering.length > 0
         )
         .toReversed()[0];
+}
+
+/**
+ * Return all logbook observations that are related to Sick Bay pages
+ */
+export async function getObservationsForSickBay(
+    area:
+        | "body-composition"
+        | "cardiovascular"
+        | "sleep"
+) {
+    const observations = await getObservations();
+
+    return observations
+        .filter((observation) =>
+            observation.data.sickBay?.includes(area)
+        )
+        .toReversed();
 }

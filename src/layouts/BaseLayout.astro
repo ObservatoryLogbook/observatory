@@ -4,10 +4,12 @@ import Telescope from "@lucide/astro/icons/telescope";
 
 interface Props {
     title?: string;
+    navTitle?: string;
 }
 
 const {
-    title = "Observatory"
+    title = "Observatory",
+    navTitle,
 } = Astro.props;
 
 const pageTitle =
@@ -47,11 +49,23 @@ const pageTitle =
     <body>
         <header class="site-header">
             <nav class="site-nav" aria-label="Main navigation">
-                <a href="/" class="site-brand">
-                    <Telescope class="site-brand__icon" aria-hidden="true" />
-                    <span>Observatory</span>
-                </a>
+<div class="site-nav__identity">
+    <a href="/" class="site-brand">
+        <Telescope
+            class="site-brand__icon"
+            aria-hidden="true"
+        />
+        <span>Observatory</span>
+    </a>
 
+    {
+        navTitle && (
+            <span class="site-nav__context">
+                {navTitle}
+            </span>
+        )
+    }
+</div>
                 <button
                     class="site-nav__toggle"
                     type="button"

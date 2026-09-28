@@ -162,6 +162,32 @@ h1 {
     stroke-width: 1.8;
 }
 
+.site-nav__identity {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+}
+
+.site-nav__context {
+    overflow: hidden;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-overflow: ellipsis;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.site-nav__context::before {
+    content: "·";
+    margin-right: 0.8rem;
+
+    color: var(--text-meta);
+}
+
 @media (max-width: 600px) {
     .site-header {
         padding: 1.25rem 0;
@@ -207,6 +233,21 @@ h1 {
 
     .site-nav__links--open {
         display: flex;
+    }
+
+        .site-nav__identity {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.2rem;
+    }
+
+    .site-nav__context {
+        max-width: 100%;
+        font-size: 0.75rem;
+    }
+
+    .site-nav__context::before {
+        content: none;
     }
 }
 
