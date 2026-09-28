@@ -26,10 +26,11 @@ const pageTitle =
             name="viewport"
             content="width=device-width"
         />
+
         <link
             rel="icon"
             type="image/svg+xml"
-            href="/favicon.svg?v=1"
+            href="/favicon.svg?v=2"
         />
 
         <link
@@ -49,23 +50,24 @@ const pageTitle =
     <body>
         <header class="site-header">
             <nav class="site-nav" aria-label="Main navigation">
-<div class="site-nav__identity">
-    <a href="/" class="site-brand">
-        <Telescope
-            class="site-brand__icon"
-            aria-hidden="true"
-        />
-        <span>Observatory</span>
-    </a>
+                <div class="site-nav__identity">
+                    <a href="/" class="site-brand">
+                        <Telescope
+                            class="site-brand__icon"
+                            aria-hidden="true"
+                        />
+                        <span>Observatory</span>
+                    </a>
 
-    {
-        navTitle && (
-            <span class="site-nav__context">
-                {navTitle}
-            </span>
-        )
-    }
-</div>
+                    {
+                        navTitle && (
+                            <span class="site-nav__context">
+                                {navTitle}
+                            </span>
+                        )
+                    }
+                </div>
+
                 <button
                     class="site-nav__toggle"
                     type="button"

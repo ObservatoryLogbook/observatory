@@ -1,9 +1,9 @@
 ## Navigation og design
 
 - [x] Tilføj observationens titel til topmenuen på den enkelte Logbook-entry.
-- [ ] Gør skrifttypen for Status, Started og Observations på Science-kort konsistent med Engineering-kort.
+- [x] Gør skrifttypen for Status, Started og Observations på Science-kort konsistent med Engineering-kort.
 - [ ] Afklar og tilføj søgning i Observatory.
-- [ ] Tilføj Observatory-logo/favicon til browserfaner og øvrig site metadata.
+- [x] Tilføj Observatory-logo/favicon til browserfaner og øvrig site metadata.
 
 ## Training
 
