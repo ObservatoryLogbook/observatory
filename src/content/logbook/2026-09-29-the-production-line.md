@@ -6,20 +6,16 @@ engineering:
   - food
 ---
 
-The foundation was closed today after Friday's anniversary celebrations, giving me a slightly unexpected Monday off. I had not really planned anything for the day, but it turned out to be surprisingly productive. In case you're in doubt: I strongly like productivity. 
+Yesterday I concluded that Observatory might finally be ready for a phase where I spend a little less time building it and a little more time actually filling it with things. Apparently I took that rather literally.
 
-I actually managed no less than six administrative tasks, a training session (slightly modified from the normal Monday programme due to the irritated quadratus lumborum), groceries and a few other minor things before 10.30. 
+Tonight I added no fewer than 14 recipes and 13 books. There was remarkably little development involved. The machinery already existed; I simply used it. And suddenly Food looks considerably more like the collection of recipes I actually cook from, while Reading is beginning to resemble my actual future reading life. The production line is operational.
 
-I spent several sessions working on Observatory. In the morning, I finally completed the integration of Sick Bay with Related Observations. Sick Bay observations can now be tagged explicitly as belonging to Body Composition, Cardiovascular or Sleep, rather than being squeezed into the Engineering taxonomy. I also added the observation title to the navigation bar on individual Logbook entries, including a mobile version that actually works with long titles.
+The rest of the day was considerably less eventful. I trained this morning, although I kept things deliberately easy because of the irritated quadratus lumborum. It is, fortunately, doing much better today.
 
-Later, I returned to some smaller design details. Observatory now has its telescope favicon in modern browsers, even if Safari 16 on the old MacBook stubbornly refuses to acknowledge it. I also refined the metadata on the Science cards and shortened their dates, bringing Science and Engineering closer to the same visual language without making them identical.
+Work was good and featured the slightly ridiculous luxury of boller i karry for both lunch and dinner. Given that it is one of my favourite dishes, I have no complaints.
 
-In the evening, I went through the entire Observatory backlog. This unexpectedly revealed that one of the remaining Reading tasks had already been implemented: individual book pages have always been able to contain arbitrary Markdown content. More importantly, the audit removed a considerable amount of completed work and clarified what is actually left.
+I also left work early for one of my least frequent personal rituals. Roughly once every year or eighteen months, I visit a personal shopper at Magasin. I hate shopping for clothes, Magasin offers the service for free, and therefore outsourcing the entire problem seems like the only rational solution. I came home with new trousers, shirts and pullovers, which should hopefully mean that I do not have to think seriously about clothes again for another year.
 
-That led to a more general realization about Observatory. For the past couple of months, most of the effort has gone into building the architecture: collections, navigation, Engineering systems, Supabase, input forms, authentication, Sick Bay and all the infrastructure needed to make the site useful. The architecture is now sufficiently mature that the balance can start shifting from building Observatory to actually using it.
+After a little more work at home, the evening ended with the now increasingly familiar Observatory routine. No new architecture, no database migrations and no debugging. Just books and recipes flowing into a system that is finally ready to receive them.
 
-There are already several real Science projects that are not represented on the site, and much of the existing content is still sparse. Reading can contain not only books but my reasons for reading them and my thoughts afterwards. Food needs more of the recipes I actually cook. Science needs to catch up with the projects that are actually happening.
-
-A useful rhythm may therefore be emerging: weekdays for populating and operating Observatory, and weekends for the larger development projects that benefit from uninterrupted time. Development will continue, of course. Cardiovascular and Sleep alone will keep us occupied for a while. But from now on, new architecture should increasingly emerge from actual use rather than being built in anticipation of it.
-
-Perhaps Observatory is finally reaching the point where I can spend a little less time building the telescope and a little more time looking through it.
+It turns out that using the telescope is rather enjoyable too.
