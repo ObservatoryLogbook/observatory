@@ -5,6 +5,11 @@ source:
   name: The Iron You
 status: favourite
 
+tags:
+  - creamy
+  - spicy
+  - comfort food
+
 ingredients:
   - group: Chicken
     items:

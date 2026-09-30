@@ -3,6 +3,11 @@ title: Cold Noodles
 category: Dinner
 status: favourite
 
+tags:
+  - refreshing
+  - crisp
+  - sweet and salty
+
 source:
   name: The Spruce Eats
 ingredients:
