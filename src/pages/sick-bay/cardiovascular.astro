@@ -1,0 +1,1026 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import RelatedObservations from "../../components/RelatedObservations.astro";
+---
+
+<BaseLayout title="Cardiovascular">
+  <main class="sick-bay">
+    <header  class="sick-bay-header">
+      <h1>Cardiovascular</h1>
+
+      <p class="sick-bay-header__intro">
+        Blood pressure, heart rate and cardiovascular trends.
+      </p>
+    </header>
+
+    <div class="auth-status-row">
+      <p
+        id="auth-status"
+        aria-live="polite"
+      >
+        Checking authentication...
+      </p>
+
+      <button
+        id="logout-button"
+        type="button"
+        hidden
+      >
+        Log out
+      </button>
+    </div>
+
+    <form
+      id="login-form"
+      hidden
+    >
+      <label>
+        Email
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          required
+        />
+      </label>
+
+      <label>
+        Password
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+      </label>
+
+      <button type="submit">
+        Log in
+      </button>
+    </form>
+
+    <section
+      id="cardiovascular-content"
+      hidden
+    >
+
+      <section  class="sick-bay-section">
+        <h2>Current status</h2>
+
+        <div class="current-metrics">
+          <div class="current-metric">
+            <p class="current-metric__label">
+              Systolic
+            </p>
+
+            <p class="current-metric__value">
+              <span id="current-systolic">—</span>
+            </p>
+
+            <p class="current-metric__meta">
+              Latest measurement
+            </p>
+
+            <p
+              id="systolic-trend"
+              class="current-metric__trend"
+            >
+              —
+            </p>
+
+            <p class="current-metric__trend-label">
+              12-week trend
+            </p>
+          </div>
+
+          <div class="current-metric">
+            <p class="current-metric__label">
+              Diastolic
+            </p>
+
+            <p class="current-metric__value">
+              <span id="current-diastolic">—</span>
+            </p>
+
+            <p class="current-metric__meta">
+              Latest measurement
+            </p>
+
+            <p
+              id="diastolic-trend"
+              class="current-metric__trend"
+            >
+              —
+            </p>
+
+            <p class="current-metric__trend-label">
+              12-week trend
+            </p>
+          </div>
+
+          <div class="current-metric">
+            <p class="current-metric__label">
+              Pulse
+            </p>
+
+            <p class="current-metric__value">
+              <span id="current-pulse">—</span>
+            </p>
+
+            <p class="current-metric__meta">
+              Latest measurement
+            </p>
+
+            <p
+              id="pulse-trend"
+              class="current-metric__trend"
+            >
+              —
+            </p>
+
+            <p class="current-metric__trend-label">
+              12-week trend
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sick-bay-section">
+        <h2>Blood pressure</h2>
+        <p class="blood-pressure-history__meta">
+          Last 365 days
+        </p>
+
+        <div class="blood-pressure-history-chart">
+          <svg
+            id="blood-pressure-history-chart"
+            viewBox="0 0 568 440"
+            role="img"
+            aria-label="Blood pressure history"
+          ></svg>
+        </div>
+      </section>
+
+
+      <section class="methodology">
+        <details>
+          <summary>Methodology</summary>
+
+          <div class="methodology__content">
+            <div>
+              <h3>Measurements</h3>
+
+              <p>
+                <strong>Blood pressure:</strong>
+                Microlife Gentle+, three consecutive measurements
+                weekly, usually Sunday morning
+              </p>
+            </div>
+
+            <div>
+              <h3>Derived metrics</h3>
+
+              <p>
+                <strong>Weekly blood pressure:</strong>
+                mean of the three measurements taken during each
+                measurement session
+              </p>
+
+              <p>
+                <strong>Measurement range:</strong>
+                minimum to maximum of the three measurements
+                within each session
+              </p>
+            </div>
+
+            <div>
+              <h3>Trends and smoothing</h3>
+
+              <p>
+                <strong>Blood pressure:</strong>
+                centered 3-measurement average
+              </p>
+
+              <p>
+                Smoothed lines are omitted where consecutive
+                observations are more than 14 days apart
+              </p>
+            </div>
+
+            <div>
+              <h3>Reference ranges</h3>
+
+              <p>
+                Reference ranges follow the 2024 ESC classification for home blood pressure monitoring: <br>
+
+                - <strong>Not elevated:</strong> below 120/70 mmHg<br>
+                - <strong>Elevated:</strong> 120/70 to below 135/85 mmHg<br>
+                - <strong>Hypertension:</strong> 135/85 mmHg or higher<br>
+
+                The shaded regions in the history plot show these thresholds separately for systolic and diastolic pressure.<br>
+
+                The ranges provide clinical context only and are not used by Observatory to make a diagnosis.
+              </p>
+            </div>
+          </div>
+        </details>
+      </section>
+
+
+      <!-- ===============================================================
+           Related observations
+           =============================================================== -->
+
+      <RelatedObservations sickBay="cardiovascular" />
+    </section>
+  </main>
+
+  <script>
+    import { supabase } from "../../lib/sick-bay/supabase";
+
+    import {
+      getSession,
+      signIn,
+      signOut,
+      canReadDomain,
+    } from "../../lib/sick-bay/auth";
+
+    import {
+      getWeeklyBloodPressure,
+      getBloodPressureSeries,
+      renderBloodPressureChart, 
+      type BloodPressureReading,
+    } from "../../lib/sick-bay/cardiovascular";
+
+    import {
+      getHistoryStartDate,
+      getMetricTrend,
+      type MetricTrend,
+    } from "../../lib/sick-bay/time-series";
+
+    function getRequiredElement<T extends Element>(
+      selector: string
+    ): T {
+      const element =
+        document.querySelector<T>(selector);
+
+      if (!element) {
+        throw new Error(
+          `Missing required element: ${selector}`
+        );
+      }
+
+      return element;
+    }
+
+    const loginForm =
+      getRequiredElement<HTMLFormElement>(
+        "#login-form"
+      );
+
+    const authStatus =
+      getRequiredElement<HTMLParagraphElement>(
+        "#auth-status"
+      );
+
+    const logoutButton =
+      getRequiredElement<HTMLButtonElement>(
+        "#logout-button"
+      );
+
+    const cardiovascularContent =
+      getRequiredElement<HTMLElement>(
+        "#cardiovascular-content"
+      );
+
+    const passwordInput =
+      getRequiredElement<HTMLInputElement>(
+        "#password"
+      );
+
+    const currentSystolic =
+      getRequiredElement<HTMLElement>(
+        "#current-systolic"
+      );
+
+    const currentDiastolic =
+      getRequiredElement<HTMLElement>(
+        "#current-diastolic"
+      );
+
+    const currentPulse =
+      getRequiredElement<HTMLElement>(
+        "#current-pulse"
+      );
+
+    const systolicTrendElement =
+      getRequiredElement<HTMLElement>(
+        "#systolic-trend"
+      );
+
+    const diastolicTrendElement =
+      getRequiredElement<HTMLElement>(
+        "#diastolic-trend"
+      );
+
+    const pulseTrendElement =
+      getRequiredElement<HTMLElement>(
+        "#pulse-trend"
+      );
+
+    const bloodPressureChart =
+      getRequiredElement<SVGSVGElement>(
+        "#blood-pressure-history-chart"
+      );
+
+    function clearPrivateUi() {
+      currentSystolic.textContent = "—";
+      currentDiastolic.textContent = "—";
+      currentPulse.textContent = "—";
+    }
+
+    async function checkReadAccess() {
+      cardiovascularContent.hidden = true;
+      logoutButton.hidden = true;
+      clearPrivateUi();
+
+      const {
+        data: sessionData,
+        error: sessionError,
+      } = await getSession();
+
+      if (sessionError) {
+        authStatus.textContent =
+          `Could not check authentication: ${sessionError.message}`;
+
+        loginForm.hidden = false;
+        return;
+      }
+
+      if (!sessionData.session) {
+        authStatus.textContent =
+          "Not authenticated.";
+
+        loginForm.hidden = false;
+        return;
+      }
+
+      loginForm.hidden = true;
+      logoutButton.hidden = false;
+
+      const {
+        data: canRead,
+        error: readError,
+      } = await canReadDomain("body");
+
+      if (readError) {
+        authStatus.textContent =
+          `Could not check read access: ${readError.message}`;
+
+        return;
+      }
+
+      if (!canRead) {
+        authStatus.textContent =
+          "Authenticated, but you do not have access to Sick Bay.";
+
+        return;
+      }
+
+      authStatus.textContent =
+        "Authenticated · loading Cardiovascular…";
+
+      const {
+        data: bloodPressureData,
+        error: bloodPressureError,
+      } = await supabase
+        .from("blood_pressure")
+        .select(
+          "measured_on, reading_number, systolic, diastolic, pulse"
+        )
+        .order(
+          "measured_on",
+          { ascending: true }
+        )
+        .order(
+          "reading_number",
+          { ascending: true }
+        );
+
+      if (bloodPressureError) {
+        authStatus.textContent =
+          `Could not load blood pressure data: ${bloodPressureError.message}`;
+
+        return;
+      }
+
+      const weeklyBloodPressure =
+        getWeeklyBloodPressure(
+          bloodPressureData as BloodPressureReading[]
+        );
+
+      const historyStartDate =
+        getHistoryStartDate(365);
+
+      const recentBloodPressure =
+        weeklyBloodPressure.filter(
+          (observation) =>
+            observation.measured_on >=
+            historyStartDate
+        );
+
+      const {
+        systolic,
+        diastolic,
+        pulse,
+        systolicAverage,
+        diastolicAverage,
+      } = getBloodPressureSeries(
+        recentBloodPressure
+      );
+
+      const systolicTrend = 
+        getMetricTrend(systolic);
+
+      const diastolicTrend = 
+        getMetricTrend(diastolic);
+
+      const pulseTrend = 
+        getMetricTrend(pulse);
+
+      function formatTrend(
+        trend: MetricTrend | null,
+        unit: string
+      ) {
+        if (!trend) {
+          return "—";
+        }
+
+        const value =
+          trend.slopePerWeek;
+
+        const symbol =
+          value > 0
+            ? "↗"
+            : value < 0
+              ? "↘"
+              : "→";
+
+        const sign =
+          value > 0 ? "+" : "";
+
+        return (
+          `${symbol} ${sign}` +
+          `${value.toFixed(1)} ${unit}/week`
+        );
+      }
+
+      systolicTrendElement.textContent =
+        formatTrend(
+          systolicTrend,
+          "mmHg"
+        );
+
+      diastolicTrendElement.textContent =
+        formatTrend(
+          diastolicTrend,
+          "mmHg"
+        );
+
+      pulseTrendElement.textContent =
+        formatTrend(
+          pulseTrend,
+          "bpm"
+        );
+
+      if (historyStartDate) {
+        renderBloodPressureChart(
+          bloodPressureChart,
+          recentBloodPressure,
+          systolic,
+          diastolic,
+          systolicAverage,
+          diastolicAverage,
+          historyStartDate
+        );
+      }
+
+      const latest =
+        weeklyBloodPressure.at(-1);
+
+      if (latest) {
+        currentSystolic.textContent =
+          `${latest.systolicMean.toFixed(1)} mmHg`;
+
+        currentDiastolic.textContent =
+          `${latest.diastolicMean.toFixed(1)} mmHg`;
+
+        currentPulse.textContent =
+          `${latest.pulseMean.toFixed(0)} bpm`;
+      } 
+
+      cardiovascularContent.hidden = false;
+      authStatus.textContent =
+        "Authenticated · read access ✓";
+    }
+
+    loginForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const email =
+          document.querySelector<HTMLInputElement>(
+            "#email"
+          )?.value;
+
+        const password =
+          document.querySelector<HTMLInputElement>(
+            "#password"
+          )?.value;
+
+        if (!email || !password) {
+          return;
+        }
+
+        authStatus.textContent =
+          "Authenticating...";
+
+        const { error } =
+          await signIn(email, password);
+
+        passwordInput.value = "";
+
+        if (error) {
+          authStatus.textContent =
+            `Authentication failed: ${error.message}`;
+
+          return;
+        }
+
+        await refreshCardiovascular();
+      }
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        authStatus.textContent =
+          "Signing out...";
+
+        const { error } =
+          await signOut();
+
+        if (error) {
+          authStatus.textContent =
+            `Sign out failed: ${error.message}`;
+
+          return;
+        }
+
+        passwordInput.value = "";
+        clearPrivateUi();
+
+        await refreshCardiovascular();
+      }
+    );
+
+    async function refreshCardiovascular() {
+      try {
+        await checkReadAccess();
+      } catch (error) {
+        cardiovascularContent.hidden = true;
+        clearPrivateUi();
+
+        const message =
+          error instanceof Error
+            ? error.message
+            : String(error);
+
+        authStatus.textContent =
+          `Could not load Cardiovascular: ${message}`;
+      }
+    }
+
+    await refreshCardiovascular();
+  </script>
+</BaseLayout>
+
+<style>
+    [hidden] {
+    display: none !important;
+  }
+
+/* ------ Over all Sick Bay ------ */
+
+  .sick-bay {
+    width: min(100% - 2rem, 52rem);
+    margin: 0 auto;
+    padding: 1.5rem 0 4rem;
+  }
+
+  .sick-bay-header {
+    margin-bottom: 2rem;
+  }
+
+  .sick-bay-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .sick-bay-header__intro {
+    margin: 0;
+
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .sick-bay-section {
+    margin-top: 3rem;
+  }
+
+  .sick-bay-section > h2 {
+    margin: 0 0 1.5rem;
+
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+/* ------ Current Metrics section ------ */
+
+  .current-metrics {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .current-metric {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .current-metric__label {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .current-metric__value {
+    margin: 0;
+
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  .current-metric__meta {
+    margin: 0.2rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .current-metric__trend {
+    margin-top: 0.9rem;
+  }
+
+  .current-metric__trend-value {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    margin: 0;
+
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .current-metric__trend-value :global(.trend-icon) {
+    width: 0.9rem;
+    height: 0.9rem;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    opacity: 0.7;
+  }
+
+  .current-metric__trend-label {
+    margin: 0.15rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+/* ------ Log-in, logout, authentication ------ */
+
+  #auth-status {
+    margin: 0.5rem 0 1.75rem;
+
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  #login-form {
+    display: grid;
+    gap: 1rem;
+
+    width: min(100%, 24rem);
+  }
+
+  #login-form label {
+    display: grid;
+    gap: 0.35rem;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  #login-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 0.9rem;
+
+    font: inherit;
+    font-size: 16px;
+
+    color: var(--text-primary);
+    background: var(--surface-neutral);
+    border: 1px solid var(--line-default);
+    border-radius: 0.35rem;
+  }
+
+  #login-form input:focus {
+    outline: 2px solid var(--line-green);
+    outline-offset: 2px;
+  }
+
+  #login-form button {
+    justify-self: end;
+
+    padding: 0.75rem 1rem;
+
+    font: inherit;
+    font-weight: 500;
+
+    color: var(--text-primary);
+    background: var(--green-surface);
+    border: 1px solid var(--line-green);
+    border-radius: 0.35rem;
+
+    cursor: pointer;
+  }
+
+  .auth-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    margin-bottom: 1.75rem;
+  }
+
+  .auth-status-row #auth-status {
+    margin: 0;
+
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  #logout-button {
+    padding: 0;
+
+    font: inherit;
+    font-size: 0.85rem;
+
+    color: var(--text-muted);
+    background: none;
+    border: 0;
+
+    cursor: pointer;
+  }
+
+  #logout-button:hover {
+    color: var(--text-primary);
+  }
+
+  .sick-bay-tools {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 2rem;
+  }
+
+  .sick-bay-tools a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .sick-bay-placeholder {
+    margin: 3rem 0;
+
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* =========================================================
+     Blood pressure history
+     ========================================================= */
+
+  .blood-pressure-history-chart {
+    width: min(100%, 46rem);
+    margin: 1.5rem auto 0;
+  }
+
+  .blood-pressure-history-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .blood-pressure-history h3 {
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .blood-pressure-history__meta {
+    margin: 0.25rem 0 0;
+
+    color: var(--text-meta);
+    font-size: 0.8rem;
+  }
+
+  /* Chart structure */
+
+  .blood-pressure-history-chart :global(.bp-panel-title) {
+    fill: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .blood-pressure-history-chart :global(.bp-axis) {
+    stroke: var(--line-default);
+    stroke-width: 1;
+  }
+
+  .blood-pressure-history-chart :global(.bp-grid-line) {
+    stroke: var(--line-subtle);
+    stroke-width: 1;
+  }
+
+  .blood-pressure-history-chart :global(.bp-month-line) {
+    stroke: var(--green-surface);
+    stroke-width: 1;
+  }
+
+  .blood-pressure-history-chart :global(.bp-axis-label) {
+    fill: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .blood-pressure-history-chart :global(.bp-y-tick) {
+    text-anchor: end;
+    dominant-baseline: middle;
+  }
+
+  .blood-pressure-history-chart :global(.bp-x-tick) {
+    text-anchor: middle;
+  }
+
+  .blood-pressure-history-chart :global(.bp-chart-meta) {
+    fill: var(--text-muted);
+    font-size: 10px;
+    dominant-baseline: middle;
+  }
+
+  /* Reference ranges */
+
+  .blood-pressure-history-chart :global(.bp-reference-low),
+  .blood-pressure-history-chart :global(.bp-reference-middle),
+  .blood-pressure-history-chart :global(.bp-reference-high) {
+    fill: var(--green-surface);
+  }
+
+  .blood-pressure-history-chart :global(.bp-reference-low) {
+    opacity: 0.1;
+  }
+
+  .blood-pressure-history-chart :global(.bp-reference-middle) {
+    opacity: 0.40;
+  }
+
+  .blood-pressure-history-chart :global(.bp-reference-high) {
+    opacity: 0.8;
+  }
+
+  .blood-pressure-history-chart :global(.bp-reference-line) {
+    stroke: var(--line-default);
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+
+
+  /* Blood pressure data */
+
+  .blood-pressure-history-chart :global(.bp-range) {
+    stroke: var(--chart-data);
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+
+  .blood-pressure-history-chart :global(.bp-point) {
+    fill: var(--chart-data);
+    opacity: 0.45;
+  }
+
+  .blood-pressure-history-chart :global(.bp-average-line) {
+    fill: none;
+
+    stroke: var(--chart-data);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .blood-pressure-history-chart :global(.bp-hover-line) {
+    stroke: var(--text-muted);
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+
+    pointer-events: none;
+  }
+
+  .blood-pressure-history-chart :global(.bp-hover-tooltip) {
+    pointer-events: none;
+
+    fill: var(--text-primary);
+  }
+
+  .blood-pressure-history-chart :global(.bp-hover-tooltip-bg) {
+    fill: var(--page-background);
+    stroke: var(--line-default);
+    stroke-width: 1;
+  }
+
+  .blood-pressure-history-chart :global(.bp-hover-tooltip-date) {
+    font-weight: 600;
+  }
+
+/* ------ Methodology section ------ */
+
+  .methodology {
+    margin-top: 3.5rem;
+  }
+
+  .methodology details {
+    border-top: 1px solid var(--line-default);
+    padding-top: 1rem;
+  }
+
+  .methodology summary {
+    width: fit-content;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .methodology__content {
+    margin-top: 1.5rem;
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .methodology__content > div + div {
+    margin-top: 1.5rem;
+  }
+
+  .methodology__content h3 {
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .methodology__content p {
+    margin: 0.25rem 0;
+  }
+
+  .methodology__content strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+</style>

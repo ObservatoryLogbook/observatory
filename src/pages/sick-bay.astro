@@ -164,10 +164,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     import {
       type MetricObservation,
       getRolling7DayAverage,
-      getMetricTrend,
       type RollingAveragePoint,
-      type MetricTrend,
     } from "../lib/sick-bay/body-composition";
+
+    import {
+      getMetricTrend,
+      type MetricTrend,
+    } from "../lib/sick-bay/time-series";
 
     function getRequiredElement<T extends Element>(
       selector: string

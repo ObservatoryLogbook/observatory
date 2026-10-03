@@ -1,3 +1,9 @@
+import {
+  dateToDayNumber,
+  getCenteredThreePointAverage,
+  type NumericObservation,
+} from "./time-series";
+
 export type CircumferenceObservation = {
   measured_on: string;
   shoulders_cm: number;
@@ -21,23 +27,6 @@ export function getFormIndex(
       observation.chest_cm) /
     (observation.waist_cm +
       observation.hips_cm)
-  );
-}
-
-export type NumericObservation = {
-  measured_on: string;
-  value: number;
-};
-
-function dateToDayNumber(
-  date: string
-): number {
-  const [year, month, day] =
-    date.split("-").map(Number);
-
-  return (
-    Date.UTC(year, month - 1, day) /
-    86_400_000
   );
 }
 
@@ -389,63 +378,6 @@ export function renderCircumferenceChart(
     return segments;
   }
 
-  function getSmoothedData(
-    data: NumericObservation[]
-  ): NumericObservation[] {
-    const result: NumericObservation[] = [];
-
-    for (
-      let index = 1;
-      index < data.length - 1;
-      index += 1
-    ) {
-      const previous =
-        data[index - 1];
-
-      const current =
-        data[index];
-
-      const next =
-        data[index + 1];
-
-      const gapBefore =
-        dateToDayNumber(
-          current.measured_on
-        ) -
-        dateToDayNumber(
-          previous.measured_on
-        );
-
-      const gapAfter =
-        dateToDayNumber(
-          next.measured_on
-        ) -
-        dateToDayNumber(
-          current.measured_on
-        );
-
-      if (
-        gapBefore > 14 ||
-        gapAfter > 14
-      ) {
-        continue;
-      }
-
-      result.push({
-        measured_on:
-          current.measured_on,
-        value:
-          (
-            previous.value +
-            current.value +
-            next.value
-          ) / 3,
-      });
-    }
-
-    return result;
-  }
-
   function renderSeries(
     data: NumericObservation[],
     scale: ReturnType<
@@ -453,7 +385,7 @@ export function renderCircumferenceChart(
     >
   ) {
     const smoothedData =
-      getSmoothedData(data);
+      getCenteredThreePointAverage(data);
 
     const lines =
       buildLineSegments(

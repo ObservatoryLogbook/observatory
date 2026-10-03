@@ -375,12 +375,6 @@ import RelatedObservations from "../../components/RelatedObservations.astro";
             </p>
 
             <p>
-              <strong>Blood pressure:</strong>
-              Microlife Gentle+, three consecutive measurements weekly,
-              usually Sunday morning
-            </p>
-
-            <p>
               <strong>InBody:</strong>
               InBody 270, measured approximately monthly
             </p>
@@ -455,13 +449,16 @@ import RelatedObservations from "../../components/RelatedObservations.astro";
     } from "../../lib/sick-bay/auth";
 
     import {
-      getRolling7DayAverage,
       getHistoryStartDate,
       getMetricTrend,
+      type MetricTrend,
+    } from "../../lib/sick-bay/time-series";
+
+    import {
+      getRolling7DayAverage,
       renderBodyCompositionChart,
       type MetricObservation,
       type RollingAveragePoint,
-      type MetricTrend,
     } from "../../lib/sick-bay/body-composition";
 
     import {
