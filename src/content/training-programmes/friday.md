@@ -5,6 +5,19 @@ description: Back focus, all exercises done as tempo exercises (explosive concen
 order: 4
 ---
 
+## Warm-up
+
+#### Open chest
+
+#### Scapula pull-ups
+
+#### Scapula push-ups
+
+#### Shoulder stretch
+
+
+## Workout
+
 ### High rows 
 3 sets · 4-6 reps
 

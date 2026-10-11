@@ -109,18 +109,133 @@ export function renderPerformanceChart(
             class: "trend-line",
         });
     }
-    const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-        day: "numeric", month: "short", timeZone: "UTC",
-    });
+
+    // Render the recorded top sets.
     for (const point of data) {
-        const circle = append("circle", {
-            cx: x(point.date), cy: y(point.e1RM), r: 4, class: "data-point",
+        append("circle", {
+            cx: x(point.date),
+            cy: y(point.e1RM),
+            r: 4,
+            class: "data-point",
         });
-        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-        title.textContent = `${dateFormatter.format(point.date)} · ` +
-            `${point.e1RM.toFixed(1)} kg · ` +
-            `${point.weight} kg x ${point.reps} @ ${point.rpe}`;
-        circle.appendChild(title);
     }
+
+    // Hover elements, matching the Cardiovascular chart.
+    const hoverLayer = append("g", {
+        visibility: "hidden",
+        class: "performance-hover-layer",
+    });
+
+    const hoverLine = document.createElementNS(
+        "http://www.w3.org/2000/svg", "line"
+    );
+    hoverLine.setAttribute("class", "performance-hover-line");
+    hoverLine.setAttribute("y1", String(padding.top));
+    hoverLine.setAttribute("y2", String(padding.top + plotHeight));
+    hoverLayer.appendChild(hoverLine);
+
+    const tooltip = document.createElementNS(
+        "http://www.w3.org/2000/svg", "g"
+    );
+    tooltip.setAttribute("class", "performance-hover-tooltip");
+    hoverLayer.appendChild(tooltip);
+
+    const tooltipWidth = 158;
+    const tooltipHeight = 78;
+
+    const background = document.createElementNS(
+        "http://www.w3.org/2000/svg", "rect"
+    );
+    background.setAttribute("width", String(tooltipWidth));
+    background.setAttribute("height", String(tooltipHeight));
+    background.setAttribute("rx", "3");
+    background.setAttribute("class", "performance-hover-tooltip-bg");
+    tooltip.appendChild(background);
+
+    const tooltipLines = [15, 33, 51, 69].map((position, index) => {
+        const line = document.createElementNS(
+            "http://www.w3.org/2000/svg", "text"
+        );
+        line.setAttribute("x", "8");
+        line.setAttribute("y", String(position));
+        if (index === 0) {
+            line.setAttribute("class", "performance-hover-tooltip-date");
+        }
+        tooltip.appendChild(line);
+        return line;
+    });
+
+    // A transparent target makes the entire plot interactive.
+    const hoverTarget = append("rect", {
+        x: padding.left,
+        y: padding.top,
+        width: plotWidth,
+        height: plotHeight,
+        fill: "transparent",
+        "pointer-events": "all",
+    });
+
     svg.appendChild(fragment);
+
+    const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+    });
+
+    hoverTarget.addEventListener("pointermove", (event) => {
+        const bounds = svg.getBoundingClientRect();
+
+        const pointerX =
+            ((event.clientX - bounds.left) / bounds.width) * width;
+
+        const clampedX = Math.min(
+            padding.left + plotWidth,
+            Math.max(padding.left, pointerX)
+        );
+
+        const pointerTime = domainStart +
+            ((clampedX - padding.left) / plotWidth) *
+            (domainEnd - domainStart);
+
+        const nearest = data.reduce((best, point) =>
+            Math.abs(point.date.getTime() - pointerTime) <
+            Math.abs(best.date.getTime() - pointerTime)
+                ? point
+                : best
+        );
+
+        const snappedX = x(nearest.date);
+
+        tooltipLines[0].textContent =
+            dateFormatter.format(nearest.date);
+        tooltipLines[1].textContent =
+            `e1RM: ${nearest.e1RM.toFixed(1)} kg`;
+        tooltipLines[2].textContent =
+            `Top set: ${nearest.weight} kg × ${nearest.reps}`;
+        tooltipLines[3].textContent =
+            `RPE: ${nearest.rpe}`;
+
+        hoverLine.setAttribute("x1", String(snappedX));
+        hoverLine.setAttribute("x2", String(snappedX));
+
+        const tooltipGap = 10;
+        const tooltipX =
+            snappedX + tooltipGap + tooltipWidth <=
+            padding.left + plotWidth
+                ? snappedX + tooltipGap
+                : snappedX - tooltipGap - tooltipWidth;
+
+        tooltip.setAttribute(
+            "transform",
+            `translate(${tooltipX} ${padding.top + 10})`
+        );
+
+        hoverLayer.setAttribute("visibility", "visible");
+    });
+
+    hoverTarget.addEventListener("pointerleave", () => {
+        hoverLayer.setAttribute("visibility", "hidden");
+    });
 }

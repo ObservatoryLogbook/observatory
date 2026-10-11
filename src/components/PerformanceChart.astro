@@ -107,4 +107,33 @@ const { title, exercise, width = 568, height = 400 } = Astro.props;
         stroke-linecap: round;
         opacity: 0.8;
     }
+
+    /* Interactive hover */
+
+    .performance-chart :global(.performance-hover-layer) {
+        pointer-events: none;
+    }
+
+    .performance-chart :global(.performance-hover-line) {
+        stroke: var(--text-muted);
+        stroke-width: 1;
+        stroke-dasharray: 2 3;
+        pointer-events: none;
+    }
+
+    .performance-chart :global(.performance-hover-tooltip-bg) {
+        fill: var(--page-background);
+        stroke: var(--line-default);
+        stroke-width: 1;
+    }
+
+    .performance-chart :global(.performance-hover-tooltip) {
+        pointer-events: none;
+        fill: var(--text-primary);
+        font-size: 11px;
+    }
+
+    .performance-chart :global(.performance-hover-tooltip-date) {
+        font-weight: 600;
+    }
 </style>

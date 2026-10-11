@@ -5,6 +5,23 @@ description: Back chain, all exercises done as tempo exercises (explosive concen
 order: 2
 ---
 
+## Warm-up
+
+#### Single-leg glute bridge
+
+#### Ankle stretch
+
+#### Elephant walk
+
+#### DWS stretch
+
+#### Back extension hold
+
+#### Back extension lateral flexion
+
+
+## Workout
+
 ### Back extensions
 3 sets · 4-6 reps
 

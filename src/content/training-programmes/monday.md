@@ -5,10 +5,23 @@ description: Chest focus, all exercises done as tempo exercises (explosive conce
 order: 1
 ---
 
+## Warm-up
+
+#### Open chest
+
+#### Scapula pull-ups
+
+#### Scapula push-ups
+
+#### Shoulder stretch
+
+
+## Workout
+
 ### Single-arm lateral cable raises
 3 sets · 4-6 reps
 
-### Inclince dumbbell presses
+### Incline dumbbell presses
 3 sets · 4-6 reps
 
 ### High row
