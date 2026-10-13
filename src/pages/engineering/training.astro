@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PerformanceChart from "../../components/PerformanceChart.astro";
+import TrainingHistory from "../../components/TrainingHistory.astro";
 
 import {
     getStrengthGoals,
@@ -247,6 +248,15 @@ const trainingContext = await getTrainingContext();
                     );
                 })}
             </div>
+        </section>
+
+        <!-- ===============================================================
+             Training history
+             =============================================================== -->
+
+        <section class="training-content">
+            <h2 class="section-heading">Training history</h2>
+            <TrainingHistory />
         </section>
 
 

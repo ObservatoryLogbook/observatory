@@ -1,0 +1,318 @@
+<div class="training-history">
+  <div class="history-header">
+    <span id="training-year"></span>
+    <span id="training-count" aria-live="polite"></span>
+  </div>
+
+  <div
+    id="training-calendar"
+    class="history-calendar"
+    aria-label="Training days by month"
+  >
+    <p class="history-message">Loading training history…</p>
+  </div>
+
+  <div
+    id="training-selection"
+    class="training-selection"
+    role="status"
+    aria-live="polite"
+    hidden
+  ></div>
+</div>
+
+<script>
+  import { getTrainingDays } from "../lib/training-history";
+
+  const MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  async function renderTrainingHistory() {
+    const calendar = document.querySelector<HTMLElement>(
+      "#training-calendar"
+    );
+    const counter = document.querySelector<HTMLElement>(
+      "#training-count"
+    );
+
+    if (!calendar || !counter) return;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const yearLabel = document.querySelector<HTMLElement>(
+      "#training-year"
+    );
+
+    if (yearLabel) {
+      yearLabel.textContent = String(year);
+    }
+
+    const today = [
+      year,
+      String(now.getMonth() + 1).padStart(2, "0"),
+      String(now.getDate()).padStart(2, "0")
+    ].join("-");
+
+    try {
+      const dates = await getTrainingDays();
+      const trained = new Set(dates);
+
+      counter.textContent =
+        `${dates.filter((date) =>
+          date.startsWith(`${year}-`)
+        ).length} training days`;
+
+      calendar.replaceChildren();
+
+      for (let month = 0; month < 12; month++) {
+        const row = document.createElement("div");
+        row.className = "history-row";
+
+        const label = document.createElement("span");
+        label.className = "month-label";
+        label.textContent = MONTHS[month];
+        row.appendChild(label);
+
+        const days = document.createElement("div");
+        days.className = "month-days";
+
+        const daysInMonth =
+          new Date(year, month + 1, 0).getDate();
+
+        for (let day = 1; day <= 31; day++) {
+          const cell = document.createElement("span");
+          cell.className = "day-cell";
+
+          if (day > daysInMonth) {
+            cell.classList.add("invalid");
+          } else {
+            const date = [
+              year,
+              String(month + 1).padStart(2, "0"),
+              String(day).padStart(2, "0")
+            ].join("-");
+
+            if (date > today) {
+              cell.classList.add("future");
+            } else if (trained.has(date)) {
+              cell.classList.add("trained");
+            }
+
+            const formattedDate = new Intl.DateTimeFormat("en-GB", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            }).format(new Date(`${date}T12:00:00`));
+
+            cell.dataset.tooltip = `${formattedDate} · ${
+              trained.has(date) ? "Training day" :
+              date > today ? "Upcoming" : "Rest day"
+            }`;
+
+            cell.addEventListener("click", () => {
+              const selection = document.querySelector<HTMLElement>(
+                "#training-selection"
+              );
+
+              if (!selection) return;
+
+              if (!selection.hidden && selection.dataset.date === date) {
+                selection.hidden = true;
+                delete selection.dataset.date;
+                return;
+              }
+
+              const status = trained.has(date)
+                ? "Training day"
+                : date > today
+                  ? "Upcoming"
+                  : "Rest day";
+
+              selection.textContent = `${formattedDate} · ${status}`;
+              selection.dataset.date = date;
+              selection.hidden = false;
+            });
+
+            cell.setAttribute(
+              "aria-label",
+              `${date}: ${
+                trained.has(date) ? "Trained" :
+                date > today ? "Future" : "Rest"
+              }`
+            );
+          }
+
+          days.appendChild(cell);
+        }
+
+        row.appendChild(days);
+        calendar.appendChild(row);
+      }
+    } catch (error) {
+      console.error("Training history:", error);
+      calendar.textContent =
+        "Could not load training history.";
+    }
+  }
+
+  renderTrainingHistory();
+</script>
+
+<style>
+  .training-history {
+    width: 100%;
+  }
+
+  .history-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .history-header h3 {
+    margin: 0;
+  }
+
+  .history-header span {
+    font-size: 0.85rem;
+    opacity: 0.65;
+  }
+
+  .history-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  :global(.history-row) {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  :global(.month-label) {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  :global(.month-days) {
+    display: grid;
+    grid-template-columns: repeat(31, minmax(0, 22px));
+    gap: 3px;
+  }
+
+  :global(.day-cell) {
+    aspect-ratio: 1;
+    min-width: 0;
+    border-radius: 2px;
+    background: var(--surface-neutral);
+  }
+
+  :global(.day-cell.trained) {
+    background: color-mix(
+      in srgb,
+      var(--green-accent) 75%, 
+      var(--green-surface)
+    );
+  }
+
+  :global(.day-cell.future) {
+    background: var(--page-background);
+  }
+
+  :global(.day-cell.invalid) {
+    background: transparent;
+  }
+
+  .history-message {
+    font-size: 0.85rem;
+    opacity: 0.65;
+  }
+
+  /* Base styling for all devices */
+  :global(.day-cell:not(.invalid)) {
+    position: relative;
+    cursor: default;
+  }
+
+  /* Hover effects only on devices with a mouse */
+  @media (hover: hover) and (pointer: fine) {
+    :global(.day-cell:not(.invalid):hover) {
+      outline: 1px solid var(--green-accent);
+      outline-offset: 2px;
+    }
+
+    :global(.day-cell[data-tooltip]:hover::after) {
+      content: attr(data-tooltip);
+      position: absolute;
+      z-index: 10;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--line-default);
+      border-radius: 4px;
+
+      background: var(--page-background);
+      color: var(--text-primary);
+
+      font-size: 0.75rem;
+      line-height: 1.4;
+      box-shadow: 0 3px 10px rgb(0 0 0 / 0.06);
+
+      pointer-events: none;
+    }
+  }
+
+  .training-selection {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    :global(.history-row) {
+      grid-template-columns: 2rem minmax(0, 1fr);
+      gap: 0.5rem;
+    }
+
+    :global(.month-days) {
+      grid-template-columns: repeat(31, minmax(0, 1fr));
+      gap: 2px;
+    }
+
+    .history-calendar {
+      gap: 0px;
+    }
+
+    :global(.month-label) {
+      line-height: 1.2;
+    }
+
+    .training-selection:not([hidden]) {
+      display: block;
+      margin-top: 1rem;
+      padding: 0.5rem 0.75rem;
+
+      background: var(--surface-neutral);
+      color: var(--text-secondary);
+      border: 1px solid var(--line-subtle);
+      border-radius: 4px;
+
+      font-size: 0.8rem;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    :global(.day-cell:not(.invalid)) {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+  }
+</style>
