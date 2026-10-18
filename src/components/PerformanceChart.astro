@@ -53,10 +53,6 @@ const { title, exercise, width = 568, height = 400 } = Astro.props;
         overflow: visible;
     }
 
-    .performance-chart :global(.axis) {
-        stroke: var(--line-default);
-        stroke-width: 1;
-    }
 
     .performance-chart :global(.data-point) {
         fill: var(--page-background);
@@ -64,29 +60,6 @@ const { title, exercise, width = 568, height = 400 } = Astro.props;
         stroke-width: 1.5;
     }
 
-    .performance-chart :global(.grid-line) {
-        stroke: var(--line-subtle);
-        stroke-width: 1;
-    }
-
-    .performance-chart :global(.month-grid-line) {
-        stroke: var(--green-surface);
-        stroke-width: 1;
-    }
-
-    .performance-chart :global(.axis-label) {
-        fill: var(--text-muted);
-        font-size: 11px;
-    }
-
-    .performance-chart :global(.y-tick) {
-        text-anchor: end;
-        dominant-baseline: middle;
-    }
-
-    .performance-chart :global(.x-tick) {
-        text-anchor: middle;
-    }
 
     .performance-chart :global(.axis-title) {
         fill: var(--text-muted);
@@ -114,18 +87,6 @@ const { title, exercise, width = 568, height = 400 } = Astro.props;
         pointer-events: none;
     }
 
-    .performance-chart :global(.performance-hover-line) {
-        stroke: var(--text-muted);
-        stroke-width: 1;
-        stroke-dasharray: 2 3;
-        pointer-events: none;
-    }
-
-    .performance-chart :global(.performance-hover-tooltip-bg) {
-        fill: var(--page-background);
-        stroke: var(--line-default);
-        stroke-width: 1;
-    }
 
     .performance-chart :global(.performance-hover-tooltip) {
         pointer-events: none;
@@ -133,7 +94,4 @@ const { title, exercise, width = 568, height = 400 } = Astro.props;
         font-size: 11px;
     }
 
-    .performance-chart :global(.performance-hover-tooltip-date) {
-        font-weight: 600;
-    }
 </style>

@@ -1,10 +1,11 @@
 ## Navigation og design
 - [ ] Afklar behov og løsning for søgning i Observatory.
+- [ ] Gennemgående design audit af sider og undersider, samt oprydning i CSS
 
 ## Training history
-- [ ] Registrér træningsdage uafhængigt af topsæt.
-- [ ] Vis træningsdage i en kalender med én række pr. måned og én kasse pr. dato.
-- [ ] Overfør historiske træningsdatoer fra Apple Notes, og skeln mellem fridage og manglende registreringer.
+- [x] Registrér træningsdage uafhængigt af topsæt.
+- [x] Vis træningsdage i en kalender med én række pr. måned og én kasse pr. dato.
+- [x] Overfør historiske træningsdatoer fra Apple Notes, og skeln mellem fridage og manglende registreringer.
 
 ## Domæne og besøgsstatistik
 - [ ] Undersøg og opsæt et eget domæne til Observatory.
@@ -19,6 +20,7 @@
 
 ## Sick Bay
 - [ ] Afklar indhold og formål for Cardiovascular.
+- [ ] Afklar om Apple Health-data kan integreres til Cardiovascular
 - [ ] Afklar indhold og formål for Sleep.
 - [ ] Tilføj et forsidelink til Sick Bay, når strukturen er på plads.
 - [ ] Tilføj read-only adgang til Sick Bay for Nicklas og Nikolaj.

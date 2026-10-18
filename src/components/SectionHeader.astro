@@ -1,0 +1,21 @@
+---
+interface Props {
+    title: string;
+    description: string;
+    icon?: any;
+    descriptionId?: string;
+    descriptionHidden?: boolean;
+}
+
+const { title, description, icon: Icon, descriptionId, descriptionHidden = false } = Astro.props;
+---
+
+<header class="section-header">
+    <div class="section-header__text">
+        <h1>{title}</h1>
+        <p id={descriptionId} class="tagline" hidden={descriptionHidden}>{description}</p>
+    </div>
+    {Icon && (
+        <Icon class="section-header__icon" aria-hidden="true" />
+    )}
+</header>

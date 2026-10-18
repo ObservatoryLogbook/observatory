@@ -1,0 +1,93 @@
+/* Shared SVG chart presentation: Training, Body Composition, Cardiovascular.
+   Parent-qualified selectors prevent rules leaking into unrelated SVGs. */
+
+/* axis */
+.performance-chart .axis,
+.weight-history-chart .weight-axis,
+.circumference-history-chart .circumference-axis,
+.blood-pressure-history-chart .bp-axis {
+
+        stroke: var(--line-default);
+        stroke-width: 1;
+}
+
+/* grid */
+.performance-chart .grid-line,
+.weight-history-chart .weight-grid-line,
+.circumference-history-chart .circumference-grid-line,
+.blood-pressure-history-chart .bp-grid-line {
+
+        stroke: var(--line-subtle);
+        stroke-width: 1;
+}
+
+/* month */
+.performance-chart .month-grid-line,
+.weight-history-chart .weight-month-line,
+.circumference-history-chart .circumference-month-line,
+.blood-pressure-history-chart .bp-month-line {
+
+        stroke: var(--green-surface);
+        stroke-width: 1;
+}
+
+/* label */
+.performance-chart .axis-label,
+.weight-history-chart .weight-axis-label,
+.circumference-history-chart .circumference-axis-label,
+.blood-pressure-history-chart .bp-axis-label {
+
+        fill: var(--text-muted);
+        font-size: 11px;
+}
+
+/* ytick */
+.performance-chart .y-tick,
+.weight-history-chart .weight-y-tick,
+.circumference-history-chart .circumference-y-tick,
+.blood-pressure-history-chart .bp-y-tick {
+
+        text-anchor: end;
+        dominant-baseline: middle;
+}
+
+/* xtick */
+.performance-chart .x-tick,
+.weight-history-chart .weight-x-tick,
+.circumference-history-chart .circumference-x-tick,
+.blood-pressure-history-chart .bp-x-tick {
+
+        text-anchor: middle;
+}
+
+/* hoverline */
+.performance-chart .performance-hover-line,
+.weight-history-chart .composition-hover-line,
+.circumference-history-chart .circumference-hover-line,
+.blood-pressure-history-chart .bp-hover-line {
+
+        stroke: var(--text-muted);
+        stroke-width: 1;
+        stroke-dasharray: 2 3;
+        pointer-events: none;
+}
+
+/* hoverbg */
+.performance-chart .performance-hover-tooltip-bg,
+.weight-history-chart .composition-hover-tooltip-bg,
+.circumference-history-chart .circumference-hover-tooltip-bg,
+.blood-pressure-history-chart .bp-hover-tooltip-bg {
+
+        fill: var(--page-background);
+        stroke: var(--line-default);
+        stroke-width: 1;
+}
+
+/* hoverdate */
+.performance-chart .performance-hover-tooltip-date,
+.weight-history-chart .composition-hover-tooltip-date,
+.circumference-history-chart .circumference-hover-tooltip-date,
+.blood-pressure-history-chart .bp-hover-tooltip-date {
+
+        font-weight: 600;
+}

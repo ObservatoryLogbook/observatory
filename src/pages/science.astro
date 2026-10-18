@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import Orbit from "@lucide/astro/icons/orbit";
 import { getProjects } from "../lib/projects";
 import { getObservations } from "../lib/logbook";
 
@@ -36,13 +38,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 
 <BaseLayout title="Science">
     <main>
-        <header class="landing-header">
-            <h1>Science</h1>
-
-            <p class="tagline">
-                Long-running investigations, projects, and accumulated knowledge.
-            </p>
-        </header>
+        <SectionHeader title="Science" description="Long-running investigations, projects, and accumulated knowledge." icon={Orbit} />
 
         <div class="project-grid">
             {

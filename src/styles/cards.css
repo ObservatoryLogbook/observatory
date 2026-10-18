@@ -1,0 +1,61 @@
+/* =========================================================
+   Landing page cards
+   ========================================================= */
+
+.landing-card {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 18rem;
+    padding: 2rem;
+
+    color: inherit;
+    background: var(--surface-neutral);
+    border: 1px solid var(--line-green);
+    border-radius: 0.4rem;
+
+    box-shadow:
+        0 0.1rem 0.3rem rgb(34 34 34 / 3%),
+        0 0.4rem 1.2rem rgb(34 34 34 / 4%);
+
+    text-decoration: none;
+
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        border-color 160ms ease;
+}
+
+.landing-card:hover {
+    transform: translateY(-0.15rem);
+
+    border-color: #cbd2c0;
+
+    box-shadow:
+        0 0.2rem 0.45rem rgb(34 34 34 / 4%),
+        0 0.75rem 1.75rem rgb(34 34 34 / 7%);
+}
+
+.landing-card__header {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+
+    border-bottom: 1px solid var(--line-green);
+}
+
+.landing-card__header h2 {
+    margin: 0;
+
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.landing-card__description {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+

@@ -1,0 +1,24 @@
+/* =========================================================
+   Colour scheme
+   ========================================================= */
+
+:root {
+    /* Colour */
+    --green-surface: #edf0e8;
+    --green-accent: #7d8973;
+
+    --text-primary: #222;
+    --text-secondary: #53584f;
+    --text-muted: #70756c;
+    --text-meta: #8a8e87;
+
+    --line-default: #deded8;
+    --line-subtle: #e7e7e1;
+    --line-green: #dfe3d8;
+
+    --page-background: #f7f7f3;
+    --surface-neutral: #f1f2ee;
+
+    --chart-data: #6f756b;
+}
+

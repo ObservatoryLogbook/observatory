@@ -1,0 +1,78 @@
+/* =========================================================
+   Foundation
+   ========================================================= */
+
+html {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: var(--text-primary);
+    background: var(--page-background);
+}
+
+body {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 2rem 5rem;
+
+    font-size: 1.15rem;
+    line-height: 1.7;
+}
+
+main {
+    width: 100%;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    margin-bottom: 1rem;
+
+    font-size: clamp(2.6rem, 7vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+}
+
+.tagline {
+    margin-top: 0;
+
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.colour {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+}
+
+.colour__swatch {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--line-default);
+    border-radius: 0.25rem;
+}
+
+.section-heading {
+    margin: 0 -1rem 2rem;
+    padding: 0.75rem 1rem;
+
+    background: var(--green-surface);
+    border-radius: 0.3rem;
+
+    color: var(--text-secondary);
+    font-size: 1.45rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+

@@ -7,7 +7,7 @@ const recipesByCategory = await getRecipesByCategory();
 ---
 
 <BaseLayout title="Food">
-    <main class="food">
+    <main class="food layout-collection">
         <header>
             <h1>Food</h1>
 
@@ -58,12 +58,7 @@ const recipesByCategory = await getRecipesByCategory();
 
 
 ￼<style>
-     .food {
-        width: min(100%, 52rem);
-        margin: 0 auto;
-    }
-
-    .food-section {
+     .food-section {
         margin-top: 4.5rem;
     }
 

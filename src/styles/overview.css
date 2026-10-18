@@ -1,0 +1,63 @@
+/* =========================================================
+   Observatory overview
+   ========================================================= */
+
+.observatory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.observatory-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.observatory-card__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+
+    color: #68705f;
+    stroke-width: 1.6;
+}
+
+.observatory-card__content {
+    margin-top: auto;
+    padding-top: 2rem;
+}
+
+.observatory-card__label {
+    margin-bottom: 0.75rem;
+
+    color: #73796d;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.observatory-card__content ul {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.observatory-card__content li {
+    padding: 0.4rem 0;
+
+    border-bottom: 1px solid rgb(104 112 95 / 20%);
+
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.observatory-card__content li:last-child {
+    border-bottom: 0;
+}
+
+

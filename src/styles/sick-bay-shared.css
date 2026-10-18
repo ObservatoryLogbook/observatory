@@ -1,0 +1,162 @@
+/* Shared Sick Bay presentation: extracted unchanged declarations from Body Composition and Cardiovascular. */
+/* Scope rules to .sick-bay so unrelated pages are unaffected. */
+
+/* ------ Over all Sick Bay ------ */
+
+  .sick-bay {
+    width: min(100% - 2rem, 52rem);
+    margin: 0 auto;
+    padding: 1.5rem 0 4rem;
+  }
+
+  :where(.sick-bay) .sick-bay-header {
+    margin-bottom: 2rem;
+  }
+
+  :where(.sick-bay) .sick-bay-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  :where(.sick-bay) .sick-bay-header__intro {
+    margin: 0;
+
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  :where(.sick-bay) .sick-bay-section {
+    margin-top: 3rem;
+  }
+
+  :where(.sick-bay) .sick-bay-section > h2 {
+    margin: 0 0 1.5rem;
+
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+
+/* ------ Current Metrics section ------ */
+
+  :where(.sick-bay) .current-metrics {
+    display: grid;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  :where(.sick-bay) .current-metric {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  :where(.sick-bay) .current-metric__label {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  :where(.sick-bay) .current-metric__value {
+    margin: 0;
+
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+
+  :where(.sick-bay) .current-metric__meta {
+    margin: 0.2rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  :where(.sick-bay) .current-metric__trend {
+    margin-top: 0.9rem;
+  }
+
+  :where(.sick-bay) .current-metric__trend-value {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    margin: 0;
+
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  :where(.sick-bay) .current-metric__trend-value .trend-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    opacity: 0.7;
+  }
+
+  :where(.sick-bay) .current-metric__trend-label {
+    margin: 0.15rem 0 0;
+
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+
+/* ------ Methodology section ------ */
+
+  :where(.sick-bay) .methodology {
+    margin-top: 3.5rem;
+  }
+
+  :where(.sick-bay) .methodology details {
+    border-top: 1px solid var(--line-default);
+    padding-top: 1rem;
+  }
+
+  :where(.sick-bay) .methodology summary {
+    width: fit-content;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  :where(.sick-bay) .methodology__content {
+    margin-top: 1.5rem;
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  :where(.sick-bay) .methodology__content > div + div {
+    margin-top: 1.5rem;
+  }
+
+  :where(.sick-bay) .methodology__content h3 {
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  :where(.sick-bay) .methodology__content p {
+    margin: 0.25rem 0;
+  }
+
+  :where(.sick-bay) .methodology__content strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+

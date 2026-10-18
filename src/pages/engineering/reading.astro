@@ -14,7 +14,7 @@ const readBooks = await getReadBooks();
 ---
 
 <BaseLayout title="Reading">
-    <main class="reading">
+    <main class="reading layout-collection">
         <header class="reading-header">
             <h1>Reading</h1>
         </header>
@@ -169,11 +169,6 @@ const readBooks = await getReadBooks();
 </BaseLayout>
 
 <style>
-    .reading {
-        width: min(100%, 52rem);
-        margin: 0 auto;
-    }
-
     .reading-header {
         margin-bottom: 4rem;
     }

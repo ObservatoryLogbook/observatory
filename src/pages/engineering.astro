@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import CircleGauge from "@lucide/astro/icons/circle-gauge";
 import { getCurrentlyReading } from "../lib/reading";
 import { getStrengthGoals } from "../lib/training";
 import { getRecipeStats } from "../lib/food.ts"
@@ -34,15 +36,9 @@ const strengthGoals = await getStrengthGoals();
 
 <BaseLayout title="Engineering">
     <main class="engineering">
-        <header class="landing-header">
-            <h1>Engineering</h1>
+        <SectionHeader title="Engineering" description="Systems and collections built and maintained for everyday life." icon={CircleGauge} />
 
-            <p class="tagline">
-                Systems and collections built and maintained for everyday life.
-            </p>
-        </header>
-
-        <section class="engineering-grid">
+        <section class="engineering-grid landing-section-grid">
 
         <!-- ===============================================================
              Reading
@@ -60,7 +56,7 @@ const strengthGoals = await getStrengthGoals();
                     Books currently in progress and recently completed.
                 </p>
 
-                <div class="engineering-card__content">
+                <div class="engineering-card__content landing-card-content">
                     <p class="engineering-card__label">
                         Currently reading
                     </p>
@@ -76,7 +72,7 @@ const strengthGoals = await getStrengthGoals();
                             </p>
 
                             {currentBook.data.started && (
-                                <p class="engineering-card__meta">
+                                <p class="engineering-card__meta landing-card-meta">
                                     Started{" "}
                                     {dateFormatter.format(
                                         currentBook.data.started
@@ -108,14 +104,14 @@ const strengthGoals = await getStrengthGoals();
                     Recipes, ideas, and experiments from my kitchen.
                 </p>
 
-                <div class="engineering-card__content">
+                <div class="engineering-card__content landing-card-content">
                     <p class="engineering-card__label">
                         Recipe status
                     </p>
 
-                    <div class="engineering-card__metrics">
+                    <div class="engineering-card__metrics landing-card-metrics">
                         <div>
-                            <span class="engineering-card__metric-name">
+                            <span class="engineering-card__metric-name landing-card-metric-name">
                                 Ideas
                             </span>
 
@@ -123,7 +119,7 @@ const strengthGoals = await getStrengthGoals();
                         </div>
 
                         <div>
-                            <span class="engineering-card__metric-name">
+                            <span class="engineering-card__metric-name landing-card-metric-name">
                                 Tested
                             </span>
 
@@ -131,7 +127,7 @@ const strengthGoals = await getStrengthGoals();
                         </div>
 
                         <div>
-                            <span class="engineering-card__metric-name">
+                            <span class="engineering-card__metric-name landing-card-metric-name">
                                 Favourites
                             </span>
 
@@ -157,7 +153,7 @@ const strengthGoals = await getStrengthGoals();
                     Training programmes, goals, and progress.
                 </p>
 
-                <div class="engineering-card__content">
+                <div class="engineering-card__content landing-card-content">
                     <p class="engineering-card__label">
                         Current strength goals
                     </p>
@@ -193,16 +189,9 @@ const strengthGoals = await getStrengthGoals();
         margin-bottom: 2rem;
     }
 
-    .engineering-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.5rem;
-    }
 
-    .engineering-card__content {
-        margin-top: auto;
-        padding-top: 2rem;
-    }
+
+
 
     .engineering-card__label {
         margin: 0 0 0.75rem;
@@ -229,29 +218,13 @@ const strengthGoals = await getStrengthGoals();
         font-size: 0.9rem;
     }
 
-    .engineering-card__meta {
-        margin: 0.75rem 0 0;
 
-        color: var(--text-meta);
-        font-size: 0.75rem;
-    }
 
-    .engineering-card__metric-name {
-        color: var(--text-muted);
-        font-size: 0.8rem;
-    }
 
-    .engineering-card__metrics {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.5rem;
-    }
 
-    .engineering-card__metrics > div {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-    }
+
+
+
 
     .engineering-card__metrics strong {
         font-size: 1.15rem;
@@ -280,11 +253,5 @@ const strengthGoals = await getStrengthGoals();
         font-size: 1rem;
         font-weight: 500;
         line-height: 1.2;
-    }
-
-    @media (max-width: 48rem) {
-        .engineering-grid {
-            grid-template-columns: 1fr;
-        }
     }
 </style>

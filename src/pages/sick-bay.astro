@@ -1,20 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import HeartPulse from "@lucide/astro/icons/heart-pulse";
 ---
 
 <BaseLayout title="Sick Bay">
   <main class="sick-bay">
-    <header class="landing-header">
-      <h1>Sick Bay</h1>
-
-      <p
-        id="sick-bay-intro"
-        class="tagline"
-        hidden
-      >
-        Longitudinal health observations and personal health data.
-      </p>
-    </header>
+    <SectionHeader title="Sick Bay" description="Longitudinal health observations and personal health data." icon={HeartPulse} descriptionId="sick-bay-intro" descriptionHidden={true} />
 
     <div class="auth-status-row">
       <p
@@ -78,7 +70,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       <!-- Landing cards will go here -->
 
-      <div class="sick-bay-grid">
+      <div class="sick-bay-grid landing-section-grid">
         <a
           class="landing-card"
           href="/sick-bay/body-composition/"
@@ -92,10 +84,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             and InBody measurements.
           </p>
 
-          <div class="sick-bay-card__content">
-            <div class="sick-bay-card__metrics">
+          <div class="sick-bay-card__content landing-card-content">
+            <div class="sick-bay-card__metrics landing-card-metrics">
               <div>
-                <span class="sick-bay-card__metric-name">
+                <span class="sick-bay-card__metric-name landing-card-metric-name">
                   Weight
                 </span>
 
@@ -110,7 +102,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               </div>
 
               <div>
-                <span class="sick-bay-card__metric-name">
+                <span class="sick-bay-card__metric-name landing-card-metric-name">
                   Fat mass
                 </span>
 
@@ -125,7 +117,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               </div>
 
               <div>
-                <span class="sick-bay-card__metric-name">
+                <span class="sick-bay-card__metric-name landing-card-metric-name">
                   Muscle mass
                 </span>
 
@@ -140,7 +132,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               </div>
             </div>
 
-            <p class="sick-bay-card__meta">
+            <p class="sick-bay-card__meta landing-card-meta">
               7-day averages · 12-week trend
             </p>
           </div>
@@ -552,35 +544,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     margin: 0 auto;
   }
 
-  .sick-bay-grid {
-    display: grid;
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-  }
 
-  .sick-bay-card__content {
-    margin-top: auto;
-    padding-top: 2rem;
-  }
 
-  .sick-bay-card__metrics {
-    display: grid;
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
-  }
 
-  .sick-bay-card__metrics > div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
 
-  .sick-bay-card__metric-name {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
+
+
+
+
+
 
   .sick-bay-card__metric-value {
     display: flex;
@@ -598,12 +570,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     font-weight: 400;
   }
 
-  .sick-bay-card__meta {
-    margin: 0.75rem 0 0;
 
-    color: var(--text-meta);
-    font-size: 0.75rem;
-  }
 
   .auth-status-row {
     display: flex;
@@ -653,12 +620,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   #input-link:hover {
     color: var(--text-primary);
-  }
-
-  @media (max-width: 48rem) {
-    .sick-bay-grid {
-        grid-template-columns: 1fr;
-    }
   }
 </style>
 

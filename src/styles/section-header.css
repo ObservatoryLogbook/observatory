@@ -1,0 +1,30 @@
+/* Shared main-area header. Icons mark top-level navigation areas. */
+.section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.section-header__text {
+    min-width: 0;
+    flex: 1;
+}
+
+.section-header__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 auto;
+    margin-top: 0.45rem;
+    color: #68705f;
+    stroke-width: 1.6;
+}
+
+@media (max-width: 600px) {
+    .section-header { gap: 1rem; }
+    .section-header__icon {
+        width: 2rem;
+        height: 2rem;
+        margin-top: 0.3rem;
+    }
+}

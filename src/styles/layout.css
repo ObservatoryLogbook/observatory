@@ -1,0 +1,16 @@
+/* Shared content widths. Choose by page function, not navigation level. */
+:root {
+    --layout-collection: 52rem;
+    --layout-wide: 72rem;
+}
+
+.layout-collection {
+    width: min(100%, var(--layout-collection));
+    margin-inline: auto;
+}
+
+/* Wide is available for future full-width layouts. */
+.layout-wide {
+    width: min(100%, var(--layout-wide));
+    margin-inline: auto;
+}

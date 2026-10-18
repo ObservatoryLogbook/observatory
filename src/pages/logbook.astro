@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHeader from "../components/PageHeader.astro";
+import SectionHeader from "../components/SectionHeader.astro";
 import { getObservations } from "../lib/logbook";
 import ObservationList from "../components/ObservationList.astro";
 
@@ -64,8 +64,8 @@ const groupedObservations = observations.reduce<YearGroup[]>(
 
 <BaseLayout title="Logbook">
     <main>
-        <div class="logbook-container">
-            <PageHeader
+        <div class="logbook-container layout-collection">
+            <SectionHeader
                 title="Logbook"
                 description="A chronological record of observations, ideas, decisions, and discoveries over time."
                 icon={NotebookTabs}
