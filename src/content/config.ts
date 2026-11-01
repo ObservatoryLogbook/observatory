@@ -215,6 +215,36 @@ const foodRecipes = defineCollection({
     }),
 });
 
+
+/* =========================================================
+   Meal Plans
+   ========================================================= */
+
+const mealPlanMeal = z.object({
+    title: z.string(),
+
+    recipe: z.string().optional(),
+});
+
+const mealPlanDay = z.object({
+    date: z.coerce.date(),
+
+    meals: z.array(mealPlanMeal),
+});
+
+const mealPlans = defineCollection({
+    type: "content",
+
+    schema: z.object({
+        title: z.string(),
+
+        startDate: z.coerce.date(),
+
+        days: z.array(mealPlanDay),
+    }),
+});
+
+
 /* =========================================================
    Exports
    ========================================================= */
@@ -226,4 +256,5 @@ export const collections = {
     "engineering-training": engineeringTraining,
     "training-programmes": trainingProgrammes,
     "food-recipes": foodRecipes,
+    "meal-plans": mealPlans, 
 };

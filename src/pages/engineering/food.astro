@@ -16,6 +16,13 @@ const recipesByCategory = await getRecipesByCategory();
             </p>
         </header>
 
+
+        <div class="food-tools">
+            <a href="/engineering/food/meal-plan/">
+                View meal plan
+            </a>
+        </div>
+
         <section class="food-section">
             <h2 class="section-heading">Recipes</h2>
 
@@ -130,6 +137,24 @@ const recipesByCategory = await getRecipesByCategory();
         text-decoration: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 0.2em;
+    }
+
+
+    .food-tools {
+        display: flex;
+        justify-content: flex-end;
+
+        margin-bottom: 2rem;
+    }
+
+    .food-tools a {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .food-tools a:hover {
+        color: var(--text-primary);
     }
 </style>
 ￼

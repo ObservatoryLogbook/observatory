@@ -1,0 +1,224 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { getLatestMealPlan } from "../../../lib/meal-plan.ts";
+
+const plan = await getLatestMealPlan();
+
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    timeZone: "UTC",
+});
+---
+
+<BaseLayout title="Meal Plan">
+    <main class="meal-plan layout-collection">
+        <header>
+            <h1>Meal Plan</h1>
+            <p class="tagline">
+                What's cooking this week?
+            </p>
+        </header>
+
+        {plan ? (
+            <section class="meal-plan__days">
+                {plan.data.days.map((day) => (
+                    <section
+                        class="meal-plan__day"
+                        data-date={day.date.toISOString().slice(0, 10)}
+                    >
+                        <div class="meal-plan__day-header">
+                            <h2>{dateFormatter.format(day.date)}</h2>
+
+                            <span class="meal-plan__today-label" hidden>
+                                Today
+                            </span>
+                        </div>
+
+                        <ul class="meal-plan__meals">
+                            {day.meals.map((meal) => (
+                                <li class="meal-plan__meal">
+                                    {meal.recipe ? (
+                                        <a
+                                            href={`/engineering/food/${meal.recipe}/`}
+                                        >
+                                            <span>{meal.title}</span>
+                                            <span
+                                                class="meal-plan__arrow"
+                                                aria-hidden="true"
+                                            >
+                                                ›
+                                            </span>
+                                        </a>
+                                    ) : (
+                                        <span class="meal-plan__meal-title">
+                                            {meal.title}
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                ))}
+            </section>
+        ) : (
+            <p>No meal plan is currently available.</p>
+        )}
+    </main>
+</BaseLayout>
+
+
+<script>
+    function getTodayInCopenhagen(): string {
+        const parts = new Intl.DateTimeFormat("en-GB", {
+            timeZone: "Europe/Copenhagen",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        }).formatToParts(new Date());
+
+        const get = (type: string) =>
+            parts.find((part) => part.type === type)?.value ?? "";
+
+        return `${get("year")}-${get("month")}-${get("day")}`;
+    }
+
+
+    function highlightToday() {
+        const today = getTodayInCopenhagen();
+
+        document.querySelectorAll<HTMLElement>(
+            ".meal-plan__day"
+        ).forEach((day) => {
+            const isToday = day.dataset.date === today;
+
+            day.classList.toggle(
+                "meal-plan__day--today",
+                isToday
+            );
+
+            const label = day.querySelector<HTMLElement>(
+                ".meal-plan__today-label"
+            );
+
+            if (label) {
+                label.hidden = !isToday;
+            }
+        });
+    }
+
+    highlightToday();
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+            if (!document.hidden) {
+                highlightToday();
+            }
+        }
+    );
+</script>
+
+
+<style>
+    .meal-plan__days {
+        margin-top: 3rem;
+    }
+
+    .meal-plan__day {
+        margin-bottom: 1.25rem;
+        padding: 1rem 1.5rem;
+
+        border-left: 3px solid transparent;
+        border-radius: 0.3rem;
+    }
+
+    .meal-plan__day--today {
+        background: var(--green-surface);
+        border-left-color: var(--green-accent);
+    }
+
+    .meal-plan__day-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.65rem;
+
+        margin-bottom: 1rem;
+    }
+
+    .meal-plan__day-header h2 {
+        margin: 0;
+
+        color: var(--text-secondary);
+        font-size: 1.15rem;
+        font-weight: 500;
+        line-height: 1.4;
+    }
+
+    .meal-plan__today-label {
+        color: var(--green-accent);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .meal-plan__today-label[hidden] {
+        display: none;
+    }
+
+    .meal-plan__meals {
+        margin: 0;
+        padding: 0;
+
+        list-style: none;
+    }
+
+    .meal-plan__meal {
+        border-top: 1px solid var(--line-subtle);
+    }
+
+    .meal-plan__meal a,
+    .meal-plan__meal-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+
+        min-height: 2.0rem;
+        padding: 0.15rem 0;
+
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.4;
+        text-decoration: none;
+    }
+
+    .meal-plan__meal a:hover {
+        color: var(--green-accent);
+    }
+
+    .meal-plan__arrow {
+        flex-shrink: 0;
+        color: var(--text-muted);
+        font-size: 1.4rem;
+        line-height: 1;
+    }
+
+    @media (max-width: 600px) {
+        .meal-plan__days {
+            margin-top: 2rem;
+        }
+
+        .meal-plan__day {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .meal-plan__day-header h2 {
+            font-size: 1.05rem;
+        }
+    }
+</style>
