@@ -1,6 +1,6 @@
 ## Navigation og design
 - [ ] Afklar behov og løsning for søgning i Observatory.
-- [ ] Gennemgående design audit af sider og undersider, samt oprydning i CSS
+- [x] Gennemgående design audit af sider og undersider, samt oprydning i CSS
 
 ## Training history
 - [x] Registrér træningsdage uafhængigt af topsæt.
@@ -12,7 +12,7 @@
 - [ ] Afklar, hvad besøgsstatistik skal fortælle, og vælg en passende løsning.
 
 ## iPhone-workflow
-- [ ] Etablér et Logbook-workflow med kladde, redigering og publicering fra iPhone uden computer.
+- [x] Etablér et Logbook-workflow med kladde, redigering og publicering fra iPhone uden computer.
 
 ## P-i-c trail E Egg
 - [ ] Afklar første etape.
