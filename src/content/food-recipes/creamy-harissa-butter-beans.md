@@ -52,14 +52,16 @@ ingredients:
         note: to taste
 ---
 
+
 ## Method
 
-Sauté the finely chopped shallot in the olive oil. Add the garlic and sun-dried tomatoes and cook briefly.
-
-Add the butter beans and harissa, followed by the vegetable stock and coconut milk.
-
-Add the spices and season with salt and pepper.
-
-Stir in the kale or spinach at the end and cook until just wilted. If using frozen kale or spinach, add it at the beginning. 
-
-Serve with bread.
+1. Heat the olive oil in a large saucepan.
+2. Finely chop the two onions and sauté until softened.
+3. Add the finely chopped garlic and sun-dried tomatoes. Cook briefly.
+4. Stir in the harissa and chilli flakes.
+5. Add the drained butter beans, coconut milk and vegetable stock.
+6. Simmer gently until the sauce has thickened slightly.
+7. Stir in the nutritional yeast or Parmesan and the white wine vinegar.
+8. Add the kale or spinach and cook until tender. If using frozen greens, add them earlier to allow sufficient time to heat through.
+9. Season with salt and black pepper.
+10. Serve with bread.

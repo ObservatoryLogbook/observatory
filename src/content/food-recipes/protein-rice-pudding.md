@@ -82,14 +82,31 @@ Serve warm with cinnamon, optionally mixed with sweetener, and a small amount of
 
 ## Testing and development
 
+
 ### Observations
 
-Not yet tested.
+- The first preparation had excellent flavour and was very filling.
+- Both the cottage cheese and vanilla protein powder worked well.
+- Adding 10 g powdered psyllium husk made the texture excessively thick, dough-like and stretchy for one taster.
+- The texture was acceptable to the other taster.
+- The flavour required no adjustments.
 
 ### Future improvements
 
-- Evaluate whether 60–80 g vanilla protein powder produces the desired sweetness and flavour.
-- Assess whether 500 g blended cottage cheese affects the texture or introduces unwanted acidity.
-- Determine whether the pudding requires additional milk after incorporating the protein.
-- Record the final cooking time and consistency.
-- Consider reducing or increasing the protein powder after the first test.
+- Omit psyllium husk from the next preparation to establish the preferred baseline texture.
+- Consider testing a small amount of PHGG as an alternative fibre source, with less impact on texture.
+- Preserve the original rice, milk, cottage cheese and protein powder proportions.
+
+### Observations
+
+- The first preparation had excellent flavour and was very filling.
+- Both the cottage cheese and vanilla protein powder worked well.
+- Adding 10 g powdered psyllium husk made the texture excessively thick, dough-like and stretchy for one taster.
+- The texture was acceptable to the other taster.
+- The flavour required no adjustments.
+
+### Future improvements
+
+- Omit psyllium husk from the next preparation to establish the preferred baseline texture.
+- Consider testing a small amount of PHGG as an alternative fibre source, with less impact on texture.
+- Preserve the original rice, milk, cottage cheese and protein powder proportions.

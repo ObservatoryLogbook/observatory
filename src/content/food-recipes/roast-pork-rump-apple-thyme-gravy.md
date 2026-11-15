@@ -140,12 +140,14 @@ ingredients:
 
 ### Observations
 
-Not yet tested.
+- The oven-roasted pork rump was very successful.
+- The roasted potatoes and steamed green beans were excellent accompaniments.
+- The pork was purchased pre-marinated with tomato and wild garlic.
+- The apple and thyme gravy had an unpleasant flavour combination and should not be repeated.
+- The interaction between the marinade and gravy may have contributed to the result.
 
 ### Future improvements
 
-- Evaluate whether the pork remains sufficiently juicy at the chosen internal temperature.
-- Assess the balance of apple sweetness, vinegar acidity and thyme in the gravy.
-- Determine whether the gravy benefits from the optional cooking cream.
-- Record the actual roasting time and final meat yield.
-- Evaluate whether the roasted potatoes develop a satisfactory crisp exterior.
+- Use a simpler gravy based on roasting juices and stock.
+- Avoid combining the apple and thyme gravy with tomato and wild garlic marinades.
+- Retain roasted potatoes and steamed green beans as the preferred accompaniments.

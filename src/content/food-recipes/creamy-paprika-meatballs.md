@@ -1,7 +1,7 @@
 ---
 title: Creamy Paprika Meatballs with Cauliflower and Potato Mash
 category: Dinner
-status: idea
+status: favourite
 tags:
   - meatballs
   - pork
@@ -145,14 +145,15 @@ Serve the meatballs with generous amounts of creamy paprika sauce over the cauli
 
 ## Testing and development
 
+
 ### Observations
 
-Not yet tested.
+- The first preparation was an outstanding success, with both tasters particularly enthusiastic about the creamy paprika sauce.
+- Adding 3 tsp hot paprika alongside the original 4 tsp sweet paprika produced an excellent flavour.
+- Despite the successful result, the sauce differed from the specific paprika sauce originally envisaged.
+- The recipe is worth preserving as a favourite in its own right.
 
 ### Future improvements
 
-- Evaluate whether 4 tsp sweet paprika produces the desired flavour and colour.
-- Assess whether the sauce is sufficiently creamy or requires adjustment to the flour, stock or cream.
-- Check the texture of the poached meatballs.
-- Evaluate whether the finely chopped red pepper improves the sauce without becoming too prominent.
-- Record the final consistency and seasoning of the cauliflower and potato mash.
+- No immediate changes are required.
+- A separate interpretation of the originally envisaged paprika sauce may be developed and documented independently.
