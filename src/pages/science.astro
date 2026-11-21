@@ -5,7 +5,9 @@ import Orbit from "@lucide/astro/icons/orbit";
 import { getProjects } from "../lib/projects";
 import { getObservations } from "../lib/logbook";
 
-const projects = await getProjects();
+const projects = (await getProjects()).filter(
+    (project) => project.data.listed
+);
 const observations = await getObservations();
 
 const observationCounts = new Map<string, number>();

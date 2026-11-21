@@ -41,6 +41,8 @@ const projects = defineCollection({
     schema: z.object({
         title: z.string(),
 
+        listed: z.boolean().default(true),
+
         status: z.enum([
             "Active",
             "Paused",

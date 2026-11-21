@@ -16,7 +16,9 @@ export async function getActiveProjects(limit?: number) {
     const projects = await getProjects();
 
     const active = projects.filter(
-        (project) => project.data.status === "Active"
+        (project) => 
+            project.data.status === "Active" &&
+            project.data.listed
     );
 
     return limit

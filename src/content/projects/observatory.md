@@ -1,6 +1,8 @@
 ---
 title: Observatory
 
+listed: true
+
 status: Active
 
 started: 2026-07-20
