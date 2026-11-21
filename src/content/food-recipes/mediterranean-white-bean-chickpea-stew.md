@@ -1,7 +1,7 @@
 ---
 title: Mediterranean White Bean and Chickpea Stew with Feta
 category: Dinner
-status: idea
+status: tested
 tags:
   - white-beans
   - chickpeas
@@ -172,15 +172,19 @@ ingredients:
 
 ## Testing and development
 
+
 ### Observations
 
-Not yet tested.
+- First tested on 18 November 2026.
+- Blending approximately 300 g of the white beans into the tomato sauce produced the desired thick, creamy consistency.
+- The stew was relatively mild and would benefit from more assertive seasoning.
+- The lemon and garlic skyr cream was omitted because the dish already contained plenty of other ingredients.
+- The consistency required no further adjustment.
 
 ### Future improvements
 
-- Evaluate whether the balance between white beans and chickpeas is satisfactory.
-- Assess whether blending 300 g of white beans produces the desired creamy texture.
-- Determine whether the tomato sauce needs additional sweetness or acidity.
-- Evaluate the seasoning, particularly the balance of paprika, oregano, cumin and chilli.
-- Consider adding a little extra hot paprika for greater depth without making the dish particularly spicy.
-- Assess whether the feta and skyr cream provide sufficient contrast to the stew.
+- Increase the overall seasoning intensity while retaining the Mediterranean flavour profile.
+- Test adding 2 tsp hot paprika alongside the existing 3 tsp sweet paprika.
+- Consider increasing the garlic, oregano or chilli flakes after tasting.
+- Make the skyr cream optional rather than a standard component.
+- Preserve the blended-bean technique and current liquid proportions.

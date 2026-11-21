@@ -1,7 +1,7 @@
 ---
 title: Potato, Spinach and Mushroom Frittata with Feta
 category: Dinner
-status: idea
+status: tested
 tags:
   - eggs
   - potatoes
@@ -119,13 +119,17 @@ The frittata can be served on its own or accompanied by a simple green salad or 
 
 ### Observations
 
-Not yet tested.
+- First tested on 16 November 2026.
+- The actual preparation used 1,800 g potatoes, 450 g cottage cheese and 750 g spinach.
+- The planned 250 g feta was omitted.
+- The remaining ingredients followed the original recipe.
+- The frittata was considered slightly dry by one taster, while the other particularly enjoyed the texture.
+- The recipe produced a very substantial quantity, with enough leftovers to replace the following day's planned dinner.
 
 ### Future improvements
 
-- Evaluate whether 16 eggs provide sufficient structure for the large quantity of potatoes and vegetables.
-- Assess whether 300 g blended cottage cheese produces a pleasantly soft texture.
-- Determine the optimal baking time for a 30 × 40 cm dish.
-- Evaluate whether the feta provides sufficient flavour or whether additional seasoning is needed.
-- Assess the texture after reheating, particularly whether the eggs remain tender.
-- Consider adding fresh herbs or a small amount of garlic in future versions.
+- Consider reducing the potatoes to 1,200–1,500 g to improve the balance between the egg mixture and the vegetables.
+- Test whether a shorter baking time produces a softer texture.
+- Consider retaining the increased cottage cheese quantity for additional moisture.
+- Evaluate whether adding feta improves the flavour and perceived richness.
+- Record the actual baking time in a future test.

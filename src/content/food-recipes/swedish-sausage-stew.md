@@ -112,15 +112,15 @@ ingredients:
 
 ## Testing and development
 
+
 ### Observations
 
-- First tested on 14 November 2026.
-- The first preparation was a major success.
-- The recipe successfully incorporates substantially more vegetables than a traditional Swedish sausage stew.
-- Rated as a favourite after the first preparation.
+- First tested on 14 November 2026 and rated as a favourite.
+- The recipe was an outstanding success, with no changes required.
+- Adding 3 tsp hot paprika alongside 4 tsp sweet paprika provided additional flavour without making the dish particularly spicy.
+- The potatoes were cooked slightly longer than intended, resulting in a softer, more stew-like consistency. This worked very well.
 
 ### Future improvements
 
-- Record any deviations from the original ingredient quantities.
-- Assess whether the vegetable proportions should be adjusted in future preparations.
-- No specific changes are currently required.
+- No changes required.
+- Slightly firmer potatoes may be preferable when a more distinct potato texture is desired.
